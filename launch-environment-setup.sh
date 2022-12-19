@@ -33,17 +33,6 @@ fi
 
 echo -e ${RESET_Cs}
 
-prepareJdkDirectory "${project_dir}/${jdk_folder}"
-
-if [[ $? -gt 0 ]]; then
-    echo -e "${RED_C} --MajorTask@PrepareJdkDirectory : Failed to prepare."
-	exit $?
-else 
-    echo -e "${GREEN_C} --MajorTask@PrepareJdkDirectory : Preparation succeeded."
-fi
-
-echo -e ${RESET_Cs}
-
 extractCompressedFile "${project_dir}/${jdk_compressed}" "${project_dir}/${jdk_folder}"
 
 if [[ $? -gt 0 ]]; then
