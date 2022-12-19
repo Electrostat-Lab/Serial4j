@@ -9,7 +9,7 @@ canonical_link=`readlink -f ${0}`
 project_dir=`dirname $canonical_link`
 
 source "${project_dir}/setup-environment.sh"
-source "${$project_dir}/constants.sh"
+source "${project_dir}/constants.sh"
 
 setupCURL
 
@@ -33,7 +33,7 @@ fi
 
 echo -e ${RESET_Cs}
 
-extractCompressedFile $jdk_compressed
+extractCompressedFile "${project_dir}/${jdk_compressed}" "${project_dir}/${jdk_folder}"
 
 if [[ $? -gt 0 ]]; then
     echo -e "${RED_C} --MajorTask@Extract-JDK-19 : Failed extracting jdk-19 archive, check your storage and your permissions."
@@ -44,7 +44,7 @@ fi
 
 echo -e ${RESET_Cs}
 
-deleteJdkArchive
+deleteArchive "${project_dir}/${jdk_compressed}"
 
 if [[ $? -gt 0 ]]; then
     echo -e "${RED_C} --MajorTask@Release-JDK-19-Archive : Failed deleting jdk-19 archive, archive not found."
@@ -55,7 +55,7 @@ fi
 
 echo -e ${RESET_Cs}
 
-provokeReadWriteExecutePermissions './jdk-19'
+provokeReadWriteExecutePermissions "${project_dir}/${jdk_folder}"
 
 if [[ $? -gt 0 ]]; then
     echo -e "${RED_C} --MajorTask@Provoke-Permissions-JDK-19 : Failed to provoke permissions, file not found or you aren't [root]."

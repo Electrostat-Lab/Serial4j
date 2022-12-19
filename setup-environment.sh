@@ -5,9 +5,14 @@
 #*#
 #!/bin/sh
 
-# setup variables
+canonical_link=`readlink -f ${0}`
+project_dir=`dirname $canonical_link`
+
+source "${project_dir}/setup-environment.sh"
+source "${project_dir}/constants.sh"
 
 jdk_compressed='jdk.tar.gz'
+jdk_folder='jdk-19'
 
 # setup functions to download and extract toolchains/compilers
 
@@ -33,7 +38,7 @@ function downloadJdk() {
         machine="x86"
     fi
     
-    curl https://download.oracle.com/java/19/archive/jdk-19_linux-${machine}_bin.tar.gz --output $jdk_compressed
+    curl https://download.oracle.com/java/19/archive/jdk-19_linux-${machine}_bin.tar.gz --output "${project_dir}/${jdk_compressed}"
     
     return $?
 }
@@ -50,12 +55,13 @@ function provokeReadWriteExecutePermissions() {
 }
 
 ##
-# Extracts a compressed `.tar.gz` file to this directory.
+# Extracts a compressed `.tar.gz` file to an explicit target directory.
 # @return [0] for success, [positive-number] for failure indicating errno, [1] for operation not permitted [EPERM].
 ##
 function extractCompressedFile() {
     local compressedFile=$1
-    tar --overwrite -xf $compressedFile
+    local targetDirectory=$2
+    tar --overwrite -xf $compressedFile -C $targetDirectory
     return $?
 }
 
@@ -63,10 +69,11 @@ function extractCompressedFile() {
 # Deletes the jdk archive if exists.
 # @return [0] for success, [positive-number] for failure indicating errno, [1] for operation not permitted [EPERM].
 ##
-function deleteJdkArchive() {
-    if [[ ! -e "$jdk_compressed" ]]; then
+function deleteArchive() {
+    local archive=$1
+    if [[ ! -e "$archive" ]]; then
         return 1    
     fi
-    rm $jdk_compressed
+    rm $archive
     return $?
 }
