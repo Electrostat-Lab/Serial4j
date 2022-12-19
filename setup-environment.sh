@@ -5,9 +5,6 @@
 #*#
 #!/bin/sh
 
-canonical_link=`readlink -f ${0}`
-project_dir=`dirname $canonical_link`
-
 jdk_compressed='jdk.tar.gz'
 jdk_folder='jdk-19'
 
@@ -28,6 +25,7 @@ function setupCURL() {
 ##
 function downloadJdk() {
     # download a machine specific jdk
+    local output=$1
     local machine=`uname -m`
     if [[ $machine -eq "x86_64" ]]; then 
         machine="x64"
@@ -35,7 +33,7 @@ function downloadJdk() {
         machine="x86"
     fi
     
-    curl https://download.oracle.com/java/19/archive/jdk-19_linux-${machine}_bin.tar.gz --output "${project_dir}/${jdk_compressed}"
+    curl https://download.oracle.com/java/19/archive/jdk-19_linux-${machine}_bin.tar.gz --output $output
     
     return $?
 }
@@ -49,14 +47,6 @@ function provokeReadWriteExecutePermissions() {
     # rwx = read-write-execute for the owner, -R for recursive search
     chmod +rwx -R $directory
     return $?
-}
-
-function prepareJdkDirectory() {
-    local directory=$1
-    if [[ -e "$directory" ]]; then
-        return 1    
-    fi
-    mkdir $directory
 }
 
 ##
