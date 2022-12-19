@@ -21,7 +21,7 @@ jobs:
           run: chmod +rwx ./launch-environment-setup.sh && ./launch-environment-setup.sh 
   
   compile:
-      runs-on: ubuntu-latest
+      runs-on: compile
       needs: setup
       steps:
         - uses: actions/checkout@v3
@@ -43,3 +43,4 @@ jobs:
         - uses: actions/checkout@v3
         - name: Run Serial4j-v1 Testcase
           run: chmod +rwx ./output/serial4j/run.sh && ./output/serial4j/run.sh
+
