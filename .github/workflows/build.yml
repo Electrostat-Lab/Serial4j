@@ -34,4 +34,4 @@ jobs:
      steps:
         - uses: actions/checkout@v3
         - name: Run Serial4j-v1 Testcase
-          run: chmod +rwx ./launch-environment-setup.sh && ./launch-environment-setup.sh && chmod +rwx ./output/serial4j/run.sh && ./output/serial4j/run.sh
+          run: chmod +rwx ./launch-environment-setup.sh && ./launch-environment-setup.sh && chmod +rwx ./output/run/run.sh && ./output/run/run.sh
