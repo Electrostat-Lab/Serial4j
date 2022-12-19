@@ -22,7 +22,7 @@ fi
 
 echo -e ${RESET_Cs}
 
-downloadJdk
+downloadJdk "${project_dir}/${jdk_compressed}"
 
 if [[ $? -gt 0 ]]; then
     echo -e "${RED_C} --MajorTask@Download-JDK-19 : Failed downloading jdk-19, check your storage and your permissions."
