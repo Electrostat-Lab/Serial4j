@@ -14,5 +14,8 @@ assemble_dir=`dirname $canonical_link`
 source "${assemble_dir}/variables.sh"
 
 function generateDocs() {
-    $javadoc -d docs -sourcepath $project_root'/src/main/java/' -subpackages $root_package -d $docs_dir
+    if [[ ! -e "${project_root}/docs" ]]; then
+        mkdir -d "${project_root}/docs"
+    fi
+    $javadoc -sourcepath $project_root'/src/main/java/' -subpackages $root_package -d "${project_root}/${docs_dir}"
 }

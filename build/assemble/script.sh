@@ -73,7 +73,7 @@ function addJavaDocs() {
 	
     if [[ $docs_dir ]]; then
         # copy the object file to the build dir
-        if [[ ! `cp -r $docs_dir $jar_tmp` -eq 0 ]]; then
+        if [[ ! `cp -r "${project_root}/${docs_dir}" $jar_tmp` -eq 0 ]]; then
             errors=$(( $errors + 1 ))
         fi   
     fi   
