@@ -8,9 +8,6 @@
 canonical_link=`readlink -f ${0}`
 project_dir=`dirname $canonical_link`
 
-source "${project_dir}/setup-environment.sh"
-source "${project_dir}/constants.sh"
-
 jdk_compressed='jdk.tar.gz'
 jdk_folder='jdk-19'
 
