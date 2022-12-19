@@ -51,6 +51,14 @@ function provokeReadWriteExecutePermissions() {
     return $?
 }
 
+function prepareJdkDirectory() {
+    local directory=$1
+    if [[ -e "$directory" ]]; then
+        return 1    
+    fi
+    mkdir $directory
+}
+
 ##
 # Extracts a compressed `.tar.gz` file to an explicit target directory.
 # @return [0] for success, [positive-number] for failure indicating errno, [1] for operation not permitted [EPERM].
