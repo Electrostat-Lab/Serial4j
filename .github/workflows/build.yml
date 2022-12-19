@@ -14,25 +14,19 @@ on:
   workflow_dispatch:
 
 jobs:
-  setup:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - name: Setup java environment
-        run: chmod +rwx ./launch-environment-setup.sh && ./launch-environment-setup.sh
-
   compile:
       runs-on: ubuntu-latest
-      needs: setup
       steps:
         - uses: actions/checkout@v3
         - name: Compile Serial4j-v1
-          run: chmod +rwx ./build/compile/compile.sh && ./build/compile/compile.sh
-
+          run: chmod +rwx ./launch-environment-setup.sh && ./launch-environment-setup.sh \
+               && chmod +rwx ./build/compile/compile.sh && ./build/compile/compile.sh
+                  
   assemble:
       runs-on: ubuntu-latest
       needs: compile
       steps:
         - uses: actions/checkout@v3
         - name: Assemble Serial4j-v1
-          run: chmod +rwx ./build/assemble/assemble.sh && ./build/assemble/assemble.sh
+          run: chmod +rwx ./launch-environment-setup.sh && ./launch-environment-setup.sh \
+               && chmod +rwx ./build/assemble/assemble.sh && ./build/assemble/assemble.sh
