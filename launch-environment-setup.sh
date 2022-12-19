@@ -33,7 +33,7 @@ fi
 
 echo -e ${RESET_Cs}
 
-extractCompressedFile "${project_dir}/${jdk_compressed}" "${project_dir}/${jdk_folder}"
+extractCompressedFile ${jdk_compressed} ${project_dir}
 
 if [[ $? -gt 0 ]]; then
     echo -e "${RED_C} --MajorTask@Extract-JDK-19 : Failed extracting jdk-19 archive, check your storage and your permissions."
