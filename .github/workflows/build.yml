@@ -15,18 +15,17 @@ jobs:
   build-serial4jv1:
       runs-on: ubuntu-latest
       steps:
-        - name: Clone and checkout the repository
         - uses: actions/checkout@v3
-        - run: echo -e "Checking out...."
+        - name: Clone and checkout the repository
         
         - name: Setup java environment
-        - run:  chmod +rwx ./launch-environment-setup.sh && ./launch-environment-setup.sh 
+          run:  chmod +rwx ./launch-environment-setup.sh && ./launch-environment-setup.sh 
           
         - name: Compile Serial4j-v1
-        - run:  chmod +rwx ./build/compile/compile.sh && ./build/compile/compile.sh
+          run:  chmod +rwx ./build/compile/compile.sh && ./build/compile/compile.sh
         
         - name: Assemble Serial4j-v1
-        - run:  chmod +rwx ./build/assemble/assemble.sh && ./build/assemble/assemble.sh         
+          run:  chmod +rwx ./build/assemble/assemble.sh && ./build/assemble/assemble.sh         
         
         - name: Run Serial4j-v1 Testcase
         - run:  chmod +rwx ./output/run/run.sh && ./output/run/run.sh
