@@ -46,6 +46,7 @@ public enum Errno {
      */
     ERR_INVALID_PORT(NativeErrno.getInvalidPortErrno(), "Invalid Port"),
     ERR_OPERATION_FAILED(NativeErrno.getOperationFailedErrno(), "Operation Failed"),
+    OPERATION_SUCCEEDED(NativeErrno.getOperationSucceededCode(), "Operation Failed"),
     ERR_NO_AVAILABLE_TTY_DEVICES(NativeErrno.getNoAvailableTtyDevicesErrno(), "No available teletype devices"),
 
     /**

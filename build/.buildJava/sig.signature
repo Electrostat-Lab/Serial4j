@@ -2750,6 +2750,13 @@
  static 
  final 
  com.serial4j.core.errno.Errno 
+ OPERATION_SUCCEEDED; 
+ descriptor: 
+ Lcom/serial4j/core/errno/Errno; 
+ public 
+ static 
+ final 
+ com.serial4j.core.errno.Errno 
  ERR_NO_AVAILABLE_TTY_DEVICES; 
  descriptor: 
  Lcom/serial4j/core/errno/Errno; 
@@ -3051,6 +3058,13 @@
  native 
  int 
  getOperationFailedErrno(); 
+ descriptor: 
+ ()I 
+ protected 
+ static 
+ native 
+ int 
+ getOperationSucceededCode(); 
  descriptor: 
  ()I 
  protected 

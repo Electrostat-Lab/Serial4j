@@ -137,6 +137,14 @@ JNIEXPORT jint JNICALL Java_com_serial4j_core_errno_NativeErrno_getOperationFail
 
 /*
  * Class:     com_serial4j_core_errno_NativeErrno
+ * Method:    getOperationSucceededCode
+ * Signature: ()I
+ */
+JNIEXPORT jint JNICALL Java_com_serial4j_core_errno_NativeErrno_getOperationSucceededCode
+  (JNIEnv *, jclass);
+
+/*
+ * Class:     com_serial4j_core_errno_NativeErrno
  * Method:    getPermissionDeniedErrno
  * Signature: ()I
  */

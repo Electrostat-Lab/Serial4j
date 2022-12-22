@@ -37,6 +37,8 @@ public final class NativeErrno {
 
     protected static native int getOperationFailedErrno();
 
+    protected static native int getOperationSucceededCode();
+
     protected static native int getPermissionDeniedErrno();
 
     protected static native int getReadOnlyFileSystemErrno();
