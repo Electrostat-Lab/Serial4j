@@ -26,4 +26,4 @@ jobs:
           run:  chmod +rwx ./build/assemble/assemble.sh && ./build/assemble/assemble.sh         
         
         - name: Run Serial4j-v1 Testcase
-        - run:  chmod +rwx ./output/run/run.sh && ./output/run/run.sh
+          run:  chmod +rwx ./output/run/run.sh && ./output/run/run.sh
