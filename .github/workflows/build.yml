@@ -16,8 +16,6 @@ jobs:
       runs-on: ubuntu-latest
       steps:
         - uses: actions/checkout@v3
-        - name: Clone and checkout the repository
-        
         - name: Setup java environment
           run:  chmod +rwx ./launch-environment-setup.sh && ./launch-environment-setup.sh 
           
