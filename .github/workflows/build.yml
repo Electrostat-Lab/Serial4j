@@ -15,17 +15,14 @@ jobs:
   build-serial4jv1:
       runs-on: ubuntu-latest
       steps:
-        - uses: actions/checkout@v3
         - name: Setup java environment
           run:  chmod +rwx ./launch-environment-setup.sh && ./launch-environment-setup.sh 
           
         - name: Compile Serial4j-v1
           run:  chmod +rwx ./build/compile/compile.sh && ./build/compile/compile.sh
         
-        - uses: actions/checkout@v3
         - name: Assemble Serial4j-v1
           run:  chmod +rwx ./build/assemble/assemble.sh && ./build/assemble/assemble.sh         
         
-        - uses: actions/checkout@v3
         - name: Run Serial4j-v1 Testcase
           run:  chmod +rwx ./output/run/run.sh && ./output/run/run.sh
