@@ -15,7 +15,7 @@ source "${assemble_dir}/variables.sh"
 
 function generateDocs() {
     if [[ ! -e "${project_root}/docs" ]]; then
-        mkdir -d "${project_root}/docs"
+        mkdir -v "${project_root}/docs"
     fi
-    $javadoc -sourcepath $project_root'/src/main/java/' -subpackages $root_package -d "${project_root}/${docs_dir}"
+    cd "${project_root}/docs" && $javadoc -sourcepath $project_root'/src/main/java/' -subpackages $root_package -d  $java_docs_folder && cd "${project_root}"
 }

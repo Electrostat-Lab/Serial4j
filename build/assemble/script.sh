@@ -63,25 +63,6 @@ function createManifest() {
 }
 
 #**
-#* Adds the API generated java docs from the javadoc tool.
-#
-#* @return the number of errors, 0 if no errors, 1 or 2 if there are errors.
-#**
-function addJavaDocs() {
-    local errors=0
-    cd $project_root
-	
-    if [[ $docs_dir ]]; then
-        # copy the object file to the build dir
-        if [[ ! `cp -r "${project_root}/${docs_dir}" $jar_tmp` -eq 0 ]]; then
-            errors=$(( $errors + 1 ))
-        fi   
-    fi   
-    return $errors
-
-}
-
-#**
 #* Adds the android native dependencies (the .so native object files) as a jar dependency 
 #* at the output/Arithmos/dependencies relative path. 
 #
@@ -146,18 +127,13 @@ function addAssets() {
 }
 
 function createDocsJar() {
-    local errors=0
     # get the manifest file to link it
-    cd $docs_tmp
-    if [[ ! `$java_jar --create --file $java_docs_jar --manifest $manifest_file './'` -eq 0 ]]; then 
-        errors=$(( $errors + 1 ))
-    fi
+    cd "${project_root}/docs/$java_docs_folder" && $java_jar --create --file $java_docs_jar --manifest $manifest_file "./"
 	
     # move the jar to its respective output folder
-    mv $java_docs_jar $jar_tmp
+    mv $java_docs_jar $jar_tmp && cd "${project_root}"
     
-	rm -r $docs_tmp
-	return $errors
+	return $?
 }
 
 function createJar() {

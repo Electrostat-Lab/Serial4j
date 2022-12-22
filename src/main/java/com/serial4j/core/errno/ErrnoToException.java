@@ -50,7 +50,6 @@ import com.serial4j.core.serial.throwable.TryAgainException;
 import com.serial4j.core.serial.throwable.BrokenPipeException;
 import com.serial4j.core.serial.throwable.NoSuchDeviceException;
 import com.serial4j.core.serial.throwable.InvalidPortException;
-import com.serial4j.core.serial.throwable.OperationFailedException;
 import com.serial4j.core.serial.throwable.NoAvailableTtyDevicesException;
 import com.serial4j.core.errno.Errno;
 
@@ -74,7 +73,6 @@ public final class ErrnoToException {
      * @throws PermissionDeniedException in case of errno(13).
      * @throws BrokenPipeException in case of errno(32).
      * @throws InvalidPortException in case of errno(-2).
-     * @throws OperationFailedException in case of errno(-1).
      * @throws NoAvailableTtyDevicesException in case of errno(-4).
      */
     public static void throwFromErrno(final int errno, final String additionalText) { 

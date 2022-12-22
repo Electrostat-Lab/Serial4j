@@ -62,15 +62,6 @@ fi
 
 echo -e $RESET_Cs
 
-addJavaDocs
-if (( $? > 0 )); then 
-    echo -e "$RED_C Task@AddJavaDocs : Failed"
-else
-    echo -e "$MAGNETA_C Task@AddJavaDocs : Completed"
-fi
-
-echo -e $RESET_Cs
-
 addDesktopNativeDependencies
 if (( $? > 0 )); then 
     echo -e "$RED_C Task@AddDesktopNativeDependencies : Failed"
@@ -80,14 +71,14 @@ fi
 
 echo -e $RESET_Cs
 
-addAndroidNativeDependencies
-if (( $? > 0 )); then 
-    echo -e "$RED_C Task@AddNativeDependencies : Failed"
-else
-    echo -e "$MAGNETA_C Task@AddNativeDependencies : Completed"
-fi
+# addAndroidNativeDependencies
+# if (( $? > 0 )); then 
+#     echo -e "$RED_C Task@AddNativeDependencies : Failed"
+# else
+#     echo -e "$MAGNETA_C Task@AddNativeDependencies : Completed"
+# fi
 
-echo -e $RESET_Cs
+# echo -e $RESET_Cs
 
 add_assets=`addAssets`
 if (( add_assets > 0 )); then 

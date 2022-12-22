@@ -39,7 +39,6 @@ source ${project_root}'/constants.sh'
 java_jar=${java_home}'/jar'
 javadoc=${java_home}'/javadoc'
 jar_tmp=$javabuild_directory"/$jar_folder"
-docs_tmp=$jar_tmp"/docs/$java_docs_folder"
 
 manifest_file=$javabuild_directory'/'$jar_folder'/Manifest.mf'
 
