@@ -66,6 +66,7 @@ public class HelloSerialMonitor implements SerialDataListener, EntityStatus<Seri
             serialMonitor.setTerminate();
         } catch (Exception e) {
             e.printStackTrace();
+            System.exit(0);
         }
     }
 
