@@ -1,4 +1,4 @@
-# <img src="https://github.com/Software-Hardware-Codesign/Serial4j-v1/blob/master/serial-4j-rounded-corners.png" height=80 width=100 /> Serial4j-API:
+# <p> <img src="https://github.com/Software-Hardware-Codesign/Serial4j-v1/blob/master/serial-4j-rounded-corners.png" height=80 width=100 /> </p> Serial4j-API:
 
 A java terminal io library designed to communicate and control the serial (RS232) drivers.
 
