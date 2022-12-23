@@ -81,6 +81,11 @@ JNIEXPORT jint JNICALL Java_com_serial4j_core_errno_NativeErrno_getOperationFail
     return ERR_OPERATION_FAILED;
 }
 
+JNIEXPORT jint JNICALL Java_com_serial4j_core_errno_NativeErrno_getOperationSucceededCode
+  (JNIEnv* env, jclass clazz) {
+    return OPERATION_SUCCEEDED;
+}
+
 JNIEXPORT jint JNICALL Java_com_serial4j_core_errno_NativeErrno_getPermissionDeniedErrno
   (JNIEnv* env, jclass clazz) {
     return EACCES;

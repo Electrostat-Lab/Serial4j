@@ -7,31 +7,27 @@ on:
   push:
     branches: [ "master" ]
   pull_request:
-    branches: [ "master" ]
 
   # enables the manual run button
   workflow_dispatch:
 
 jobs:  
-  compile:
+  build-serial4jv1:
       runs-on: ubuntu-latest
       steps:
+        
         - uses: actions/checkout@v3
+        - name: Clone and checkout to the repository
+          run: echo "Checking out to the repository ..."
+          
+        - name: Setup java environment
+          run:  chmod +rwx ./launch-environment-setup.sh && ./launch-environment-setup.sh 
+          
         - name: Compile Serial4j-v1
-          run: chmod +rwx ./launch-environment-setup.sh && ./launch-environment-setup.sh && chmod +rwx ./build/compile/compile.sh && ./build/compile/compile.sh
-                  
-  assemble:
-      runs-on: ubuntu-latest
-      needs: compile
-      steps:
-        - uses: actions/checkout@v3
+          run:  chmod +rwx ./build/compile/compile.sh && ./build/compile/compile.sh
+        
         - name: Assemble Serial4j-v1
-          run: chmod +rwx ./launch-environment-setup.sh && ./launch-environment-setup.sh && chmod +rwx ./build/assemble/assemble.sh && ./build/assemble/assemble.sh
- 
-  test:
-     runs-on: ubuntu-latest
-     needs: assemble
-     steps:
-        - uses: actions/checkout@v3
+          run:  chmod +rwx ./build/assemble/assemble.sh && ./build/assemble/assemble.sh         
+        
         - name: Run Serial4j-v1 Testcase
-          run: chmod +rwx ./launch-environment-setup.sh && ./launch-environment-setup.sh && chmod +rwx ./output/run/run.sh && ./output/run/run.sh
+          run:  chmod +rwx ./output/run/run.sh && ./output/run/run.sh
