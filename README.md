@@ -1,3 +1,7 @@
+# <img src="https://github.com/Software-Hardware-Codesign/Serial4j-v1/blob/master/serial-4j-rounded-corners.png" height=80 width=100 /> Serial4j-API:
+
+A java terminal io library designed to communicate and control the serial (RS232) drivers.
+
 ## The Serial4j Architectural HAL:
 
 ![image](https://user-images.githubusercontent.com/60224159/189999625-fd667e7c-b219-4aa8-a91f-c9809dcef225.png)
@@ -27,10 +31,11 @@ Serial4j is a terminal io library primarialy built on top of POSIX base file API
 |                           |                          |
 | `com.serial4j.core.throwable` | A java package that provides java exceptions as translations to C native error codes. |
 
-- Java Binding library for the native API:
+- Java Binding library for the native API: 
+> WIP.
 
 - Direct Implementation of the POSIX base file/directory and terminal IO APIs:
-
+> WIP.
 
 - Unix/POSIX Base APIs:
-
+> WIP.
