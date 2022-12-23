@@ -49,7 +49,6 @@ import com.serial4j.core.serial.throwable.PermissionDeniedException;
 import com.serial4j.core.serial.throwable.BrokenPipeException;
 import com.serial4j.core.serial.throwable.NoSuchDeviceException;
 import com.serial4j.core.serial.throwable.InvalidPortException;
-import com.serial4j.core.serial.throwable.OperationFailedException;
 
 /**
  * An example for Serial4j showing Native terminal control and

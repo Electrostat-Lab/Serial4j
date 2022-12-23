@@ -1326,7 +1326,6 @@
  com.serial4j.core.serial.throwable.PermissionDeniedException, 
  com.serial4j.core.serial.throwable.BrokenPipeException, 
  com.serial4j.core.serial.throwable.InvalidPortException, 
- com.serial4j.core.serial.throwable.OperationFailedException, 
  com.serial4j.core.serial.throwable.NoAvailableTtyDevicesException, 
  java.io.FileNotFoundException; 
  descriptor: 
@@ -2221,26 +2220,6 @@
  { 
  public 
  com.serial4j.core.serial.throwable.InputOutputException(java.lang.String); 
- descriptor: 
- (Ljava/lang/String;)V 
- public 
- com.serial4j.core.errno.Errno 
- getCausingErrno(); 
- descriptor: 
- ()Lcom/serial4j/core/errno/Errno; 
- } 
- Compiled 
- from 
- "OperationFailedException.java" 
- public 
- final 
- class 
- com.serial4j.core.serial.throwable.OperationFailedException 
- extends 
- com.serial4j.core.serial.throwable.SerialThrowable 
- { 
- public 
- com.serial4j.core.serial.throwable.OperationFailedException(java.lang.String); 
  descriptor: 
  (Ljava/lang/String;)V 
  public 
