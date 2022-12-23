@@ -1,6 +1,6 @@
 <p>  <a href="https://software-hardware-codesign.github.io/Serial4j-v1/serial4j-0.3A-javadoc/index.html"> <img src="https://github.com/Software-Hardware-Codesign/Serial4j-v1/blob/master/serial-4j-rounded-corners.png" height=80 width=100/> </a> </p> 
 
-[![](https://github.com/Software-Hardware-Codesign/Serial4j-v1/actions/workflows/build.yml/badge.svg)](https://github.com/Software-Hardware-Codesign/Serial4j-v1/actions)
+[![](https://github.com/Software-Hardware-Codesign/Serial4j-v1/actions/workflows/build-publish-deploy.yml/badge.svg)](https://github.com/Software-Hardware-Codesign/Serial4j-v1/actions)
 
 # Serial4j-API:
 
