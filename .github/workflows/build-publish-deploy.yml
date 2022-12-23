@@ -1,5 +1,5 @@
 # Serial4j-v1 low-level workflow
-name: Build Serial4j-v1
+name: Build, publish and deploy Serial4j-v1
 
 # Controls when the workflow will run
 on:
