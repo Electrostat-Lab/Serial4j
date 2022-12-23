@@ -31,3 +31,26 @@ jobs:
         
         - name: Run Serial4j-v1 Testcase
           run:  chmod +rwx ./output/run/run.sh && ./output/run/run.sh
+          
+        - name: Setup Pages
+          uses: actions/configure-pages@v2
+          
+        - name: Build docs with Jekyll
+          uses: actions/jekyll-build-pages@v1
+          with:
+            source: ./docs
+            destination: ./_site
+        - name: Upload artifact
+          uses: actions/upload-pages-artifact@v1
+
+
+  docs-deployment:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build-serial4jv1
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v1
