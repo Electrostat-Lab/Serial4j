@@ -1,15 +1,9 @@
 # Serial4j-v1 low-level workflow
 name: Build, publish and deploy Serial4j-v1
 
-env:
-  GITHUB_USERNAME: ${{ secrets.USERNAME }}
-  GITHUB_TOKEN: ${{ secrets.TOKEN }}
-
 # Controls when the workflow will run
 on:
-  # Triggers the workflow on push or pull request events but only for the "master" branch
   push:
-  pull_request:
 
   # enables the manual run button
   workflow_dispatch:
@@ -42,7 +36,9 @@ jobs:
           run:  chmod +rwx ./output/run/run.sh && ./output/run/run.sh
           
         - name: Publish to apache maven
-          if: ${{ github.ref }} == "master"
+          env:
+            GITHUB_USERNAME: ${{ secrets.USERNAME }}
+            GITHUB_TOKEN: ${{ secrets.TOKEN }}
           run: chmod +rwx ./maven-publish.sh && ./maven-publish.sh
           
         - name: Setup Pages
