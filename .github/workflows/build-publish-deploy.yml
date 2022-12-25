@@ -37,10 +37,9 @@ jobs:
           
         - name: Publish to apache maven
           env:
-            RELEASE_VERSION: ${{ github.ref }}
             GITHUB_USERNAME: ${{ secrets.USERNAME }}
             GITHUB_TOKEN: ${{ secrets.TOKEN }}
-          run: echo $RELEASE_VERSION && chmod +rwx ./maven-publish.sh && ./maven-publish.sh
+          run: chmod +rwx ./maven-publish.sh && ./maven-publish.sh
           
         - name: Setup Pages
           uses: actions/configure-pages@v2
