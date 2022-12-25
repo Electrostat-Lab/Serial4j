@@ -42,8 +42,8 @@ jobs:
           run:  chmod +rwx ./output/run/run.sh && ./output/run/run.sh
           
         - name: Publish to apache maven
-          if: ${{ github.ref }} == "master"
-          run: chmod +rwx ./maven-publish.sh && ./maven-publish.sh
+          if: ${{ github.ref }} == 'master'
+          run: echo $GITHUB_REF chmod +rwx ./maven-publish.sh && ./maven-publish.sh
           
         - name: Setup Pages
           uses: actions/configure-pages@v2
