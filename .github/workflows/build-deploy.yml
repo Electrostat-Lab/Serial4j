@@ -4,7 +4,6 @@ name: Build, publish and deploy Serial4j-v1
 on:
   # Runs on pushes targeting the default branch
   push:
-    branches: ["development"]
     
   # enables the manual run button
   workflow_dispatch:
@@ -16,7 +15,10 @@ permissions:
   id-token: write
 
 jobs:  
-  build-serial4jv1:
+  build-deploy-serial4jv1:
+      environment:
+        name: github-pages
+        url: ${{ steps.deployment.outputs.page_url }}
       runs-on: ubuntu-latest
       steps:
         
@@ -52,15 +54,7 @@ jobs:
             destination: ./_site
         - name: Upload artifact
           uses: actions/upload-pages-artifact@v1
-
-
-  docs-deployment:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
-    needs: build-serial4jv1
-    steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v1
+        
+        - name: Deploy to GitHub Pages
+          id: deployment
+          uses: actions/deploy-pages@v1
