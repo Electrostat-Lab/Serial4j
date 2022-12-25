@@ -21,7 +21,7 @@ function deploy() {
 	local version=$5
 	local url=$6
 	
-	mvn deploy:deploy-file -s "${settings}" "-DgroupId=$groupId" \
+	mvn deploy:deploy-file --debug -s "${settings}" "-DgroupId=$groupId" \
 						   "-DartifactId=$artifactId" \
 						   "-Dversion=$version" \
 						   "-Dpackaging=jar" \
