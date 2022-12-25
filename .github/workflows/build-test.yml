@@ -4,7 +4,7 @@ name: Build and test Serial4j-v1
 
 # Controls when the workflow will run
 on:
-  push:
+  pull_request:
 
   # enables the manual run button
   workflow_dispatch:
