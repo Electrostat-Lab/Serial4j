@@ -34,7 +34,7 @@ function deploy() {
 
 function publish() {
 	groupId="com.avrsandbox.serial4j"
-	version="0.3-Alpha"
+	version=$GITHUB_REF_NAME
 	url="https://maven.pkg.github.com/Software-Hardware-Codesign/Serial4j-v1"
 
 	files=(`cd "${project_dir}/output/serial4j" && ls *.jar && cd "${project_dir}"`)
