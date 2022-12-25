@@ -12,7 +12,7 @@ canonical_link=`readlink -f ${0}`
 assemble_dir=`dirname $canonical_link`
 
 jar_folder='serial4j'
-version_number='0.3A'
+version_number=$RELEASE_VERSION
 jar=${jar_folder}'.jar'
 
 java_docs_folder=$jar_folder'-'$version_number'-javadoc'
