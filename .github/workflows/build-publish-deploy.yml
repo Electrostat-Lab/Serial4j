@@ -37,6 +37,7 @@ jobs:
           
         - name: Publish to apache maven
           env:
+            RELEASE_VERSION: ${{ github.ref }}
             GITHUB_USERNAME: ${{ secrets.USERNAME }}
             GITHUB_TOKEN: ${{ secrets.TOKEN }}
           run: chmod +rwx ./maven-publish.sh && ./maven-publish.sh
