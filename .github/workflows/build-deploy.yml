@@ -16,12 +16,8 @@ permissions:
 
 jobs:  
   build-deploy-serial4jv1:
-      environment:
-        name: github-pages
-        url: ${{ steps.deployment.outputs.page_url }}
       runs-on: ubuntu-latest
       steps:
-        
         - uses: actions/checkout@v3
         - name: Clone and checkout to the repository
           run: echo "Checking out to the repository ..."
