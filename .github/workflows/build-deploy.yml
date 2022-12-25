@@ -3,7 +3,7 @@ name: Build, publish and deploy Serial4j-v1
 
 on:
   release:
-    types: [published]
+    types: ['published', 'prereleased']
     
   # enables the manual run button
   workflow_dispatch:
