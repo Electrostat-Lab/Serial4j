@@ -54,7 +54,6 @@ prepare_maven
 
 if (( $? > 0 )); then 
     echo -e "$RED_C Task@PrepareMaven : Failed, check your connection !"
-	exit 1
 else 
     echo -e "$CYAN_C Task@PrepareMaven : Completed"
 fi
@@ -65,7 +64,6 @@ publish
 
 if (( $? > 0 )); then 
     echo -e "$RED_C Task@Publish : Failed"
-	exit 1
 else 
     echo -e "$CYAN_C Task@Publish : Completed"
 fi
