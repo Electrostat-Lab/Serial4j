@@ -40,7 +40,7 @@ jobs:
             RELEASE_VERSION: ${{ github.ref }}
             GITHUB_USERNAME: ${{ secrets.USERNAME }}
             GITHUB_TOKEN: ${{ secrets.TOKEN }}
-          run: chmod +rwx ./maven-publish.sh && ./maven-publish.sh
+          run: echo $RELEASE_VERSION && chmod +rwx ./maven-publish.sh && ./maven-publish.sh
           
         - name: Setup Pages
           uses: actions/configure-pages@v2
