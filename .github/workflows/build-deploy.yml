@@ -2,8 +2,8 @@
 name: Build, publish and deploy Serial4j-v1
 
 on:
-  # Runs on pushes targeting the default branch
-  push:
+  release:
+    types: [published]
     
   # enables the manual run button
   workflow_dispatch:
