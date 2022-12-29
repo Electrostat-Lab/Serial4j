@@ -20,6 +20,18 @@ function setupCURL() {
 }
 
 ##
+# Tests whether jdk is installed.
+# @return [0] for success, [1] for failure.
+##
+function isJdkInstalled() {
+    local jdk_dir=$1
+
+    "${jdk_dir}/bin/java" --version
+    
+    return $?
+}
+
+##
 # Downloads jdk-19 from oracle domains.
 # @return [0] for success, [positive-number] for failure indicating errno, [1] for operation not permitted [EPERM].
 ##
