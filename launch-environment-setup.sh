@@ -11,6 +11,17 @@ project_dir=`dirname $canonical_link`
 source "${project_dir}/setup-environment.sh"
 source "${project_dir}/constants.sh"
 
+isJdkInstalled "${project_dir}/jdk-19"
+
+if [[ $? -gt 0 ]]; then 
+    echo -e "${RED_C} --MajorTask@SelfJdkTest : JDK isn't found."
+else 
+    echo -e "${GREEN_C} --MajorTask@SelfJdkTest : JDK is already installed."
+	exit $?
+fi
+
+echo -e ${RESET_Cs}
+
 setupCURL
 
 if [[ $? -gt 0 ]]; then 
