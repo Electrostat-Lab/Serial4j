@@ -1,0 +1,13 @@
+import com.jme3.build.UnixScriptRunner;
+
+final String javaHome = System.getProperty("java.home")
+
+tasks.register("compileX86_64", UnixScriptRunner) {
+   scriptArgs = new String[] { javaHome, "-m64" }
+   script = "./serial4j-native/build.sh"
+}
+
+tasks.register("compileX86", UnixScriptRunner) {
+   scriptArgs = new String[] { javaHome, "-m32" }
+   script = "./serial4j-native/build.sh"
+}

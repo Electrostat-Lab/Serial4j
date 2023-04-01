@@ -1,0 +1,4 @@
+rootProject.name = 'Serial4j-v1'
+include('serial4j')
+include('serial4j-native')
+include('serial4j-examples')
