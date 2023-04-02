@@ -1,20 +1,46 @@
+import com.serial4j.build.util.JarMetadata
+
 plugins {
     id 'java-library'
 }
 
-repositories {
-    mavenCentral()
+task generateJavadocJar(type: Jar) {
+    classifier = 'javadoc'
+    from javadoc
+}
+
+task generateSourcesJar(type: Jar) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+tasks.register("android") {
+    JarMetadata.TARGET.setData("android")
+}
+
+tasks.register("desktop") {
+    JarMetadata.TARGET.setData("desktop")
+}
+
+tasks.withType(JavaCompile) { // compile-time options [javac <options> <sources>]
+    //options.compilerArgs << '-Xlint:deprecation' // to show deprecation warnings
+    options.compilerArgs << '-Xlint:unchecked'
+    options.compilerArgs += ["-h", "${project.rootDir}/serial4j-native/src/include/jni/"]
+    options.encoding = 'UTF-8'
+    if (JavaVersion.current().isCompatibleWith(JavaVersion.VERSION_1_10)) {
+        options.release = 8
+    }
+}
+
+jar { // assemble jar options [java -jar]
+    archiveFileName = "${JarMetadata.BASE_NAME.getData()}-${JarMetadata.TARGET.getData()}-${JarMetadata.VERSION.getData()}${JarMetadata.EXT.getData()}"
+    manifest {
+        attributes 'Project': "${JarMetadata.BASE_NAME.getData()}-${JarMetadata.TARGET.getData()}",
+                   'Implementation-Version': "${JarMetadata.VERSION.getData()}",
+                   'Automatic-Module-Name': "${project.name.replace("-", ".")}",
+                   'Compiled-by': JavaVersion.current()
+    }
 }
 
 dependencies {
-}
-
-testing {
-    suites {
-        // Configure the built-in test suite
-        test {
-            // Use JUnit Jupiter test framework
-            useJUnitJupiter('5.9.1')
-        }
-    }
 }

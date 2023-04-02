@@ -6,4 +6,8 @@
 .gradle
 
 # Ignore Gradle build output directory
-build
+/serial4j/build
+/serial4j-native/build
+/serial4j-examples/build
+
+/*.so

@@ -1,13 +1,25 @@
-import com.jme3.build.UnixScriptRunner;
+import com.serial4j.build.UnixScriptRunner;
 
-final String javaHome = System.getProperty("java.home")
+final String JAVA_HOME = System.getProperty("java.home")
+final String buildDirectory="${project.rootDir}/serial4j/build/classes/java/main/lib"
+final String nativeObjects="${project.rootDir}/serial4j-native/build/lib"
+
+task copyNatives(type: Copy) {
+    from "${nativeObjects}"
+    into "${buildDirectory}"
+}
 
 tasks.register("compileX86_64", UnixScriptRunner) {
-   scriptArgs = new String[] { javaHome, "-m64" }
-   script = "./serial4j-native/build.sh"
+   scriptArgs = new String[] { "${JAVA_HOME}", "x86-64", "-m64" }
+   script = "./helper-scripts/project-impl/compile-x86.sh"
 }
 
 tasks.register("compileX86", UnixScriptRunner) {
-   scriptArgs = new String[] { javaHome, "-m32" }
-   script = "./serial4j-native/build.sh"
+   scriptArgs = new String[] { "${JAVA_HOME}", "x86", "-m32" }
+   script = "./helper-scripts/project-impl/compile-x86.sh"
+}
+
+tasks.register("compileAndroid", UnixScriptRunner) {
+   scriptArgs = new String[] { "${JAVA_HOME}" }
+   script = "./helper-scripts/project-impl/compile-android.sh"
 }

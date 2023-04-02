@@ -1,0 +1,10 @@
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
+import com.serial4j.build.util.JarMetadata;
+
+plugins {
+    id 'com.android.application' version '7.4.1' apply false
+    id 'com.android.library' version '7.4.1' apply false
+}
+
+// get the version from the gradle properties, default is 'SNAPSHOT'
+JarMetadata.VERSION.setData("${version}")

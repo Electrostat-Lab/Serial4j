@@ -31,8 +31,6 @@
  */
 package com.serial4j.example;
 
-import com.serial4j.example.serial4j.HelloSerial4jIO;
-import com.serial4j.example.serial4j.HelloNativeSerial4J;
 import com.serial4j.example.monitor.HelloSerialMonitor;
 
 /**
@@ -45,7 +43,7 @@ public final class Launcher {
     public static void main(String args[]) throws InterruptedException {
         /* starts the native fctnl io example */
         // Thread.ofVirtual().start(new HelloNativeSerial4J());
-        Thread.ofPlatform().start(new HelloSerialMonitor());
+        new Thread(new HelloSerialMonitor()).start();;
         while (true);
     }
 }
