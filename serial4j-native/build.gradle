@@ -6,7 +6,7 @@ plugins {
 }
 
 final String JAVA_HOME = System.getProperty("java.home")
-final String buildDirectory="${project.rootDir}/serial4j-native/build/classes/java/main/lib"
+final String buildDirectory="${project.rootDir}/serial4j/build/classes/java/main/lib"
 final String nativeObjects="${project.rootDir}/serial4j-native/build/lib"
 
 tasks.register("copyNatives", Copy) {
@@ -33,7 +33,7 @@ jar { // assemble jar options [java -jar]
     archiveFileName = "${project.name}-${system}.jar"
     manifest {
         attributes 'Project': "${project.name}-${system}",
-                   'Implementation-Version': "${JarMetadata.VERSION.getData()}",
+                   'Implementation-Version': "${version}",
                    'Automatic-Module-Name': "${project.name.replace("-", ".")}",
                    'Created-by': JavaVersion.current()
     }

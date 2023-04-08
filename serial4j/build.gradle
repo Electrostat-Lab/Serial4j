@@ -1,5 +1,3 @@
-import com.serial4j.build.util.JarMetadata
-
 plugins {
     id 'java-library'
 }
@@ -14,14 +12,6 @@ task generateSourcesJar(type: Jar) {
     from sourceSets.main.allSource
 }
 
-tasks.register("android") {
-    JarMetadata.TARGET.setData("android")
-}
-
-tasks.register("desktop") {
-    JarMetadata.TARGET.setData("desktop")
-}
-
 tasks.withType(JavaCompile) { // compile-time options [javac <options> <sources>]
     //options.compilerArgs << '-Xlint:deprecation' // to show deprecation warnings
     options.compilerArgs << '-Xlint:unchecked'
@@ -33,10 +23,17 @@ tasks.withType(JavaCompile) { // compile-time options [javac <options> <sources>
 }
 
 jar { // assemble jar options [java -jar]
-    archiveFileName = "${JarMetadata.BASE_NAME.getData()}-${JarMetadata.TARGET.getData()}-${JarMetadata.VERSION.getData()}${JarMetadata.EXT.getData()}"
+    final String dependencies = 
+        "serial4j-native-linux.jar" + " " +
+        "serial4j-native-windows.jar" + " " +
+        "serial4j-native-darwin.jar" + " " +
+        "serial4j-native-android.jar"
+
+    archiveFileName = "${project.name}.jar"
     manifest {
-        attributes 'Project': "${JarMetadata.BASE_NAME.getData()}-${JarMetadata.TARGET.getData()}",
-                   'Implementation-Version': "${JarMetadata.VERSION.getData()}",
+        attributes 'Project': "${project.name}",
+                   'Implementation-Version': "${version}",
+                   'Class-Path': "${dependencies}",
                    'Automatic-Module-Name': "${project.name.replace("-", ".")}",
                    'Compiled-by': JavaVersion.current()
     }

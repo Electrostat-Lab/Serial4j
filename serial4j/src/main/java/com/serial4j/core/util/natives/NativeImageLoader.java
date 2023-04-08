@@ -53,8 +53,8 @@ public final class NativeImageLoader {
      * Represents an image domain.
      */
     public enum NativeImage {
-        LINUX_x86_x64("native/Linux/linux-x86-x64/libserial4j.so"),
-        LINUX_x86_x86("native/Linux/linux-x86-x86/libserial4j.so"),
+        LINUX_x86_x64("lib/linux/x86-64/libserial4j.so"),
+        LINUX_x86_x86("lib/linux/x86/libserial4j.so"),
         MAC_x86_x64("native/OSX/mac-x86-x64/libserial4j.dylb"),
         WIN_x86_x64("native/Windows/win-x86-x64/libserial4j.dll");
 

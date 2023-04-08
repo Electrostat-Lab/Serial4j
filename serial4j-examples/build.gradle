@@ -4,15 +4,12 @@ plugins {
     id 'application'
 }
 
-final String dependencyName = "${JarMetadata.BASE_NAME.getData()}-${JarMetadata.TARGET.getData()}-${JarMetadata.VERSION.getData()}${JarMetadata.EXT.getData()}"
-
 application {
     // Define the main class for the application.
     mainClass = 'com.serial4j.example.Launcher'
 }
 
 dependencies {
-    implementation files("../serial4j/build/libs/${dependencyName}")
+    implementation files("../serial4j/build/libs/serial4j.jar")
+    implementation files("../serial4j-native/build/libs/serial4j-native-linux.jar")
 }
-
-
