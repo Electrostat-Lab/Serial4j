@@ -1,4 +1,4 @@
-<p>  <a href="https://software-hardware-codesign.github.io/Serial4j-v1"> <img src="https://github.com/Software-Hardware-Codesign/Serial4j-v1/blob/master/.assets/serial-4j-rounded-corners.png" height=80 width=100/> </a> </p> 
+<p>  <a href="https://software-hardware-codesign.github.io/Serial4j-v1"> <img src="https://github.com/Software-Hardware-Codesign/Serial4j-v1/blob/master/.repo-resources/assets/serial-4j-rounded-corners.png" height=80 width=100/> </a> </p> 
 
 # Serial4j-API:
 
