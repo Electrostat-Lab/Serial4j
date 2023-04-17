@@ -1,15 +1,20 @@
-import com.serial4j.build.util.JarMetadata
-
 plugins {
     id 'application'
 }
 
 application {
     // Define the main class for the application.
-    mainClass = 'com.serial4j.example.Launcher'
+    mainClass = 'com.serial4j.example.jme.RollingTheMonkey'
 }
 
 dependencies {
     implementation files("../serial4j/build/libs/serial4j.jar")
     implementation files("../serial4j-native/build/libs/serial4j-native-linux.jar")
+
+    implementation "org.jmonkeyengine:jme3-core:3.6.0-stable"
+    implementation "org.jmonkeyengine:jme3-desktop:3.6.0-stable"
+    implementation "org.jmonkeyengine:jme3-lwjgl3:3.6.0-stable"
+
+    implementation 'com.github.stephengold:Minie:7.4.0'
+
 }
