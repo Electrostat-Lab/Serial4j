@@ -39,12 +39,7 @@ import java.io.OutputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import com.serial4j.core.errno.Errno;
-import com.serial4j.core.util.natives.NativeImageLoader;
-import com.serial4j.core.serial.Permissions;
 import com.serial4j.core.errno.ErrnoToException;
-import com.serial4j.core.serial.SerialPort;
-import com.serial4j.core.serial.NativeTerminalDevice;
-import com.serial4j.core.serial.ReadConfiguration;
 import com.serial4j.core.serial.control.TerminalControlFlag;
 import com.serial4j.core.serial.control.TerminalLocalFlag;
 import com.serial4j.core.serial.control.TerminalInputFlag;
@@ -73,13 +68,12 @@ import com.serial4j.core.serial.throwable.NoAvailableTtyDevicesException;
  */
 public final class TerminalDevice {
 
-    /**
+    /*
      * Static initializer for loading and setting up the native image.
      * This initializer has a static context and therefore it runs only one
      * time when creating the first object.
      */
     static {
-        NativeImageLoader.loadLibrary();
         TerminalDevice.setupJniEnvironment();
     }
 
@@ -110,7 +104,7 @@ public final class TerminalDevice {
      */
     private static void setupJniEnvironment() {
         final int errno = NativeTerminalDevice.setupJniEnvironment0();
-        ErrnoToException.throwFromErrno(errno, "Jni Environment passed is invalid !");
+        ErrnoToException.throwFromErrno(errno, "Jni Environment passed is invalid!");
     }
 
     /**
