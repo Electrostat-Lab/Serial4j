@@ -84,7 +84,7 @@ namespace TerminalDevice {
      * @return int (-3) if the directory ["/dev"] is invalid, (-4) if there are no tty
      * devices available at the ["/dev"] directory, (1) if operation succeeded.
      */
-    int fetchSerialPorts(struct DynamicBuffer* serialPorts);
+    int fetchSerialPorts(DynamicBuffer* serialPorts);
 
     /**
      * @brief Opens a serial port device with a name.
