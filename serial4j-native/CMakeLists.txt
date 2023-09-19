@@ -28,7 +28,8 @@ set(headers "${CMAKE_CURRENT_SOURCE_DIR}/src/include/"
 
 set(sources "${CMAKE_CURRENT_SOURCE_DIR}/src/lib/jni/com_serial4j_core_serial_NativeTerminalDevice.cpp"
             "${CMAKE_CURRENT_SOURCE_DIR}/src/lib/jni/com_serial4j_core_errno_NativeErrno.cpp"
-            "${CMAKE_CURRENT_SOURCE_DIR}/src/lib/linux/TerminalDevice.cpp")
+            "${CMAKE_CURRENT_SOURCE_DIR}/src/lib/linux/TerminalDevice.cpp"
+            "${CMAKE_CURRENT_SOURCE_DIR}/src/lib/DynamicBuffer.cpp")
 
 # add a library target
 add_library(${library} SHARED ${sources})
