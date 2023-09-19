@@ -109,7 +109,6 @@ namespace BufferUtils {
         /* re-init the buffer, removing the null pointers */
         for (int i = 0, j = 0; i < count; i++) {
             if (temp[i] == NULL) {
-                 printf("%s\n", "zero");
                 continue;
             }
             buffer[j] = (void*) calloc(1, sizeof(void*));
