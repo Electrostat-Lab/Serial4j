@@ -12,6 +12,7 @@
 /serial4j/bin
 /serial4j-native/build
 /serial4j-examples/build
+/serial4j-examples/libs
 /serial4j-examples/bin
 /serial4j-examples/*.so
 /buildSrc/build
