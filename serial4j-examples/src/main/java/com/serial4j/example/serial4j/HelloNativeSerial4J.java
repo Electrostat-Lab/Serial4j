@@ -49,6 +49,7 @@ import com.serial4j.core.serial.throwable.PermissionDeniedException;
 import com.serial4j.core.serial.throwable.BrokenPipeException;
 import com.serial4j.core.serial.throwable.NoSuchDeviceException;
 import com.serial4j.core.serial.throwable.InvalidPortException;
+import com.serial4j.core.util.natives.NativeImageLoader;
 
 /**
  * An example for Serial4j showing Native terminal control and
@@ -58,13 +59,17 @@ import com.serial4j.core.serial.throwable.InvalidPortException;
  */
 public final class HelloNativeSerial4J implements Runnable {
 
+	static {
+		NativeImageLoader.setExtractionPathFromUserDir("libs", "bin");
+	}
+
 	/**
 	 * Provides a java binding to a native terminal device.
 	 */
 	protected final TerminalDevice ttyDevice = new TerminalDevice();
 
 	protected static final Logger EXAMPLE_LOGGER = Logger.getLogger(HelloNativeSerial4J.class.getName());
-	
+
 	@Override
 	public void run() {
 		System.out.println(Thread.currentThread());

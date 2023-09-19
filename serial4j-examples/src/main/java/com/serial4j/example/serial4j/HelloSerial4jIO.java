@@ -44,6 +44,7 @@ import com.serial4j.core.serial.throwable.BrokenPipeException;
 import com.serial4j.core.serial.throwable.NoSuchDeviceException;
 import com.serial4j.core.serial.throwable.InvalidPortException;
 import com.serial4j.core.serial.Permissions;
+import com.serial4j.core.util.natives.NativeImageLoader;
 
 /**
  * An example showing serial and terminal io using java.io API.
@@ -52,10 +53,14 @@ import com.serial4j.core.serial.Permissions;
  */
 public final class HelloSerial4jIO implements Runnable {
 
+    static {
+        NativeImageLoader.setExtractionPathFromUserDir("libs", "bin");
+    }
+
     /**
      * Provides a java binding to the native terminal device.
      */
-    protected final TerminalDevice ttyDevice = new TerminalDevice();		
+    protected final TerminalDevice ttyDevice = new TerminalDevice();
 
     @Override
     public void run() {

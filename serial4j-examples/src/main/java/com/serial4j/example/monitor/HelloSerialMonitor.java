@@ -37,6 +37,7 @@ import com.serial4j.core.serial.entity.impl.WritableCapsule;
 import com.serial4j.core.serial.entity.impl.SerialWriteEntity;
 import com.serial4j.core.serial.monitor.SerialDataListener;
 import com.serial4j.core.serial.monitor.SerialMonitor;
+import com.serial4j.core.util.natives.NativeImageLoader;
 
 /**
  * Represents an example for UART using jSerialComm.
@@ -44,6 +45,10 @@ import com.serial4j.core.serial.monitor.SerialMonitor;
  * @author pavl_g.
  */
 public class HelloSerialMonitor implements SerialDataListener, EntityStatus<SerialWriteEntity>, Runnable {
+
+    static {
+        NativeImageLoader.setExtractionPathFromUserDir("libs", "bin");
+    }
 
     private static boolean isDataSent;
 

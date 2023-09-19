@@ -31,7 +31,6 @@
  */
 package com.serial4j.core.serial;
 
-import com.serial4j.core.serial.SerialPort;
 import com.serial4j.core.util.natives.NativeImageLoader;
 
 /**
@@ -42,11 +41,11 @@ import com.serial4j.core.util.natives.NativeImageLoader;
  */
 public final class NativeTerminalDevice {
 
-    /**
+    /*
      * Static initializer: Loads the native image when this object is created or referenced.
      */
     static {
-        NativeImageLoader.loadLibrary();
+        NativeImageLoader.loadSerial4jNatives();
     }
 
     private SerialPort serialPort;

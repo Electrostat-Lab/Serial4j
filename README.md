@@ -41,3 +41,72 @@ Serial4j is a terminal io library primarialy built on top of POSIX base file API
 
 - Unix/POSIX Base APIs:
 > WIP.
+
+- Quick usage:
+> WIP.
+
+- Compiling, building and testing examples:
+> ```bash
+> # build Java classes and generate native headers
+> └──╼ $./gradlew :serial4j:build
+> 
+> BUILD SUCCESSFUL in 1s
+> 4 actionable tasks: 4 up-to-date
+> 
+> # assemble Java class files into a Jar for production
+> └──╼ $./gradlew :serial4j:assemble
+> 
+> BUILD SUCCESSFUL in 1s
+> 4 actionable tasks: 4 up-to-date
+> 
+> # compile and link native binaries using cmake-gradle tasks
+>  └──╼ $./gradlew :serial4j-native:compileX86_64 :serial4j-native:compileX86
+>
+> Task :serial4j-native:compileX86_64
+> -- JAVA_HOME: /usr/lib/jvm/jdk-20
+> -- Building binary for: Linux
+> -- Target Binary Instruction-set: -m64
+> -- Configuring done
+> -- Generating done
+> -- Build files have been written to: /home/twisted/GradleProjects/Serial4j-v1/serial4j-native/build/cmake-build
+> [ 25%] Building CXX object CMakeFiles/serial4j.dir/src/lib/jni/com_serial4j_core_serial_NativeTerminalDevice.cpp.o
+> [ 50%] Building CXX object CMakeFiles/serial4j.dir/src/lib/jni/com_serial4j_core_errno_NativeErrno.cpp.o
+> [ 75%] Building CXX object CMakeFiles/serial4j.dir/src/lib/linux/TerminalDevice.cpp.o
+> [100%] Linking CXX shared library libserial4j.so
+> [100%] Built target serial4j
+> renamed '././serial4j-native/build/cmake-build//libserial4j.so' -> '././serial4j-native/build/lib/linux/x86-64/libserial4j.so'
+>
+> Task :serial4j-native:compileX86
+> -- JAVA_HOME: /usr/lib/jvm/jdk-20
+> -- Building binary for: Linux
+> -- Target Binary Instruction-set: -m32
+> -- Configuring done
+> -- Generating done
+> -- Build files have been written to: /home/twisted/GradleProjects/Serial4j-v1/serial4j-native/build/cmake-build
+> [ 25%] Building CXX object CMakeFiles/serial4j.dir/src/lib/jni/com_serial4j_core_serial_NativeTerminalDevice.cpp.o
+> [ 50%] Building CXX object CMakeFiles/serial4j.dir/src/lib/jni/com_serial4j_core_errno_NativeErrno.cpp.o
+> [ 75%] Building CXX object CMakeFiles/serial4j.dir/src/lib/linux/TerminalDevice.cpp.o
+> [100%] Linking CXX shared library libserial4j.so
+> [100%] Built target serial4j
+> renamed '././serial4j-native/build/cmake-build//libserial4j.so' -> '././serial4j-native/build/lib/linux/x86/libserial4j.so'
+> 
+> BUILD SUCCESSFUL in 4s
+> 4 actionable tasks: 2 executed, 2 up-to-date
+>
+> # assemble pre-compiled native binaries for the runtime loader (jSnapLoader)
+> └──╼ $./gradlew :serial4j-native:copyBinaries &&
+>       ./gradlew :serial4j-native:assemble &&
+>       ./gradlew :serial4j-native:copyToExamples
+>
+> BUILD SUCCESSFUL in 1s
+> 3 actionable tasks: 3 up-to-date
+>
+> BUILD SUCCESSFUL in 1s
+> 3 actionable tasks: 3 up-to-date
+> 
+> BUILD SUCCESSFUL in 1s
+> 3 actionable tasks: 1 executed, 2 up-to-date
+> 
+> # run an example selectively
+> └──╼ $./gradlew :serial4j-examples:run
+> ```

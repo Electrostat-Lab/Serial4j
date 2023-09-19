@@ -59,23 +59,24 @@ import com.jme3.scene.Spatial;
 import com.jme3.scene.shape.Box;
 import com.jme3.scene.shape.Sphere;
 import com.jme3.shadow.DirectionalLightShadowFilter;
-
 import java.io.FileNotFoundException;
 import java.util.concurrent.Callable;
-
 import com.serial4j.core.serial.BaudRate;
-import com.serial4j.core.serial.entity.EntityStatus;
-import com.serial4j.core.serial.entity.impl.WritableCapsule;
-import com.serial4j.core.serial.entity.impl.SerialWriteEntity;
 import com.serial4j.core.serial.monitor.SerialDataListener;
 import com.serial4j.core.serial.monitor.SerialMonitor;
+import com.serial4j.core.util.natives.NativeImageLoader;
+
 /**
  * Physics based marble game.
  * 
  * @author SkidRunner (Mark E. Picknell)
  */
 public class RollingTheMonkey extends SimpleApplication implements SerialDataListener, ActionListener, PhysicsCollisionListener {
-    
+
+    static {
+        NativeImageLoader.setExtractionPathFromUserDir("libs", "bin");
+    }
+
     private static final String MESSAGE         = "Thanks for Playing!";
     private static final String INFO_MESSAGE    = "Collect all the spinning cubes!\nPress the 'R' key any time to reset!";
     
@@ -105,7 +106,7 @@ public class RollingTheMonkey extends SimpleApplication implements SerialDataLis
     private static final String INPUT_MAPPING_LEFT      = "INPUT_MAPPING_LEFT";
     private static final String INPUT_MAPPING_RIGHT     = "INPUT_MAPPING_RIGHT";
     private static final String INPUT_MAPPING_RESET     = "INPUT_MAPPING_RESET";
-    
+
     public static void main(String[] args) {
         RollingTheMonkey app = new RollingTheMonkey();
         app.start();

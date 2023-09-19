@@ -39,8 +39,7 @@ import com.serial4j.example.monitor.HelloSerialMonitor;
  * @author pavl_g.
  */
 public final class Launcher {
-
-    public static void main(String args[]) throws InterruptedException {
+    public static void main(String args[]) {
         /* starts the native fctnl io example */
         // Thread.ofVirtual().start(new HelloNativeSerial4J());
         new Thread(new HelloSerialMonitor()).start();;

@@ -1,7 +1,7 @@
 /*
  * BSD 3-Clause License
  *
- * Copyright (c) 2022, Scrappers Team, The Arithmos Project.
+ * Copyright (c) 2022, Scrappers Team, The AVR-Sandbox Project, Serial4j API.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -29,161 +29,183 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 package com.serial4j.core.util.natives;
 
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import com.serial4j.core.util.process.Semaphore;
+import com.avrsandbox.snaploader.LibraryInfo;
+import com.avrsandbox.snaploader.LoadingCriterion;
+import com.avrsandbox.snaploader.NativeBinaryLoader;
+import com.avrsandbox.snaploader.platform.NativeVariant;
+import com.avrsandbox.snaploader.platform.PropertiesProvider;
+import java.io.File;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
- * Helper utility for loading native images.
- * 
- * @author pavl_g.
+ * Utilizes jSnapLoader to extract and load native images.
+ *
+ * @author pavl_g
  */
-public final class NativeImageLoader {
-    
-    /**
-     * A state for a critical section.
-     */
-    public enum State {
-		TOGGLED,
-	}
-    
-    /**
-     * Represents an image domain.
-     */
-    public enum NativeImage {
-        LINUX_x86_x64("lib/linux/x86-64/libserial4j.so"),
-        LINUX_x86_x86("lib/linux/x86/libserial4j.so"),
-        MAC_x86_x64("native/OSX/mac-x86-x64/libserial4j.dylb"),
-        WIN_x86_x64("native/Windows/win-x86-x64/libserial4j.dll");
+public class NativeImageLoader {
 
-        private final String image;
+    private static String jarPath = null;
 
-        NativeImage(final String image) {
-            this.image = image;
-        }
+    private static String extractionPath = null;
 
-        public String getImage() {
-            return image;
-        }
-    }
-
-    /**
-     * Represents an operating system domain.
-     */
-    private enum OS {
-        NAME(System.getProperty("os.name")),
-        ARCH(System.getProperty("os.arch"));
-        
-        public static final String Linux = "Linux";
-        public static final String Windows = "Windows";
-        public static final String Mac = "Mac";
-        public static final String Android = "Android";
-
-        private final String data;
-
-        OS(final String data) {
-            this.data = data;
-        }
-        public String getData() {
-            return data;
-        }
-        
-        /** WIP */
-
-        public static boolean is_x86_x64(final String arch) {
-            return arch.equals("amd64");
-        }
-        public static boolean is_x86_x86(final String arch) {
-            return arch.equals("amd32");
-        }
-        public static boolean is_arrm32(final String arch) {
-            return arch.equals("armhf");
-        }
-    }
-
-    protected static final Semaphore.Mutex MUTEX = new Semaphore.Mutex();
-	protected static final Semaphore SEMAPHORE = Semaphore.build(MUTEX);
-    
-    private static boolean isLoaded = false;
-	
     private NativeImageLoader() {
     }
 
-    public static void loadLibrary() {
-        if (OS.NAME.getData().equals(OS.Linux)) {
-            loadLinux();
-        } else if (OS.NAME.getData().equals(OS.Windows)) {
-            /** WIP */
-        } else if (OS.NAME.getData().equals(OS.Mac)) {
-            /** WIP */
-        } else if (OS.NAME.getData().equals(OS.Android)) {
-            loadAndroid();
+    /**
+     * Incrementally extracts and loads the platform-specific serial4j native image.
+     */
+    public static void loadSerial4jNatives() {
+        /* sanity check the existence of the extraction path */
+        final File dir = new File(getExtractionPath());
+
+        if (!dir.exists()) {
+            dir.mkdir();
         }
-    }
 
-    private static void loadLinux() {
-        if (OS.is_x86_x64(OS.ARCH.getData())) {
-            extractImage(NativeImage.LINUX_x86_x64);
-        } 
-    }
+        final LibraryInfo libraryInfo =
+                new LibraryInfo(getJarPath(), null, getLibraryBaseName(), getExtractionPath());
 
-    private static void loadWindows() {
-        /** WIP */
-    }
-
-    private static void loadMac() {
-        /** WIP */
-    }
-
-    private static void loadAndroid() {
-        System.loadLibrary("Serial4j");
+        final NativeBinaryLoader loader = new NativeBinaryLoader(libraryInfo)
+                                                .initPlatformLibrary();
+        loader.setLoggingEnabled(true);
+        loader.setRetryWithCleanExtraction(true);
+        try {
+            loader.loadLibrary(LoadingCriterion.INCREMENTAL_LOADING);
+        } catch (IOException e) {
+            Logger.getLogger(NativeBinaryLoader.class.getName())
+                  .log(Level.SEVERE, "Loading Serial4j natives failed!", e);
+        }
     }
 
     /**
-     * Extracts an appropriate system-based native image from sources.
-     * 
-     * @param image the image to extract to the user directory.
+     * Sets the jar absolute path, that is the source to extract the
+     * native library from.
+     * <p>
+     * Default path to use the classpath to
+     * locate the native library to extract.
+     * </p>
+     *
+     * @param parts the path parts starting from the root directory without file separators
      */
-    private static void extractImage(final NativeImage image) {
-        
-        // protect a critical section
-        initMutexWithLockData();
-
-        SEMAPHORE.lock(NativeImageLoader.class);
-
-        if (isLoaded) {
-            SEMAPHORE.unlock(NativeImageLoader.class);
-            return;
+    public static void setJarPath(String... parts) {
+        NativeImageLoader.jarPath = "";
+        for (String part: parts) {
+            NativeImageLoader.jarPath += PropertiesProvider.FILE_SEPARATOR.getSystemProperty() + part;
         }
-
-        // extract the shipped native files
-        final String workingDirectory = System.getProperty("user.dir");
-        try {
-            final InputStream nativeImageIS = NativeImageLoader.class.getClassLoader().getResourceAsStream(image.getImage());
-            final byte[] buffer = new byte[nativeImageIS.available()];
-            final FileOutputStream fos = new FileOutputStream(workingDirectory + "/libserial4j.so");  
-            int numberOfReadBytes = 0;
-            while ((numberOfReadBytes = nativeImageIS.read(buffer)) != -1) {
-                /* use the numberOfReadBytes as the buffer length to write valid data */
-                fos.write(buffer, 0, numberOfReadBytes);
-            }
-            nativeImageIS.close();
-            fos.close();
-            System.load(workingDirectory + "/libserial4j.so");
-        } catch(final Exception exception) {
-            exception.printStackTrace();
-        }
-        
-        isLoaded = true;
-
-        SEMAPHORE.unlock(NativeImageLoader.class);
-
     }
 
-    private static void initMutexWithLockData() {
-        MUTEX.setLockData(NativeImageLoader.State.TOGGLED);
-        MUTEX.setMonitorObject(NativeImageLoader.class);
+    /**
+     * Sets the jar path from the current user directory.
+     *
+     * @param parts the path parts in string format without file separators
+     */
+    public static void setJarPathFromUserDir(String... parts) {
+        NativeImageLoader.jarPath = PropertiesProvider.USER_DIR.getSystemProperty();
+        for (String part: parts) {
+            NativeImageLoader.jarPath += PropertiesProvider.FILE_SEPARATOR.getSystemProperty() + part;
+        }
+    }
+
+    /**
+     * Sets the extraction path, that is the directory for extracting the native
+     * library.
+     * <p>
+     * Default path is {@link NativeImageLoader#getDefaultExtractionPath()}.
+     * </p>
+     *
+     * @param parts the path parts in string format without file separators
+     */
+    public static void setExtractionPath(String... parts) {
+        NativeImageLoader.extractionPath = "";
+        for (String part: parts) {
+            NativeImageLoader.extractionPath += PropertiesProvider.FILE_SEPARATOR.getSystemProperty() + part;
+        }
+    }
+
+    /**
+     * Sets the extraction path from the current user directory.
+     *
+     * @param path the path parts
+     */
+    public static void setExtractionPathFromUserDir(String... path) {
+        NativeImageLoader.extractionPath = PropertiesProvider.USER_DIR.getSystemProperty();
+        for (String part: path) {
+            NativeImageLoader.extractionPath += PropertiesProvider.FILE_SEPARATOR.getSystemProperty() + part;
+        }
+    }
+
+    /**
+     * Retrieves the native library extraction path or
+     * the default {@link NativeImageLoader#getDefaultExtractionPath()}
+     * if the user extraction path is "null".
+     *
+     * @return the native library extraction path in an absolute format
+     */
+    public static String getExtractionPath() {
+        if (extractionPath != null) {
+            return extractionPath;
+        }
+        return getDefaultExtractionPath();
+    }
+
+    /**
+     * Retrieves the jar path to locate the jar file from which
+     * the native library will be extracted or the default {@link NativeImageLoader#getDefaultJarPath()}
+     * if the user jar path is "null".
+     *
+     * @return the jar file absolute path
+     */
+    public static String getJarPath() {
+        if (jarPath != null) {
+            return jarPath;
+        }
+        return getDefaultJarPath();
+    }
+
+    /**
+     * Assigns and retrieves the default extraction path directory to
+     * the extractionPath field, as "current-user-dir/libs".
+     *
+     * @return the default extraction path directory in absolute format
+     */
+    public static String getDefaultExtractionPath() {
+        setExtractionPathFromUserDir("libs");
+        return extractionPath;
+    }
+
+    /**
+     * Assigns and retrieves the default absolute jar path,
+     * as "current-user-dir/libs", to locate the jar file to extract the native library from.
+     *
+     * @return the default jar path in absolute format
+     */
+    public static String getDefaultJarPath() {
+        setJarPathFromUserDir("libs");
+        return jarPath + PropertiesProvider.FILE_SEPARATOR.getSystemProperty()
+                            + getJarFile();
+    }
+
+    /**
+     * Provides a platform independent constant value for the natives jar file.
+     *
+     * @return the name of the jar file containing
+     *         the native dynamic libraries to extract and load
+     */
+    public static String getJarFile() {
+        return "serial4j-native-" + NativeVariant.NAME.getProperty().toLowerCase() + ".jar";
+    }
+
+    /**
+     * Provides a constant value for the library basename.
+     *
+     * @return the library basename in string format
+     */
+    public static String getLibraryBaseName() {
+        return "serial4j";
     }
 }

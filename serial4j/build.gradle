@@ -2,28 +2,23 @@ plugins {
     id 'java-library'
 }
 
-task generateJavadocJar(type: Jar) {
-    classifier = 'javadoc'
+tasks.register('generateJavadocJar', Jar) {
     from javadoc
 }
 
-task generateSourcesJar(type: Jar) {
-    classifier = 'sources'
+tasks.register('generateSourcesJar', Jar) {
     from sourceSets.main.allSource
 }
 
-tasks.withType(JavaCompile) { // compile-time options [javac <options> <sources>]
+tasks.withType(JavaCompile).configureEach { // compile-time options [javac <options> <sources>]
     //options.compilerArgs << '-Xlint:deprecation' // to show deprecation warnings
     options.compilerArgs << '-Xlint:unchecked'
     options.compilerArgs += ["-h", "${project.rootDir}/serial4j-native/src/include/jni/"]
     options.encoding = 'UTF-8'
-    if (JavaVersion.current().isCompatibleWith(JavaVersion.VERSION_1_10)) {
-        options.release = 8
-    }
 }
 
 jar { // assemble jar options [java -jar]
-    final String dependencies = 
+    final String dependencies =
         "serial4j-native-linux.jar" + " " +
         "serial4j-native-windows.jar" + " " +
         "serial4j-native-darwin.jar" + " " +
@@ -40,4 +35,5 @@ jar { // assemble jar options [java -jar]
 }
 
 dependencies {
+    implementation "io.github.software-hardware-codesign:snaploader:1.0.0-alpha"
 }
