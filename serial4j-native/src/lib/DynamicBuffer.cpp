@@ -1,7 +1,7 @@
 #include<DynamicBuffer.h>
 
 void DynamicBuffer::add(void* item) {
-  
+
     /* move the pointer to point to the last item */
     /* then, obtain a superficial copy */
     void** copy = (buffer += count);
@@ -23,23 +23,17 @@ void DynamicBuffer::add(int index, void* item) {
 
 void DynamicBuffer::removeAt(int index) {
     BufferUtils::nullifyBuffer(buffer, index);
-    BufferUtils::reValidateBuffer(buffer, getItemsCount(), &(this->isProcessed));
-    
-    while (!this->isProcessed);
-    this->isProcessed = 0;
+    BufferUtils::reValidateBuffer(buffer, *getItemsCount());
     
     count--;
 }
 
 void DynamicBuffer::removeAll() {
-    for (int i = 0; i < *(this->getItemsCount()); i++) {
+    for (int i = 0; i < count; i++) {
         BufferUtils::nullifyBuffer(buffer, i);
     }
 
-    BufferUtils::reValidateBuffer(buffer, getItemsCount(), &(this->isProcessed));
-    
-    while (!this->isProcessed);
-    this->isProcessed = 0;
+    BufferUtils::reValidateBuffer(buffer, *getItemsCount());
 
     this->resetDataPointer();
 }
