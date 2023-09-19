@@ -60,10 +60,10 @@ namespace BufferUtils {
      * @param buffer the buffer to free its cells.
      * @param count the number of cells to free, starting from index zero.
      */
-    static inline void freeBufferCells(void** buffer, int* count) {
-        for (int i = 0; i < *count; i++) {
-            BufferUtils::nullifyBuffer(buffer, i);
+    static inline void freeBufferCells(void** buffer, int count) {
+        for (int i = 0; i < count; i++) {
             free(buffer[i]);
+            BufferUtils::nullifyBuffer(buffer, i);
         }
     }
     
@@ -85,9 +85,9 @@ namespace BufferUtils {
      * @param count the count length of the buffer.
      * @return void** a new buffer with the same data as the source.
      */
-    static inline void** copy(void** src, int* count) {
+    static inline void** copy(void** src, int count) {
         void** copy = (void**) calloc(1, sizeof(void**));
-        for (int i = 0; i < *count; i++) {
+        for (int i = 0; i < count; i++) {
             /* add new memory on the next array block */
             copy[i] = (void*) calloc(1, sizeof(void*));
             copy[i] = src[i];
@@ -101,22 +101,21 @@ namespace BufferUtils {
      * @param buffer the buffer to re-validate.
      * @param count the pointers count.
      */
-    static inline void reValidateBuffer(void** buffer, int* count, int* isProcessed) {
+    static inline void reValidateBuffer(void** buffer, int count) {
         /* get a temp copy from flagged buffer */
         void** temp = BufferUtils::copy(buffer, count);
         /* free the buffer cells to prepare the buffer to be reinitialized */
         BufferUtils::freeBufferCells(buffer, count);
         /* re-init the buffer, removing the null pointers */
-        for (int i = 0, j = 0; i < *count; i++) {
+        for (int i = 0, j = 0; i < count; i++) {
             if (temp[i] == NULL) {
-                printf("%s\n", "zero");
+                 printf("%s\n", "zero");
                 continue;
             }
             buffer[j] = (void*) calloc(1, sizeof(void*));
             buffer[j] = temp[i];
             j++;
         }
-        *isProcessed = 1;
         /* free the temp buffer */
         BufferUtils::freeBufferCells(temp, count);
     }
