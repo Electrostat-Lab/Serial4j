@@ -14,7 +14,7 @@ int TerminalDevice::openPort(const char* port, int flag) {
     return open(port, flag);
 }
 
-int TerminalDevice::fetchSerialPorts(struct DynamicBuffer* serialPorts) {
+int TerminalDevice::fetchSerialPorts(DynamicBuffer* serialPorts) {
 
     DIR* dirp = opendir(DEVICES_DIR);
     
