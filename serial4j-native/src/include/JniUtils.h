@@ -322,6 +322,12 @@ namespace JniUtils {
         (*JniUtils::getJniEnv())->SetBooleanArrayRegion(booleanArray, 0, length, buffer);
         return booleanArray;
     }
+
+    static inline const cc_t* getReadConfiguration(jobject* object) {
+          jint fd = JniUtils::getPortDescriptorFromSerialPort(object);
+          const cc_t* readConfigBuffer = TerminalDevice::getReadConfigurationMode(&fd);
+          return readConfigBuffer;
+    }
 }
 
 #endif
