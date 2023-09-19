@@ -6,12 +6,23 @@ plugins {
 }
 
 final String JAVA_HOME = System.getProperty("java.home")
-final String buildDirectory="${project.rootDir}/serial4j/build/classes/java/main/lib"
+final String buildDirectory="${project.rootDir}/serial4j-native/build/classes/java/main/lib"
 final String nativeObjects="${project.rootDir}/serial4j-native/build/lib"
+final String jarOutput="${project.rootDir}/serial4j-native/build/libs"
+final String examples="${project.rootDir}/serial4j-examples/libs"
 
-tasks.register("copyNatives", Copy) {
+tasks.register("copyBinaries", Copy) {
+    mustRunAfter(compileX86_64, compileX86)
+
     from "${nativeObjects}"
     into "${buildDirectory}"
+}
+
+tasks.register("copyToExamples", Copy) {
+    dependsOn(jar)
+
+    from "${jarOutput}"
+    into "${examples}"
 }
 
 tasks.register("compileX86_64", UnixScriptRunner) {
