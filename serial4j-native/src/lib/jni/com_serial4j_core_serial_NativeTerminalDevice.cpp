@@ -41,16 +41,7 @@
 #include<stdlib.h>
 #include<JniUtils.h>
 
-struct DynamicBuffer serialPorts;
-cc_t* config = (cc_t*) calloc(2, sizeof(cc_t));
-
-const cc_t* getReadConfiguration(jobject* object);
-
-const cc_t* getReadConfiguration(jobject* object) {
-    jint fd = JniUtils::getPortDescriptorFromSerialPort(object);
-    const cc_t* readConfigBuffer = TerminalDevice::getReadConfigurationMode(&fd);
-    return readConfigBuffer;
-}
+DynamicBuffer serialPorts;
 
 JNIEXPORT jint JNICALL Java_com_serial4j_core_serial_NativeTerminalDevice_setupJniEnvironment0
   (JNIEnv* env, jclass clazz) {
@@ -115,7 +106,7 @@ JNIEXPORT jint JNICALL Java_com_serial4j_core_serial_NativeTerminalDevice_setRea
 
 JNIEXPORT jintArray JNICALL Java_com_serial4j_core_serial_NativeTerminalDevice_getReadConfigurationMode0
   (JNIEnv* env, jobject object) {
-    const cc_t* readConfig = getReadConfiguration(&object);
+    const cc_t* readConfig = JniUtils::getReadConfiguration(&object);
     int* buffer = (int*) calloc(2, sizeof(int));
     buffer[0] = readConfig[0];
     buffer[1] = readConfig[1];
@@ -146,7 +137,8 @@ JNIEXPORT jlong JNICALL Java_com_serial4j_core_serial_NativeTerminalDevice_write
 JNIEXPORT jlong JNICALL Java_com_serial4j_core_serial_NativeTerminalDevice_readData0
   (JNIEnv* env, jobject object) {
     jint fd = JniUtils::getPortDescriptorFromSerialPort(&object);
-    int length = getReadConfiguration(&object)[1] <= 0 ? getReadConfiguration(&object)[1] : 1;
+    int length = JniUtils::getReadConfiguration(&object)[1] <= 0 ?
+                                    JniUtils::getReadConfiguration(&object)[1] : 1;
     
     jchar* buffer = (jchar*) calloc(length, sizeof(jchar));
     int state = TerminalDevice::readData((void*) buffer, length, &fd);
