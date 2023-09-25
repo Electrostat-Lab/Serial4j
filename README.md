@@ -2,15 +2,20 @@
 
 # Serial4j-API:
 
-A java terminal io library designed to communicate and control the serial (RS232) drivers.
+A Java terminal io library designed to communicate and control the serial (RS232) drivers.
 
 ## The Serial4j Architectural HAL:
 
 ![image](https://user-images.githubusercontent.com/60224159/189999625-fd667e7c-b219-4aa8-a91f-c9809dcef225.png)
 
-Serial4j is a terminal io library primarialy built on top of POSIX base file API `<fcntl>` for file control operations, `<unistd>` for Unix std R/W operations and `<dirent>` for directory entry dir operations.
+Serial4j is a terminal I/O library primarily built on top of POSIX base file API `<fcntl>` for file control operations, `<unistd>` for Unix std R/W operations and `<dirent>` for directory entry dir operations.
 
 ## Quick Overview:
+- Software Specification:
+
+| What's the problem? | How does Serial4j approach the problem? | Does Serial4j provide a threading/processing model? | Can I use `libserial4j` dynamic library only? | Is it easy to build my own serial monitor on top of Serial4j? | From where should I start, should I learn the Unix/POSIX interface first? | What about other operating systems and machines? | What's jMonkeyEngine? | Can I use Serial4j with other game engines (C++/Python)? |
+|---------------------|-----------------------------------------|-----------------------------------------------------|------------------------------------------------|------------------|----------------------------------|--------------------------------------|------------------------------|--------------------------|
+| Controlling the serial ports with the most possible minimalistic approach without irrelevant multithreading/processing bloatware. | Serial4j ports the Unix/POSIX standard terminal IO library to the Java platform without adding extra threading stuff, leaving them to the user application, the framework is sub-divided into layered APIs, of which the classes starting with `Native-` prefix acts as the literal native library. | No, it doesn't; but as it evolves, it may provide a threading model, however mostly on a different module. | Yes, you can do this and there are ongoing optimizations to remove the JNI source binaries for C++ applications cross-compatibility. | Yes, yes, and yes, the `serial/monitor` package has the right tools! | Currently, you can start testing the examples provided in the `serial4j-examples` modules, but knowing how the Unix terminal works will help you to understand the bit manipulations taking place at the terminal flags part. | The library hasn't been tested on Windows, Mac, and Android, yet, it should work on Unix/POSIX standard-based systems, that include Mac and Android! | jMonkeyEngine is a complete code-first approach modern 3D game engine written primarily in Java, Serial4j has an example operating a serial monitor inside a game, COOL! | Of course, you CAN, as Serial4j is built into a dynamic library `libserial4j` that's independent of Java! |
 
 - Java Implementation of the binding library: 
 
