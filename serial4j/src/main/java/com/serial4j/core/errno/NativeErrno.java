@@ -5,45 +5,45 @@ public final class NativeErrno {
     private NativeErrno() {
     }
 
-    protected static native int getBadFileDescriptorErrno();
+    static native int getBadFileDescriptorErrno();
 
-    protected static native int getBrokenPipeErrno();
+    static native int getBrokenPipeErrno();
 
-    protected static native int getFileAlreadyOpenedErrno();
+    static native int getFileAlreadyOpenedErrno();
 
-    protected static native int getFileIsDirectoryErrno();
+    static native int getFileIsDirectoryErrno();
 
-    protected static native int getFileTableOverflowErrno();
+    static native int getFileTableOverflowErrno();
 
-    protected static native int getFileTooLargeErrno();
+    static native int getFileTooLargeErrno();
 
-    protected static native int getInputOutputErrno();
+    static native int getInputOutputErrno();
 
-    protected static native int getInterruptedSystemCallErrno();
+    static native int getInterruptedSystemCallErrno();
 
-    protected static native int getInvalidArgumentErrno();
+    static native int getInvalidArgumentErrno();
 
-    protected static native int getInvalidPortErrno();
+    static native int getInvalidPortErrno();
 
-    protected static native int getNoAvailableTtyDevicesErrno();
+    static native int getNoAvailableTtyDevicesErrno();
 
-    protected static native int getNoSpaceLeftErrno();
+    static native int getNoSpaceLeftErrno();
 
-    protected static native int getNoSuchDeviceErrno();
+    static native int getNoSuchDeviceErrno();
 
-    protected static native int getNoSuchFileErrno();
+    static native int getNoSuchFileErrno();
 
-    protected static native int getNotTtyDeviceErrno();
+    static native int getNotTtyDeviceErrno();
 
-    protected static native int getOperationFailedErrno();
+    static native int getOperationFailedErrno();
 
-    protected static native int getOperationSucceededCode();
+    static native int getOperationSucceededCode();
 
-    protected static native int getPermissionDeniedErrno();
+    static native int getPermissionDeniedErrno();
 
-    protected static native int getReadOnlyFileSystemErrno();
+    static native int getReadOnlyFileSystemErrno();
 
-    protected static native int getTooManyOpenedFilesErrno();
+    static native int getTooManyOpenedFilesErrno();
 
-    protected static native int getTryAgainErrno();
+    static native int getTryAgainErrno();
 }
