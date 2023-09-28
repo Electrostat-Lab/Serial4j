@@ -45,13 +45,18 @@
 namespace BufferUtils {
 
     /**
-     * Nullifies a single buffer cell at the index. 
-     * 
-     * @param buffer the buffer to nullify its cell.
-     * @param index the index of the buffer cell to nullify.
+     * @brief Deletes a typified buffer and frees its memory.
+     *
+     * @param buffer the buffer to delete.
      */
-    static inline void nullifyBuffer(void** buffer, int index) {
-        buffer[index] = NULL;
+    static inline void deleteBuffer(void* buffer) {
+        /* protection against the double free cases! */
+        if (buffer == NULL) {
+            return;
+        }
+        free(buffer);
+        /* disables the double free cases when using this API */
+        buffer = NULL;
     }
 
     /**
@@ -62,19 +67,8 @@ namespace BufferUtils {
      */
     static inline void freeBufferCells(void** buffer, int count) {
         for (int i = 0; i < count; i++) {
-            free(buffer[i]);
-            BufferUtils::nullifyBuffer(buffer, i);
+            BufferUtils::deleteBuffer(buffer[i]);
         }
-    }
-    
-    /**
-     * @brief Deletes a typified buffer and frees its memory.
-     * 
-     * @param buffer the buffer to delete.
-     */
-    static inline void deleteBuffer(void* buffer) {
-       free(buffer);
-       BufferUtils::nullifyBuffer(&buffer, 0);
     }
 
     /**
@@ -97,6 +91,8 @@ namespace BufferUtils {
 
     /**
      * @brief Re-validates the buffer from [NULL] pointers.
+     * @warning this is not currently used, it's a part of
+     *          Serial4j C/C++ API.
      * 
      * @param buffer the buffer to re-validate.
      * @param count the pointers count.
