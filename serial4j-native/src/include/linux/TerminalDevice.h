@@ -49,7 +49,7 @@
 #include<errno.h>
 #include<dirent.h>
 
-#include<DynamicBuffer.h>
+#include<AddressesBuffer.h>
 #include<SerialUtils.h>
 #include<ErrnoUtils.h>
 
@@ -75,16 +75,16 @@ namespace TerminalDevice {
      * @param fd the virtual file descriptor for this tty device.
      * @return a memory reference to the termios defining this tty device terminal attributes.
      */
-    struct termios* getTermiosFromFd(int* fd);
+    void getTermiosFromFd(struct termios* tty, int* fd);
 
     /**
      * @brief Fetches serial port devices on "/dev/" into [serialPorts] buffer.
-     * @note Uses <dirent.h>, <SerialUtils.h>, <BufferUtils.h>, <DynamicBuffer.h> and <ErrnoUtils.h>.
+     * @note Uses <dirent.h>, <SerialUtils.h>, <BufferUtils.h>, <AddressesBuffer.h> and <ErrnoUtils.h>.
      *
      * @return int (-3) if the directory ["/dev"] is invalid, (-4) if there are no tty
      * devices available at the ["/dev"] directory, (1) if operation succeeded.
      */
-    int fetchSerialPorts(DynamicBuffer* serialPorts);
+    int fetchSerialPorts(AddressesBuffer* serialPorts);
 
     /**
      * @brief Opens a serial port device with a name.
@@ -203,14 +203,14 @@ namespace TerminalDevice {
      * @param VMIN_VALUE the value of the minimum number of bytes to read.
      * @return int (ERR_INVALID_PORT = -2) if port isn't available, (0) otherwise.
      */
-    int setReadConfigurationMode(const int VTIME_VALUE, const int VMIN_VALUE, int* fd);
+    int setReadConfigurationMode(const cc_t* readConfig, int* fd);
 
     /**
      * @brief Get the Read Configuration Mode in a new pointer.
      *
      * @return int* a memory reference to the new read configuration instance holding the VTIME and VMIN.
      */
-    cc_t* getReadConfigurationMode(int* fd);
+    void getReadConfigurationMode(cc_t* readConfig, int* fd);
 
     /**
      * @brief Sets the Baud Rate object for the terminal io.
