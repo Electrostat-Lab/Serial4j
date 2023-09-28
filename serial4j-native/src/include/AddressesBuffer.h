@@ -43,19 +43,20 @@
 #include<ErrnoUtils.h>
 #include<BufferUtils.h>
 
-class DynamicBuffer {
+class AddressesBuffer {
     public:
             /**
              * @brief Allocates a heap buffer of pointers and clears it to 0.
              */
-            DynamicBuffer(): startAddress((void**) calloc(1, sizeof(void**))) {
+            AddressesBuffer(): startAddress((void**) calloc(1, sizeof(void**))) {
             }
 
             /**
-             * @brief Destructs the allocated buffer cells.
+             * @brief Destructs the allocated buffer cells, this API uses
+             *        the BufferUtils which protects against double free callbacks.
              */
-            ~DynamicBuffer() {
-                BufferUtils::freeBufferCells(startAddress, count);
+            ~AddressesBuffer() {
+               this->deallocateAll();
             }
 
             /**
@@ -97,11 +98,11 @@ class DynamicBuffer {
              * @return an integer representing this struct in bytes.
              */
             virtual size_t getBufferSize() {
-                return sizeof(struct DynamicBuffer);
+                return sizeof(struct AddressesBuffer);
             }
 
             /**
-             * Resets the c
+             * Resets the counter to the start address.
              */
             virtual void resetToStartAddress() {
                 this->count = 0;
@@ -141,6 +142,13 @@ class DynamicBuffer {
              * Frees all the buffers of this pointer from the memory.
              */
             virtual void removeAll();
+
+            virtual void deallocateAt(int index);
+
+            /**
+             * Deallocates all the buffers pointed by their memory addresses.
+             */
+            virtual void deallocateAll();
 
             /**
              * Retrieves a buffer index.
