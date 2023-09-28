@@ -31,8 +31,6 @@
  */
 package com.serial4j.core.errno;
 
-import com.serial4j.core.serial.NativeTerminalDevice;
-
 /**
  * Interprets the native methods bad return values into error codes,
  * used by the java {@link com.serial4j.core.errno.ErrnoToException} 
@@ -73,7 +71,7 @@ public enum Errno {
     /**
      * tcsetattr(int, struct termios*) only.
      */
-    EINVAL(NativeErrno.getInvalidArgumentErrno(), "Invalid argumnet"),
+    EINVAL(NativeErrno.getInvalidArgumentErrno(), "Invalid argument"),
 
     /**
      * Additional error codes for basic R/W from <fcntl.h>
