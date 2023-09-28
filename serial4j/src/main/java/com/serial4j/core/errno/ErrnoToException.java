@@ -114,10 +114,6 @@ public final class ErrnoToException {
             throw new TooManyOpenedFilesException(additionalText);
         } else if (errno == Errno.EAGAIN.getValue()) {
             throw new TryAgainException(additionalText);
-        } else if (errno == Errno.OPERATION_SUCCEEDED.getValue()) {
-            return;
-        } else {
-            throw new ErrnoNotFoundError("Cannot interpret this error code !");
         }
     }
 
