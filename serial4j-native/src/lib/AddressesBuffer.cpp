@@ -1,17 +1,15 @@
-#include<DynamicBuffer.h>
+#include<AddressesBuffer.h>
 
-void DynamicBuffer::add(void* address) {
-
+void AddressesBuffer::add(void* address) {
     /* move the pointer to point to the last item */
     /* then, obtain a superficial copy */
-    void** copy = (startAddress + count);
-    /* dereference and evalute using the superficial copy */
-    *copy = (void*) calloc(1, sizeof(void*));
-    *copy = address;
+    void** addressToAdd = (startAddress + count);
+    /* adds the address after the start address in the buffer */
+    *addressToAdd = address;
     count++;
 } 
 
-void DynamicBuffer::add(int index, void* address) {
+void AddressesBuffer::add(int index, void* address) {
     /* adds on the count if the location was empty previously */
     if (startAddress[index] == NULL) {
         ++count;
@@ -19,28 +17,31 @@ void DynamicBuffer::add(int index, void* address) {
     startAddress[index] = address;
 }
 
-void DynamicBuffer::removeAt(int index) {
+void AddressesBuffer::removeAt(int index) {
     startAddress[index] = NULL;
-    BufferUtils::reValidateBuffer(startAddress, *getAddressesCount());
-    
     count--;
 }
 
-void DynamicBuffer::removeAll() {
+void AddressesBuffer::removeAll() {
     for (int i = 0; i < count; i++) {
-        startAddress[i] = NULL;
+        this->removeAt(i);
     }
+}
 
-    BufferUtils::reValidateBuffer(startAddress, *getAddressesCount());
+void AddressesBuffer::deallocateAt(int index) {
+    BufferUtils::deleteBuffer(startAddress[index]);
+}
 
+void AddressesBuffer::deallocateAll() {
+    BufferUtils::freeBufferCells(startAddress, count);
     this->resetToStartAddress();
 }
 
-void* DynamicBuffer::getAddress(int index) {
+void* AddressesBuffer::getAddress(int index) {
     return startAddress[index];
 }
 
-int DynamicBuffer::indexOf(void* address) {
+int AddressesBuffer::indexOf(void* address) {
     for (int i = 0; i < *getAddressesCount(); i++) {
         if (startAddress[i] == address) {
             return i;
@@ -49,6 +50,6 @@ int DynamicBuffer::indexOf(void* address) {
     return ERR_OPERATION_FAILED;
 }
 
-int* DynamicBuffer::getAddressesCount() {
+int* AddressesBuffer::getAddressesCount() {
     return &count;
 }
