@@ -1,11 +1,11 @@
 /**
  * @file DynamicBuffer.h
  * @author pavl_g.
- * @brief Represents a cross platform dynamic buffer wrapper.
+ * @brief Represents a dynamic buffer wrapper.
  * @version 0.1
  * @date 2022-08-24
- * 
- * @copyright 
+ *
+ * @copyright
  * BSD 3-Clause License
  *
  * Copyright (c) 2022, Scrappers Team, The AVR-Sandbox Project, Serial4j API.
@@ -37,7 +37,7 @@
  */
 #ifndef DY_BUFFER
 
-#define DY_BUFFER 1
+#define DY_BUFFER
 
 #include<stdlib.h>
 #include<ErrnoUtils.h>
@@ -46,24 +46,26 @@
 class DynamicBuffer {
     public:
             /**
-             * @brief Initializes a buffer of pointers.
+             * @brief Allocates a heap buffer of pointers and clears it to 0.
              */
-            DynamicBuffer() {
-                 buffer = (void**) calloc(1, sizeof(void**));
-            }
-
-            ~DynamicBuffer() {
-                BufferUtils::freeBufferCells(buffer, count);
+            DynamicBuffer(): startAddress((void**) calloc(1, sizeof(void**))) {
             }
 
             /**
-             * Declares and initializes a pointer that points to
-             * other void* buffers starting from index zero.
+             * @brief Destructs the allocated buffer cells.
+             */
+            ~DynamicBuffer() {
+                BufferUtils::freeBufferCells(startAddress, count);
+            }
+
+            /**
+             * Represents the pointer that groups buffers in a contiguous format using
+             * their memory addresses.
              *
-             * @note The pointer is of single size of a type.
-             * @note The pointer points to only and only one buffer at a time.
-             * @note New buffers can be added to this pointer by dereferencing it and adding one to the memory address to move
-             * it to a new cell block.
+             * @note This pointer represents the memory address to the start-address of the buffer.
+             * @note New buffers can be added to the contiguous memory after this pointer by
+             *       de-referencing it and adding one to the memory address to move it to a new cell block.
+             * <p>
              * e.g:
              * 1) First way of adding a new buffer to this pointer using the deep copy:
              *     buffer[index] = (void*) calloc(1, sizeof(void*));
@@ -76,16 +78,17 @@ class DynamicBuffer {
              *
              * 3) The superficial copy example:
              *     buffer[index] = item;
+             * </p>
              */
-            void** buffer;
+            void** startAddress;
 
             /**
              * Retrieves the pointer to this dynamic buffer.
              *
              * @return a pointer to this array of buffers.
              */
-            virtual void** getBuffer() {
-                return buffer;
+            virtual void** getStartAddress() {
+                return startAddress;
             }
 
             /**
@@ -98,9 +101,9 @@ class DynamicBuffer {
             }
 
             /**
-             * Resets the pointer value back to zero.
+             * Resets the c
              */
-            virtual void resetDataPointer() {
+            virtual void resetToStartAddress() {
                 this->count = 0;
             }
 
@@ -109,22 +112,22 @@ class DynamicBuffer {
              *
              * @return a pointer referring to the memory address of the integer that represents the item counts.
              */
-            virtual int* getItemsCount();
+            virtual int* getAddressesCount();
 
             /**
-             * Adds a new buffer to this pointer in a new index.
+             * Adds a new buffer address to this buffer of addresses in a new index.
              *
-             * @param item a void* buffer to add.
+             * @param address a void* buffer to add.
              */
-            virtual void add(void* item);
+            virtual void add(void* address);
 
             /**
              * Adds a new buffer on a particular location in this pointer replacing an old one if exists.
              *
-             * @param index the index where the new buffer will be located in this pointer.
+             * @param address the index where the new buffer will be located in this pointer.
              * @param item the buffer to add.
              */
-            virtual void add(int index, void* item);
+            virtual void add(int index, void* address);
 
             /**
              * Frees a buffer from the memory at a particular index.
@@ -145,7 +148,7 @@ class DynamicBuffer {
              * @param item the buffer to get its index.
              * @return the buffer index in an integer format.
              */
-            virtual int getItemIndex(void* item);
+            virtual int indexOf(void* address);
 
             /**
              * Retrieves a buffer from this pointer using its index.
@@ -153,12 +156,10 @@ class DynamicBuffer {
              * @param index the index where the buffer is located in this pointer.
              * @return the buffer corresponding to this index.
              */
-            virtual void* getItem(int index);
+            virtual void* getAddress(int index);
 
     private:
         int count = 0;
-        int isProcessed = 0;
-
 };
 
 #endif
