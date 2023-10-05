@@ -29,7 +29,7 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.serial4j.core.serial;
+package com.serial4j.core.terminal;
 
 import com.serial4j.core.errno.Errno;
 import com.serial4j.core.serial.throwable.InvalidPortException;
@@ -46,7 +46,6 @@ public enum ReadConfiguration {
     READ_WITH_TIMEOUT(new short[] {1, 0}, "Polling Read with timeout"),
     READ_WITH_INTERBYTE_TIMEOUT(new short[] {1, 1}, "Blocking read with timeout"),
     ERR_INVALID_PORT(new short[] {(short) Errno.ERR_INVALID_PORT.getValue(), (short) Errno.ERR_INVALID_PORT.getValue()}, "Error invalid port");
-
     private short[] mode;
     private final String description;
 

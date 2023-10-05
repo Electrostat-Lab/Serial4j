@@ -29,16 +29,22 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.serial4j.core.serial;
+package com.serial4j.core.terminal;
 
-import com.serial4j.util.natives.NativeImageLoader;
+import com.serial4j.core.serial.SerialPort;
+import com.serial4j.core.terminal.control.TerminalControlFlag;
+import com.serial4j.core.terminal.control.TerminalInputFlag;
+import com.serial4j.core.terminal.control.TerminalLocalFlag;
+import com.serial4j.core.terminal.control.TerminalOutputFlag;
+import com.serial4j.util.loader.NativeImageLoader;
 
 /**
- * Represents the native java binding for Serial4j API, represented by 
- * [com_serial4j_core_serial_NativeTerminalDevice.h] natively.
+ * Represents the native Java binding for the Serial-4j API, represented by
+ * `com_serial4j_core_terminal_NativeTerminalDevice.h` natively.
  * 
  * @author pavl_g.
  */
+@SuppressWarnings("all")
 public final class NativeTerminalDevice {
 
     /*
@@ -50,9 +56,14 @@ public final class NativeTerminalDevice {
 
     private SerialPort serialPort;
     private String[] serialPorts;
-    private char[] readData;
-    private final String readBuffer = "";
+    private String readBuffer;
 
+    /**
+     * Creates a native terminal device after
+     * loading the native library (see the static-initializer).
+     *
+     * @see TerminalDevice
+     */
     NativeTerminalDevice() {
     }
 
@@ -75,14 +86,16 @@ public final class NativeTerminalDevice {
     }
 
     /**
-     * Gets the read data in an up-to 32-bit integer format resulting from using the native method {@link NativeTerminalDevice#readData0()}.
+     * Retrieves the read buffer in a string format after
+     * dispatching {@link NativeTerminalDevice#read()}.
      *
-     * @return the read data from this terminal device in an up-to 32-bit integer format.
+     * <p>
+     * The read buffer is a native const char*, settled natively by reading data
+     * frames using {@link NativeTerminalDevice#read()}.
+     * </p>
+     *
+     * @return the buffer in string format
      */
-    public char[] getReadData() {
-        return this.readData;
-    }
-
     public String getReadBuffer() {
         return this.readBuffer;
     }
@@ -102,119 +115,143 @@ public final class NativeTerminalDevice {
      * @return (-1) if the jni env pointer is NULL, (1) for successful initialization.
      */
     @Deprecated
-    static native int setupJniEnvironment0();
+    static native int setupJniEnvironment();
 
     /**
      * Adjusts the native terminal control [c_cflag] of the [termios] structure variable for this terminal device.
-     * @apiNote The terminal control flag controls the way the terminal device r/w the charachters on the console.
+     *
+     * <p>
+     * The terminal control flag controls the way the terminal device r/w the charachters on the console.
      * For more, refer to the POSIX terminal control guide.
-     * 
-     * Default value = tty->c_cflag |= (CREAD | CS8 | CLOCAL); defined by {@link NativeTerminalDevice#initTermios0()}.
+     * </p>
+     *
+     * <p>
+     * Default value = tty->c_cflag |= (CREAD | CS8 | CLOCAL); defined by {@link NativeTerminalDevice#initTerminal()}.
+     * </p>
      * 
      * @param flag the flag to set the [c_cflag] to.
      * @return errno(-1) for failure, errno(-2) for invalid port, errno(1) for success.
-     * @see com.serial4j.core.serial.control.TerminalControlFlag
+     * @see TerminalControlFlag
      */
-    native int setTerminalControlFlag(final long flag);
+    native int setTerminalControlFlag(final int flag);
 
     /**
      * Adjusts the native terminal local [c_lflag] of the [termios] structure variable for this terminal device.
-     * @apiNote The terminal local flag controls the way the terminal device interprets and displays the charachters on the console (i.e local console).
-     * For more, refer to the POSIX terminal control guide.
      *
+     * <p>
+     * The terminal local flag controls the way the terminal device interprets and displays the charachters on the console (i.e local console).
+     * For more, refer to the POSIX terminal control guide.
+     * </p>
+     *
+     * <p>
      * Default value = tty->c_lflag &= ~(ICANON | ECHO | ECHOE | ECHOK | ECHOKE | ECHONL | ECHOPRT | ECHOCTL | ISIG | IEXTEN); 
-     * defined by {@link NativeTerminalDevice#initTermios0()}.
+     * defined by {@link NativeTerminalDevice#initTerminal()}.
+     * </p>
      *
      * @param flag the flag to set the [c_lflag] to.
      * @return errno(-1) for failure, errno(-2) for invalid port, errno(1) for success.
-     * @see com.serial4j.core.serial.control.TerminalLocalFlag
+     * @see TerminalLocalFlag
      */    
-    native int setTerminalLocalFlag(final long flag);
+    native int setTerminalLocalFlag(final int flag);
 
     /**
      * Adjusts the native terminal input [c_iflag] of the [termios] structure variable for this terminal device.
-     * @apiNote The terminal input flag controls the way the terminal device receives and interprets the charachters on input.
+     *
+     * <p>
+     * The terminal input flag controls the way the terminal device receives and interprets the charachters on input.
      * For more, refer to the POSIX terminal control guide.
-     * 
-     * Default value = tty->c_iflag = 0x00; defined by {@link NativeTerminalDevice#initTermios0()}.
+     * </p>
+     *
+     * <p>
+     * Default value = tty->c_iflag = 0x00; defined by {@link NativeTerminalDevice#initTerminal()}.
+     * </p>
      *
      * @param flag the flag to set the [c_iflag] to.
      * @return errno(-1) for failure, errno(-2) for invalid port, errno(1) for success.
-     * @see com.serial4j.core.serial.control.TerminalInputFlag
+     * @see TerminalInputFlag
      */    
-    native int setTerminalInputFlag(final long flag);
+    native int setTerminalInputFlag(final int flag);
 
     /**
      * Adjusts the native terminal output [c_oflag] of the [termios] structure variable for this terminal device.
-     * @apiNote The terminal output flag controls the way the terminal device transmits and interprets the charachters on output.
+     *
+     * <p>
+     * The terminal output flag controls the way the terminal device transmits and interprets the charachters on output.
      * For more, refer to the POSIX terminal control guide.
-     * 
-     * Default value = tty->c_oflag &= ~(OPOST | ONLCR); defined by {@link NativeTerminalDevice#initTermios0()}.
+     * </p>
+     *
+     * <p>
+     * Default value = tty->c_oflag &= ~(OPOST | ONLCR); defined by {@link NativeTerminalDevice#initTerminal()}.
+     * </p>
      *
      * @param flag the flag to set the [c_oflag] to.
      * @return errno(-1) for failure, errno(-2) for invalid port, errno(1) for success.
-     * @see com.serial4j.core.serial.control.TerminalOutputFlag
+     * @see TerminalOutputFlag
      */    
-    native int setTerminalOutputFlag(final long flag);
+    native int setTerminalOutputFlag(final int flag);
 
     /**
      * Retrieves the terminal control flag from this terminal device port descriptor in 64-bit format.
      * 
-     * @return the [c_cflag] value in longs.
+     * @return the [c_cflag] value in integers.
      */
-    native long getTerminalControlFlag();
+    native int getTerminalControlFlag();
 
     /**
      * Retrieves the terminal local flag from this terminal device port descriptor in 64-bit format.
-     * 
-     * @return the [c_lflag] value in longs.
+     *
+     * @return the [c_lflag] value in integers.
      */
-    native long getTerminalLocalFlag();
+    native int getTerminalLocalFlag();
 
     /**
      * Retrieves the terminal input flag from this terminal device port descriptor in 64-bit format.
-     * 
-     * @return the [c_iflag] value in longs.
+     *
+     * @return the [c_iflag] value in integers.
      */
-    native long getTerminalInputFlag();
+    native int getTerminalInputFlag();
 
     /**
      * Retrieves the terminal output flag from this terminal device port descriptor in 64-bit format.
-     * 
-     * @return the [c_oflag] value in longs.
+     *
+     * @return the [c_oflag] value in integerss.
      */
-    native long getTerminalOutputFlag();
+    native int getTerminalOutputFlag();
 
     /**
      * Adjusts the read mode for this terminal device, the read mode is defined by the read timeout value and the minimum
      * number of bytes to read at that time.
-     * 
-     * Default value = BLOCKING_READ_ONE_CHAR {0, 1}; defined by {@link NativeTerminalDevice#initTermios0()}.
      *
-     * @param VTIME_VALUE the value of the read timeout, applied only when the first index of [mode] is 1 (aka read timeout is activated).
-     * @param VMIN_VALUE the value of the minimum byte to read in this time.
+     * <p>
+     * Default value = BLOCKING_READ_ONE_CHAR {0, 1}; defined by {@link NativeTerminalDevice#initTerminal()}.
+     * </p>
+     *
+     * @param timeout the value of the read timeout, applied only when the first index of [mode] is 1 (aka read timeout is activated).
+     * @param bytes the value of the minimum byte to read in this time.
      * @return errno(-1) for failure, errno(-2) for invalid port, errno(1) for success.
-     * @see com.serial4j.core.serial.ReadConfiguration
+     * @see ReadConfiguration
      */
-    native int setReadConfigurationMode0(final short VTIME_VALUE, final short VMIN_VALUE);
+    native int setReadConfigurationMode(final short timeout, final short bytes);
 
     /**
-     * Gets the read configuration for this terminal device defining the timeout value as the first index and 
+     * Gets the read configuration for this terminal device defining the timeout value as the first index and
      * the minimum number of read byte in this timeout as the second index.
      *
-     * Default value = BLOCKING_READ_ONE_CHAR {0, 1}; defined by {@link NativeTerminalDevice#initTermios0()}.
+     * <p>
+     * Default value = BLOCKING_READ_ONE_CHAR {0, 1}; defined by {@link NativeTerminalDevice#initTerminal()}.
+     * </p>
      *
      * @return an array referring to the read mode, where index [0] represents the read timeout, index [1] represents
      *         the minimum bytes to read.
      */
-    native short[] getReadConfigurationMode0();
+    native short[] getReadConfigurationMode();
 
     /**
      * Retrieves the last error encountered by the native code,
      *
      * @return the last error code from the native <errno.h>.
      */
-    native int getErrno0();
+    native int getErrno();
 
     /**
      * Fetches the available system teletype terminal devices (tty) located within "/dev" directory
@@ -222,39 +259,31 @@ public final class NativeTerminalDevice {
      *
      * @return errno(-1) for failure, errno(-2) for invalid port, errno(1) for success.
      */
-    native int fetchSerialPorts0();
+    native int fetchSerialPorts();
 
     /**
      * Retrieves the baud rate POSIX code for this terminal process, find more at <./usr/include/x86_64-linux-gnu/bits/termios.h>.
-     * 
+     *
      * @return the baud rate code in integers.
      */
-    native int getBaudRate0();
+    native int getBaudRate();
 
     /**
      * Writes an integer buffer to this terminal device.
-     * 
+     *
      * @param data an integer data buffer to write up-to 32-bit.
      * @return the number of written bytes in long format.
      */
-    native long writeData0(final int data);
-
-    /**
-     * Reads the data from the terminal device and inserts the result into an integer buffer 
-     * {@link NativeTerminalDevice#readData}.
-     *
-     * @return the number of read bytes.
-     */
-    native long readData0();
+    native long write(final int data);
 
     /**
      * Writes a string buffer (const char*) with a length to this terminal device.
-     * 
+     *
      * @param buffer a string buffer to write to this terminal device.
      * @param length the string buffer length in integers, this minimizes the jni native calls.
      * @return the number of written bytes to this terminal device.
      */
-    native long writeBuffer0(final String buffer, final int length);
+    native long write(final String buffer, final int length);
 
     /**
      * Reads the data from this terminal device and insert the result into the {@link NativeTerminalDevice#readBuffer}
@@ -262,7 +291,7 @@ public final class NativeTerminalDevice {
      *
      * @return the number of read bytes from this terminal device.
      */
-    native long readBuffer0();
+    native long read();
 
     /**
      * Opens this terminal device using the path to the port [port] in strings and the port permissions [flag] in integers.
@@ -271,62 +300,75 @@ public final class NativeTerminalDevice {
      * @param flag the flag for the base file control native api [fcntl].
      * @return errno(-1) for failure, errno(1) for success.
      */
-    native int openPort0(final String port, final int flag);
+    native int openPort(final String port, final int flag);
 
     /**
      * Initializes this terminal device with the default terminal flags and read timeout properties:
-     * -----------
-     * # c_cflag: for control mode flags.
-     * *** Enable these bits:
-     * - [CREAD]: Allow input to be received.
-     * - [CS8]: For charachter size 8-bit, you can use the bit mask CSIZE to read this value.
-     * - [CLOCAL]: Ignore modem status lines (dont check carrier signal).
-     * -----------
-     * # c_lflag: for local mode flags.
-     * ***Disable these bits:
-     * - [ICANON]: Canonical mode (line-by-line) input.
-     * - [ECHO]: Echo input characters.
-     * - [ECHOE]: Perform ERASE visually.
-     * - [ECHOK]: Echo KILL visually.
-     * - [ECHOKE]: Dont output a newline after echoed KILL.
-     * - [ECHONL]: Echo NL (in canonical mode) even if echoing is disabled.
-     * - [ECHOPRT]: Echo deleted characters backward (between \ and / ).
-     * - [ECHOCTL]: Echo control characters visually (e.g., ^L ).
-     * - [ISIG]: Enable signal-generating characters (INTR, QUIT, SUSP).
-     * - [IEXTEN]: Enable extended processing of input characters.
-     * -----------
-     * # c_oflag: for output mode flags.
-     * ***Disable these bits:
-     * - [OPOST]: Perform output postprocessing.
-     * - [ONLCR]: Map NL to CR-NL on output.
-     * -----------
-     * # c_iflag: for input mode flags.
-     * ***Disable all input bit masks.
-     * -----------
-     * # c_cc: For control characters.
-     * ***Sets to BLOCKING READ ONE CHAR AT A TIME MODE.
-     * -----------
+     * <p>
+     * <h3> c_cflag: for control mode flags. </h3>
+     * Enable these bits:
+     * <li> [CREAD]: Allow input to be received. </li>
+     * <li> [CS8]: For charachter size 8-bit, you can use the bit mask CSIZE to read this value. </li>
+     * <li> [CLOCAL]: Ignore modem status lines (do not check carrier signal). </li>
+     * </p>
      *
-     * @apiNote This should be called right after {@link NativeTerminalDevice#openPort0(String, int)}.
-     * 
+     * <p>
+     * <h3> c_lflag: for local mode flags. </h3>
+     * Disable these bits:
+     * <li> [ICANON]: Canonical mode (line-by-line) input. </li>
+     * <li> [ECHO]: Echo input characters. </li>
+     * <li> [ECHOE]: Perform ERASE visually. </li>
+     * <li> [ECHOK]: Echo KILL visually. </li>
+     * <li> [ECHOKE]: Do not output a newline after echoed KILL. </li>
+     * <li> [ECHONL]: Echo NL (in canonical mode) even if echoing is disabled. </li>
+     * <li> [ECHOPRT]: Echo deleted characters backward (between \ and / ). </li>
+     * <li> [ECHOCTL]: Echo control characters visually (e.g., ^L ). </li>
+     * <li> [ISIG]: Enable signal-generating characters (INTR, QUIT, SUSP). </li>
+     * <li> [IEXTEN]: Enable extended processing of input characters. </li>
+     * </p>
+     *
+     * <p>
+     * <h3> c_oflag: for output mode flags. </h3>
+     * Disable these bits:
+     * <li> [OPOST]: Perform output postprocessing. </li>
+     * <li> [ONLCR]: Map NL to CR-NL on output. </li>
+     * </p>
+     *
+     * <p>
+     * <h3> c_iflag: for input mode flags. </h3>
+     * Disable all input bit masks.
+     * </p>
+     *
+     * <p>
+     * <h3> c_cc: For control characters. </h3>
+     * Sets to BLOCKING READ ONE CHAR AT A TIME MODE.
+     * </p>
+     *
+     * <p>
+     * Note: This should be called right after {@link NativeTerminalDevice#openPort(String, int)}.
+     * </p>
+     *
      * @return errno(-1) for failure, errno(-2) for invalid port, errno(1) for success.
      */
-    native int initTermios0();
+    native int initTerminal();
 
     /**
      * Adjusts the baud rate aka. the speed of data transmission in bits/seconds for this bus.
      *
-     * @param baudRate the baud rate POSIX native code, find more about baud rate codes at <./usr/include/x86_64-linux-gnu/bits/termios.h>.
+     * @param baudRate the baud rate POSIX native code, find more about baud rate codes at `include/x86_64-linux-gnu/bits/termios.h`
      * @return errno(-1) for failure, errno(-2) for invalid port, errno(1) for success.
      */    
-    native int setBaudRate0(int baudRate);
+    native int setBaudRate(int baudRate);
 
     /**
      * Closes the serial port of this terminal device releasing the resources.
-     * @apiNote This call triggers {@link NativeTerminalDevice#serialPort#portOpened} to 0, 
+     *
+     * <p>
+     * Note: This call clears the {@link NativeTerminalDevice#serialPort#portOpened} to 0,
      * the port descriptor {@link NativeTerminalDevice#serialPort#fd} to 0 and the port path {@link NativeTerminalDevice#serialPort#fd} to "".
+     * </p>
      * 
      * @return errno(-1) for failure, errno(-2) for invalid port, errno(1) for success.
      */
-    native int closePort0();
+    native int closePort();
 }

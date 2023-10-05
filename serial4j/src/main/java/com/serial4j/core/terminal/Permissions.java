@@ -1,24 +1,4 @@
 /*
- * From POSIX Standard: 6.5 File Control Operations.
- * Copyright (C) 1993-2019 Free Software Foundation, Inc.
- * This file is part of the GNU C Library.
- *
- * The GNU C Library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
- *
- * The GNU C Library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with the GNU C Library; if not, see
- * <http://www.gnu.org/licenses/>.
- *
- *  -----------------------------------------------------------------------
- *
  * BSD 3-Clause License for Serial4j from the AVR-Sandbox Project.
  *
  * Copyright (c) 2022, Scrappers Team, The AVR-Sandbox Project, Serial4j API.
@@ -49,7 +29,8 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.serial4j.core.serial;
+
+package com.serial4j.core.terminal;
 
 /**
  * Provides Unix file system permissions for the specified serial port
@@ -59,11 +40,30 @@ package com.serial4j.core.serial;
  */
 public enum Permissions {
 
-    O_RDONLY(00, "Read Only"),
-    O_WRONLY(01, "Write Only"),
-    O_RDWR(02, "Read/Write"),
-    O_NOCTTY(0400, "No Control terminal device"),
-    O_NONBLOCK(04000, "Terminal non block");
+    /**
+     * Aliasing Read-only file permission.
+     */
+    O_RDONLY(NativeFilePermissions.getReadOnly(), "Read Only"),
+
+    /**
+     * Aliasing Write-only file permission.
+     */
+    O_WRONLY(NativeFilePermissions.getWriteOnly(), "Write Only"),
+
+    /**
+     * Aliasing R/W file permission.
+     */
+    O_RDWR(NativeFilePermissions.getReadWrite(), "Read/Write"),
+
+    /**
+     * Specifies that the terminal is not the controlling device.
+     */
+    O_NOCTTY(NativeFilePermissions.getNoControlTerminalDevice(), "No Control terminal device"),
+
+    /**
+     * Applies non-blocking operations for the target terminal device.
+     */
+    O_NONBLOCK(NativeFilePermissions.getTerminalNonBlock(), "Terminal non block");
 
     private int value;
     private String description;
