@@ -31,15 +31,10 @@
  */
 package com.serial4j.core.serial.monitor;
 
-import com.serial4j.core.serial.control.TerminalControlFlag;
-import com.serial4j.core.serial.control.TerminalLocalFlag;
-import com.serial4j.core.serial.control.TerminalOutputFlag;
-import com.serial4j.core.serial.control.TerminalInputFlag;
-import com.serial4j.core.serial.ReadConfiguration;
-import com.serial4j.core.serial.Permissions;
-import com.serial4j.core.serial.BaudRate;
+import com.serial4j.core.terminal.Permissions;
+import com.serial4j.core.terminal.control.*;
 import com.serial4j.core.serial.SerialPort;
-import com.serial4j.core.serial.TerminalDevice;
+import com.serial4j.core.terminal.TerminalDevice;
 import com.serial4j.core.serial.throwable.PermissionDeniedException;
 import com.serial4j.core.serial.throwable.NoAvailableTtyDevicesException;
 import com.serial4j.core.serial.throwable.BrokenPipeException;
@@ -61,28 +56,50 @@ import java.util.ArrayList;
  */
 public final class SerialMonitor {
 
+    /**
+     * Provides callbacks for the serial read task.
+     */
+    public volatile EntityStatus<SerialReadEntity> serialReadEntityEntityStatus;
+
+    /**
+     * Provides callbacks for the serial write task.
+     */
+    public volatile EntityStatus<SerialWriteEntity> serialWriteEntityEntityStatus;
+
+    /**
+     * The state of the serial read task. Default is "false".
+     */
+    public volatile boolean isReadSerialEntityInitialized;
+
+    /**
+     * The state of the write read task. Default is "false".
+     */
+    public volatile boolean isWriteSerialEntityInitialized;
+
+    /**
+     * The state of this monitor object. Default is "false".
+     */
+    public volatile boolean isMonitoringStarted;
+
+    /**
+     * The state of use CR/NL (jump to the start of a new line). Default is "true".
+     */
+    public volatile boolean useReturnCarriage = true;
     private final ArrayList<SerialDataListener> serialDataListeners = new ArrayList<>();
     private final String monitorName;
-
-    public volatile EntityStatus<SerialReadEntity> serialReadEntityEntityStatus;
-    public volatile EntityStatus<SerialWriteEntity> serialWriteEntityEntityStatus;
-    public volatile boolean isReadSerialEntityInitialized;
-    public volatile boolean isWriteSerialEntityInitialized;
-    public volatile boolean isMonitoringStarted;
-    public volatile boolean useReturnCarriage = true;
-
     private volatile InputStream readEntityStream;
     private volatile OutputStream writeEntityStream;
-    private volatile TerminalDevice terminalDevice;
+    private final TerminalDevice terminalDevice = new TerminalDevice();
     private volatile boolean terminate = false;
     private volatile SerialReadEntity serialReadEntity;
     private volatile SerialWriteEntity serialWriteEntity;
 
     /**
      * Instantiates a new SerialMonitor with a name.
-     *
-     * Use {@link SerialMonitor#startDataMonitoring(String, int)} to initialize and start
+     * <p>
+     * Use {@link SerialMonitor#startDataMonitoring(String, BaudRate, Permissions)} to initialize and start
      * data monitoring.
+     * </p>
      *
      * @param monitorName the name for this monitor.
      */
@@ -103,17 +120,19 @@ public final class SerialMonitor {
                                                                                                                        NoAvailableTtyDevicesException,
                                                                                                                        FileNotFoundException {  
         /* ignore timeout strategy */
-        terminalDevice = new TerminalDevice();
         terminalDevice.setSerial4jLoggingEnabled(true);
         if (permissions != null) {
             terminalDevice.setPermissions(permissions);
         }
         terminalDevice.openPort(new SerialPort(port));
         terminalDevice.setBaudRate(baudRate);
-        terminalDevice.initTermios();
+        terminalDevice.initTerminal();
         /* define terminal flags */
+        final TerminalFlag CS_MASK = TerminalControlFlag.CSIZE.append(
+                TerminalControlFlag.MaskBits.CS8
+        );
         final TerminalControlFlag TCF_VALUE = (TerminalControlFlag) TerminalControlFlag.CLOCAL
-                                                            .append(TerminalControlFlag.CS8, TerminalControlFlag.CREAD);
+                                                            .append(CS_MASK, TerminalControlFlag.CREAD);
         final TerminalLocalFlag TLF_VALUE = (TerminalLocalFlag) TerminalLocalFlag.EMPTY_INSTANCE
                                                             .disable(TerminalLocalFlag.ECHO, TerminalLocalFlag.ECHOK,
                                                                     TerminalLocalFlag.ECHOE, TerminalLocalFlag.ECHOKE,
@@ -133,13 +152,19 @@ public final class SerialMonitor {
         writeEntityStream = terminalDevice.getOutputStream();
 
         serialWriteEntity = new SerialWriteEntity(this);
-	new Thread(serialWriteEntity).start();
 
         serialReadEntity = new SerialReadEntity(this);
-	new Thread(serialReadEntity).start();
-
+	    new Thread(() -> {
+            serialReadEntity.run();
+            serialWriteEntity.run();
+        }, monitorName).start();
     }
 
+    /**
+     * Retrieves the current monitor name.
+     *
+     * @return the monitor name utilized by the internal thread
+     */
     public String getMonitorName() {
         return monitorName;
     }
@@ -254,31 +279,33 @@ public final class SerialMonitor {
     }
 
     /**
-     * Tests whether [CR/LF] check is enabled.
+     * Tests whether `CR/LF` check is enabled. Default value is "true".
      *
-     * @apiNote
-     * CR: Carriage return, defined by '\r'
-     * LF: Line Feed, defined by '\n'
+     * <p>
+     * Note:
+     * <li> CR: Carriage return, defined by '\r' </li>
+     * <li> LF: Line Feed, defined by '\n' </li>
+     * </p>
      *
-     * @return true if [CR/LF] is enabled, false otherwise.
+     * @return true if `CR/LF` is enabled, false otherwise.
      */
     public boolean isUsingReturnCarriage() {
         return useReturnCarriage;
     }
 
     /**
-     * Triggers the [CR/LF] check state flag.
+     * Triggers the `CR/LF` check state flag. Default value is "true".
      *
-     * @param useReturnCarriage true to enable [CR/LF] and return data frames
+     * @param useReturnCarriage true to enable `CR/LF` and return data frames
      *                          at {@link SerialDataListener#onDataReceived(String)}, false to disable
-     *                          both the [CR/LF] check and disable {@link SerialDataListener#onDataReceived(String)}.
+     *                          both the `CR/LF` check and disable {@link SerialDataListener#onDataReceived(String)}.
      */
     public void setUseReturnCarriage(boolean useReturnCarriage) {
         this.useReturnCarriage = useReturnCarriage;
     }
 
     /**
-     * Gets the serial data listeners used for listening to data changes at the
+     * Gets the serial data listeners used for listening to data changes at
      * this monitor port.
      *
      * @return a list of serial data listeners for this monitor.
