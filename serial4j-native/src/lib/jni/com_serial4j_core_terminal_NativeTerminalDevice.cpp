@@ -1,5 +1,5 @@
 /**
- * @file com_serial4j_core_serial_NativeTerminalDevice.c
+ * @file com_serial4j_core_terminal_NativeTerminalDevice.c
  * @author pavl_g.
  * @brief Instantiates a native interface of Serial4j API for the java programming language.
  * @version 0.1
@@ -35,7 +35,7 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#include<jni/com_serial4j_core_serial_NativeTerminalDevice.h>
+#include<jni/com_serial4j_core_terminal_NativeTerminalDevice.h>
 #include<errno.h>
 #include<TerminalDevice.h>
 #include<stdlib.h>
@@ -46,60 +46,64 @@ AddressesBuffer serialPorts;
 /**
  * @brief Deprecated for removal.
  */
-JNIEXPORT jint JNICALL Java_com_serial4j_core_serial_NativeTerminalDevice_setupJniEnvironment0
+JNIEXPORT jint JNICALL Java_com_serial4j_core_terminal_NativeTerminalDevice_setupJniEnvironment
   (JNIEnv* env, jclass clazz) {
     return JniUtils::setupJavaEnvironment(env, JNI_VERSION_1_8);
 }
 
-JNIEXPORT jint JNICALL Java_com_serial4j_core_serial_NativeTerminalDevice_setTerminalControlFlag
-  (JNIEnv* env, jobject object, jlong flag) {
+JNIEXPORT jint JNICALL Java_com_serial4j_core_terminal_NativeTerminalDevice_setTerminalControlFlag
+  (JNIEnv* env, jobject object, jint flag) {
     jint fd = JniUtils::getPortDescriptorFromSerialPort(env, &object);
-    return TerminalDevice::setTerminalControlFlag(flag, &fd);
+    const TerminalFlag terminalFlag = flag;
+    return TerminalDevice::setTerminalControlFlag(terminalFlag, &fd);
 }
 
-JNIEXPORT jint JNICALL Java_com_serial4j_core_serial_NativeTerminalDevice_setTerminalLocalFlag
-  (JNIEnv* env, jobject object, jlong flag) {
+JNIEXPORT jint JNICALL Java_com_serial4j_core_terminal_NativeTerminalDevice_setTerminalLocalFlag
+  (JNIEnv* env, jobject object, jint flag) {
     jint fd = JniUtils::getPortDescriptorFromSerialPort(env, &object);
-    return TerminalDevice::setTerminalLocalFlag(flag, &fd);
+    const TerminalFlag terminalFlag = flag;
+    return TerminalDevice::setTerminalLocalFlag(terminalFlag, &fd);
 }
 
-JNIEXPORT jint JNICALL Java_com_serial4j_core_serial_NativeTerminalDevice_setTerminalInputFlag
-  (JNIEnv* env, jobject object, jlong flag) {
+JNIEXPORT jint JNICALL Java_com_serial4j_core_terminal_NativeTerminalDevice_setTerminalInputFlag
+  (JNIEnv* env, jobject object, jint flag) {
     jint fd = JniUtils::getPortDescriptorFromSerialPort(env, &object);
-    return TerminalDevice::setTerminalInputFlag(flag, &fd);
+    const TerminalFlag terminalFlag = flag;
+    return TerminalDevice::setTerminalInputFlag(terminalFlag, &fd);
 }
 
-JNIEXPORT jint JNICALL Java_com_serial4j_core_serial_NativeTerminalDevice_setTerminalOutputFlag
-  (JNIEnv* env, jobject object, jlong flag) {
+JNIEXPORT jint JNICALL Java_com_serial4j_core_terminal_NativeTerminalDevice_setTerminalOutputFlag
+  (JNIEnv* env, jobject object, jint flag) {
     jint fd = JniUtils::getPortDescriptorFromSerialPort(env, &object);
-    return TerminalDevice::setTerminalOutputFlag(flag, &fd);
+    const TerminalFlag terminalFlag = flag;
+    return TerminalDevice::setTerminalOutputFlag(terminalFlag, &fd);
 }
 
-JNIEXPORT jlong JNICALL Java_com_serial4j_core_serial_NativeTerminalDevice_getTerminalControlFlag
+JNIEXPORT jint JNICALL Java_com_serial4j_core_terminal_NativeTerminalDevice_getTerminalControlFlag
   (JNIEnv* env, jobject object) {
     jint fd = JniUtils::getPortDescriptorFromSerialPort(env, &object);
-    return (jlong) TerminalDevice::getTerminalControlFlag(&fd);
+    return TerminalDevice::getTerminalControlFlag(&fd);
 }
 
-JNIEXPORT jlong JNICALL Java_com_serial4j_core_serial_NativeTerminalDevice_getTerminalLocalFlag
+JNIEXPORT jint JNICALL Java_com_serial4j_core_terminal_NativeTerminalDevice_getTerminalLocalFlag
   (JNIEnv* env, jobject object) {
     jint fd = JniUtils::getPortDescriptorFromSerialPort(env, &object);
-    return (jlong) TerminalDevice::getTerminalLocalFlag(&fd);
+    return TerminalDevice::getTerminalLocalFlag(&fd);
 } 
 
-JNIEXPORT jlong JNICALL Java_com_serial4j_core_serial_NativeTerminalDevice_getTerminalInputFlag
+JNIEXPORT jint JNICALL Java_com_serial4j_core_terminal_NativeTerminalDevice_getTerminalInputFlag
   (JNIEnv* env, jobject object) {
     jint fd = JniUtils::getPortDescriptorFromSerialPort(env, &object);
-    return (jlong) TerminalDevice::getTerminalInputFlag(&fd);
+    return TerminalDevice::getTerminalInputFlag(&fd);
 }
 
-JNIEXPORT jlong JNICALL Java_com_serial4j_core_serial_NativeTerminalDevice_getTerminalOutputFlag
+JNIEXPORT jint JNICALL Java_com_serial4j_core_terminal_NativeTerminalDevice_getTerminalOutputFlag
   (JNIEnv* env, jobject object) {
     jint fd = JniUtils::getPortDescriptorFromSerialPort(env, &object);
-    return (jlong) TerminalDevice::getTerminalOutputFlag(&fd);
+    return TerminalDevice::getTerminalOutputFlag(&fd);
 }
 
-JNIEXPORT jint JNICALL Java_com_serial4j_core_serial_NativeTerminalDevice_setReadConfigurationMode0
+JNIEXPORT jint JNICALL Java_com_serial4j_core_terminal_NativeTerminalDevice_setReadConfigurationMode
   (JNIEnv* env, jobject object, jshort timeoutValue, jshort minimumBytes) {
     
     jint fd = JniUtils::getPortDescriptorFromSerialPort(env, &object);
@@ -110,7 +114,7 @@ JNIEXPORT jint JNICALL Java_com_serial4j_core_serial_NativeTerminalDevice_setRea
     return TerminalDevice::setReadConfigurationMode(readConfig, &fd);
 }
 
-JNIEXPORT jshortArray JNICALL Java_com_serial4j_core_serial_NativeTerminalDevice_getReadConfigurationMode0
+JNIEXPORT jshortArray JNICALL Java_com_serial4j_core_terminal_NativeTerminalDevice_getReadConfigurationMode
   (JNIEnv* env, jobject object) {
 
     cc_t readConfig[READ_CONFIG_SIZE];
@@ -125,7 +129,7 @@ JNIEXPORT jshortArray JNICALL Java_com_serial4j_core_serial_NativeTerminalDevice
     return array;
 }
 
-JNIEXPORT jint JNICALL Java_com_serial4j_core_serial_NativeTerminalDevice_fetchSerialPorts0
+JNIEXPORT jint JNICALL Java_com_serial4j_core_terminal_NativeTerminalDevice_fetchSerialPorts
   (JNIEnv* env, jobject object) {
 
      int state = TerminalDevice::fetchSerialPorts(&serialPorts);
@@ -137,28 +141,13 @@ JNIEXPORT jint JNICALL Java_com_serial4j_core_serial_NativeTerminalDevice_fetchS
      return state;  
 }
 
-JNIEXPORT jlong JNICALL Java_com_serial4j_core_serial_NativeTerminalDevice_writeData0
+JNIEXPORT jlong JNICALL Java_com_serial4j_core_terminal_NativeTerminalDevice_write__I
   (JNIEnv* env, jobject object, jint buffer) {
     int fd = JniUtils::getPortDescriptorFromSerialPort(env, &object);
     return TerminalDevice::writeData(&buffer, 1, &fd);
 }
 
-JNIEXPORT jlong JNICALL Java_com_serial4j_core_serial_NativeTerminalDevice_readData0
-  (JNIEnv* env, jobject object) {
-
-    int fd = JniUtils::getPortDescriptorFromSerialPort(env, &object);
-    cc_t readConfig[READ_CONFIG_SIZE];
-    TerminalDevice::getReadConfigurationMode(readConfig, &fd);
-    int length = (readConfig[0] <= 0 ? readConfig[0] : 1);
-    jchar buffer[length];
-    int state = TerminalDevice::readData((void*) &buffer, length, &fd);
-    jcharArray arrayBuffer = JniUtils::getCharArrayFromBuffer(env, buffer, length);
-    JniUtils::setObjectField(env, &object, "readData", "[C", arrayBuffer);
-
-    return state;
-}
-
-JNIEXPORT jlong JNICALL Java_com_serial4j_core_serial_NativeTerminalDevice_writeBuffer0
+JNIEXPORT jlong JNICALL Java_com_serial4j_core_terminal_NativeTerminalDevice_write__Ljava_lang_String_2I
   (JNIEnv* env, jobject object, jstring string, jint length) {
 
     int fd = JniUtils::getPortDescriptorFromSerialPort(env, &object);
@@ -169,41 +158,42 @@ JNIEXPORT jlong JNICALL Java_com_serial4j_core_serial_NativeTerminalDevice_write
     return state;
 }
 
-JNIEXPORT jlong JNICALL Java_com_serial4j_core_serial_NativeTerminalDevice_readBuffer0
+JNIEXPORT jlong JNICALL Java_com_serial4j_core_terminal_NativeTerminalDevice_read
   (JNIEnv* env, jobject object) {
 
     int fd = JniUtils::getPortDescriptorFromSerialPort(env, &object);
-    /* construct a termios and get the control charachter flag from fd */
+    /* construct a termios and get the control character flag from fd */
     struct termios tty;
     TerminalDevice::getTermiosFromFd(&tty, &fd);
-    int length = tty.c_cc[VMIN];
-    char strBuffer[length];
-    long numberOfReadChars = TerminalDevice::readData((void*) &strBuffer, length, &fd);
+    int length = tty.c_cc[VMIN] <= 0 ? 1 : tty.c_cc[VMIN];
+
+    char strBuffer[length + 1];
+    long numberOfReadChars = TerminalDevice::readData((void*) strBuffer, length, &fd);
     /* get the java string buffer and setup its data with the buffer */
     JniUtils::setObjectField(env, &object, "readBuffer", "Ljava/lang/String;", env->NewStringUTF(strBuffer));
 
     return numberOfReadChars;
 }
 
-JNIEXPORT jint JNICALL Java_com_serial4j_core_serial_NativeTerminalDevice_setBaudRate0
+JNIEXPORT jint JNICALL Java_com_serial4j_core_terminal_NativeTerminalDevice_setBaudRate
   (JNIEnv* env, jobject object, jint baudRate) {
     int fd = JniUtils::getPortDescriptorFromSerialPort(env, &object);
     return TerminalDevice::setBaudRate(baudRate, &fd);
 }
 
-JNIEXPORT jint JNICALL Java_com_serial4j_core_serial_NativeTerminalDevice_getBaudRate0
+JNIEXPORT jint JNICALL Java_com_serial4j_core_terminal_NativeTerminalDevice_getBaudRate
   (JNIEnv* env, jobject object) {
     int fd = JniUtils::getPortDescriptorFromSerialPort(env, &object);
     return TerminalDevice::getBaudRate(&fd);
 }
 
-JNIEXPORT jint JNICALL Java_com_serial4j_core_serial_NativeTerminalDevice_initTermios0
+JNIEXPORT jint JNICALL Java_com_serial4j_core_terminal_NativeTerminalDevice_initTerminal
   (JNIEnv* env, jobject object) {
     int fd = JniUtils::getPortDescriptorFromSerialPort(env, &object);
     return TerminalDevice::initTermios(&fd);
 }
 
-JNIEXPORT jint JNICALL Java_com_serial4j_core_serial_NativeTerminalDevice_openPort0
+JNIEXPORT jint JNICALL Java_com_serial4j_core_terminal_NativeTerminalDevice_openPort
   (JNIEnv* env, jobject object, jstring string, jint flag) {
 
     const char* buffer = JniUtils::getBufferFromString(env, string);
@@ -217,7 +207,7 @@ JNIEXPORT jint JNICALL Java_com_serial4j_core_serial_NativeTerminalDevice_openPo
     return fd;
 }
 
-JNIEXPORT jint JNICALL Java_com_serial4j_core_serial_NativeTerminalDevice_closePort0
+JNIEXPORT jint JNICALL Java_com_serial4j_core_terminal_NativeTerminalDevice_closePort
   (JNIEnv* env, jobject object) {
     
     jobject serialPortObject = JniUtils::getSerialPortFromTerminalDevice(env, &object);
@@ -229,7 +219,7 @@ JNIEXPORT jint JNICALL Java_com_serial4j_core_serial_NativeTerminalDevice_closeP
     return TerminalDevice::closePort(&fd);
 }
 
-JNIEXPORT jint JNICALL Java_com_serial4j_core_serial_NativeTerminalDevice_getErrno0
+JNIEXPORT jint JNICALL Java_com_serial4j_core_terminal_NativeTerminalDevice_getErrno
   (JNIEnv* env, jobject object) {
     return errno;
 }
