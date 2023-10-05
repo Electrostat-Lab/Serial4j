@@ -4,7 +4,7 @@ plugins {
 
 application {
     // Define the main class for the application.
-    mainClass = 'com.serial4j.example.jme.RollingTheMonkey'
+    mainClass = 'com.serial4j.example.Launcher'
 }
 
 dependencies {

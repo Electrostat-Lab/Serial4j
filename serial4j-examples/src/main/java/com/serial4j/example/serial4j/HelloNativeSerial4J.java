@@ -31,25 +31,15 @@
  */
 package com.serial4j.example.serial4j;
 
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.Arrays;
 import java.io.FileNotFoundException;
+import java.util.logging.Level;
 import java.util.logging.Logger;
-import com.serial4j.core.serial.control.TerminalControlFlag;
-import com.serial4j.core.serial.control.TerminalLocalFlag;
-import com.serial4j.core.serial.control.TerminalOutputFlag;
-import com.serial4j.core.serial.control.TerminalInputFlag;
-import com.serial4j.core.serial.ReadConfiguration;
-import com.serial4j.core.serial.Permissions;
-import com.serial4j.core.serial.BaudRate;
+import com.serial4j.core.terminal.ReadConfiguration;
+import com.serial4j.core.terminal.Permissions;
+import com.serial4j.core.terminal.control.*;
 import com.serial4j.core.serial.SerialPort;
-import com.serial4j.core.serial.TerminalDevice;
-import com.serial4j.core.serial.throwable.PermissionDeniedException;
-import com.serial4j.core.serial.throwable.BrokenPipeException;
-import com.serial4j.core.serial.throwable.NoSuchDeviceException;
-import com.serial4j.core.serial.throwable.InvalidPortException;
-import com.serial4j.core.util.natives.NativeImageLoader;
+import com.serial4j.core.terminal.TerminalDevice;
 
 /**
  * An example for Serial4j showing Native terminal control and
@@ -59,29 +49,28 @@ import com.serial4j.core.util.natives.NativeImageLoader;
  */
 public final class HelloNativeSerial4J implements Runnable {
 
-	static {
-		NativeImageLoader.setExtractionPathFromUserDir("libs", "bin");
-	}
-
 	/**
 	 * Provides a java binding to a native terminal device.
 	 */
-	protected final TerminalDevice ttyDevice = new TerminalDevice();
-
-	protected static final Logger EXAMPLE_LOGGER = Logger.getLogger(HelloNativeSerial4J.class.getName());
+	private final TerminalDevice ttyDevice = new TerminalDevice();
 
 	@Override
 	public void run() {
 		System.out.println(Thread.currentThread());
 		try {
 			System.out.println("Started native io example: ");
+			ttyDevice.setSerial4jLoggingEnabled(true);
 			/* set port permissions */
-			final Permissions permissions = Permissions.O_RDWR.append(Permissions.O_NOCTTY)
-															  .append(Permissions.O_NONBLOCK);
+			final Permissions permissions = Permissions.O_RDWR.append(Permissions.O_NOCTTY);
 			ttyDevice.setPermissions(permissions);
+
+			final TerminalFlag CHAR_SIZE = TerminalControlFlag.CSIZE.append(
+					TerminalControlFlag.MaskBits.CS8
+			);
+
 			/* define terminal flags */
 			final TerminalControlFlag TCF_VALUE = (TerminalControlFlag) TerminalControlFlag.CLOCAL
-															.append(TerminalControlFlag.CS8, TerminalControlFlag.CREAD);
+															.append(CHAR_SIZE, TerminalControlFlag.CREAD);
 			final TerminalLocalFlag TLF_VALUE = (TerminalLocalFlag) TerminalLocalFlag.EMPTY_INSTANCE
 																.disable(TerminalLocalFlag.ECHO, TerminalLocalFlag.ECHOK,
 																		TerminalLocalFlag.ECHOE, TerminalLocalFlag.ECHOKE,
@@ -94,7 +83,7 @@ public final class HelloNativeSerial4J implements Runnable {
 			/* open the serial port using the path or the name */
 			ttyDevice.openPort(new SerialPort("/dev/ttyUSB0"));
 			/* initialize the terminal IO with the default terminal flags */
-			ttyDevice.initTermios();
+			ttyDevice.initTerminal();
 			/* print the initial terminal control flags as long value */
 			System.out.println(ttyDevice.getTerminalControlFlag().getValue());
 			/* set and update the new terminal flags */
@@ -107,7 +96,7 @@ public final class HelloNativeSerial4J implements Runnable {
 			/* set the baud rate (bits/second) */
 			ttyDevice.setBaudRate(BaudRate.B57600);
 			/* set the reading mode config to interbyte timeout of delay 510 bytes and delay of 5ms between each charachter */
-			ttyDevice.setReadConfigurationMode(ReadConfiguration.READ_WITH_INTERBYTE_TIMEOUT, 0, 255);
+			ttyDevice.setReadConfigurationMode(ReadConfiguration.BLOCKING_READ_ONE_CHAR, 0, 9);
 
 			/* print the port file descriptor */
 			if (ttyDevice.getSerialPort().getFd() > 0) {
@@ -115,22 +104,24 @@ public final class HelloNativeSerial4J implements Runnable {
 			}
 			System.out.println(Arrays.toString(ttyDevice.getReadConfigurationMode().getMode()));
 			System.out.println(Arrays.toString(ttyDevice.getSerialPorts()) + " " + ttyDevice.getSerialPorts().length);
-			// /* start the R/W threads */
+
+			 /* start the R/W threads */
 			startReadThread(ttyDevice, 0);
-			startWriteThread(ttyDevice, 20000);
+			startWriteThread(ttyDevice, 10000);
 		} catch(FileNotFoundException e) {
-			e.printStackTrace();
+			Logger.getLogger(getClass().getName())
+				   .log(Level.SEVERE, "Terminal IO has failed!", e);
 		}
-		
+
 	}
 
     /**
      * Uses the [extern ssize_t read (int __fd, void *__buf, size_t __nbytes) __wur] provided by <unistd.h> base posix api
-	 * to read from the pre-initialized port in a new thread. 
-     * 
+	 * to read from the pre-initialized port in a new thread.
+     *
      * @param ttyDevice the terminal device object to read the data from.
      * @param millis a delay before the reading operation starts in ms.
-     */	
+     */
 	private void startReadThread(final TerminalDevice ttyDevice, final long millis) {
 		new Thread(new Runnable() {
 			public void run() {
@@ -139,14 +130,15 @@ public final class HelloNativeSerial4J implements Runnable {
 					long read;
 					while(true) {
 						/* read data and get the buffer */
-						if ((read = ttyDevice.readBuffer()) > 0) {
-							System.out.println(read);
-							System.out.println(ttyDevice.getReadBuffer());
-							// System.exit(0);
+						if ((read = ttyDevice.read()) > 0) {
+							System.out.println("Total number of read bytes = " + read);
+							System.out.println("Serial stream data = " + (ttyDevice.getReadBuffer()));
+							ttyDevice.closePort();
 						}
 					}
 				} catch(Exception e) {
-					e.printStackTrace();
+					Logger.getLogger(getClass().getName())
+							.log(Level.SEVERE, "Reading has failed!", e);
 				}
 			}
 		}).start();
@@ -154,23 +146,22 @@ public final class HelloNativeSerial4J implements Runnable {
 
     /**
      * Uses the [extern ssize_t write (int __fd, const void *__buf, size_t __n) __wur] provided by <unistd.h> base posix api
-	 * to write to the pre-initialized port in a new thread. 
-     * 
+	 * to write to the pre-initialized port in a new thread.
+     *
      * @param ttyDevice the terminal device object to write the data to.
      * @param millis a delay before the writing operation starts in ms.
-     */		
+     */
 	private void startWriteThread(final TerminalDevice ttyDevice, final long millis) {
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
 				try {
-					/* write a buffer (array of chars) and close the port */
 					Thread.sleep(millis);
-					ttyDevice.writeData(new int[] {'A', 'B'});
-					Thread.sleep(millis / 2);
-					ttyDevice.closePort();
+					/* write a buffer (array of chars) and close the port */
+					ttyDevice.write(new int[] {'S', 'e', 'r', 'i', 'a', 'l', '4', 'j', '\0'});
 				} catch (Exception e) {
-					e.printStackTrace();
+					Logger.getLogger(getClass().getName())
+							.log(Level.SEVERE, "Writing has failed!", e);
 				}
 			}
 		}).start();
