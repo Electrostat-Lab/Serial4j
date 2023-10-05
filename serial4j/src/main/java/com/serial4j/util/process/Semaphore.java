@@ -29,7 +29,7 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.serial4j.core.util.process;
+package com.serial4j.util.process;
 
 import java.util.logging.Logger;
 
@@ -38,7 +38,9 @@ import java.util.logging.Logger;
  *
  * @see Semaphore.Mutex
  * @author pavl_g.
+ * @deprecated for removal.
  */
+@Deprecated
 public final class Semaphore {
     private final Mutex mutex;
     private static final Logger logger = Logger.getLogger(Semaphore.class.getName());
@@ -66,7 +68,7 @@ public final class Semaphore {
             this.monitorObject = monitorObject;
         }
 
-        protected void setUnlockData(Object unlockData) {
+        private void setUnlockData(Object unlockData) {
             this.unlockData = unlockData;
         }
 
@@ -88,7 +90,7 @@ public final class Semaphore {
          *
          * @return a null job.
          */
-        protected final Void NO_JOB() {
+        private final Void NO_JOB() {
             return null;
         }
     }
