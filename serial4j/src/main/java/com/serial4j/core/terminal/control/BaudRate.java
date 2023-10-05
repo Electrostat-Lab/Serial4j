@@ -49,9 +49,9 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.serial4j.core.serial.control;
+package com.serial4j.core.terminal.control;
 
-import com.serial4j.core.serial.control.NativeTerminalFlags.ControlFlags.MaskBits;
+import com.serial4j.core.terminal.control.NativeTerminalFlags.ControlFlags.MaskBits;
 
 /**
  * Represents codes for the POSIX Systems baud rates and their real values
@@ -61,7 +61,7 @@ import com.serial4j.core.serial.control.NativeTerminalFlags.ControlFlags.MaskBit
  */
 public enum BaudRate {
 
-    /** Baud-rates for POSIX systems as defined by "termios.h" */
+    /* Baud-rates for POSIX systems as defined by "termios.h" */
     B0(MaskBits.getBaud0(), 0),
     B50(MaskBits.getBaud50(), 50),
     B75(MaskBits.getBaud75(), 75),
@@ -96,7 +96,7 @@ public enum BaudRate {
     MAX_BAUD(B4000000.getBaudRate(), B4000000.getRealBaud());
     
     private final int baudRate;
-    private final long realBaud;
+    private final int realBaud;
 
     /**
      * Defines a basic structure for POSIX baud rates.
@@ -104,7 +104,7 @@ public enum BaudRate {
      * @param baudRate the baud rate representative POSIX code.
      * @param realBaud the real baud value.
      */
-    BaudRate(final int baudRate, final long realBaud) {
+    BaudRate(final int baudRate, final int realBaud) {
         this.baudRate = baudRate;
         this.realBaud = realBaud;
     }
@@ -115,7 +115,7 @@ public enum BaudRate {
      * 
      * @return the real baud rate.
      */
-    public long getRealBaud() {
+    public int getRealBaud() {
         return realBaud;
     }
 

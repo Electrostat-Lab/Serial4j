@@ -29,40 +29,38 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.serial4j.core.serial.control;
-
-import com.serial4j.core.serial.control.NativeTerminalFlags.OutputFlags;
+package com.serial4j.core.terminal.control;
 
 public final class TerminalOutputFlag extends TerminalFlag {
     public static final TerminalOutputFlag EMPTY_INSTANCE = new TerminalOutputFlag(0);
     public static final TerminalOutputFlag BSDLY =
-            new TerminalOutputFlag(OutputFlags.getBackspaceDelayMask());
+            new TerminalOutputFlag(NativeTerminalFlags.OutputFlags.getBackspaceDelayMask());
     public static final TerminalOutputFlag CRDLY =
-            new TerminalOutputFlag(OutputFlags.getCarriageReturnDelayMask());
+            new TerminalOutputFlag(NativeTerminalFlags.OutputFlags.getCarriageReturnDelayMask());
     public static final TerminalOutputFlag FFDLY =
-            new TerminalOutputFlag(OutputFlags.getFormFeedDelayMask());
+            new TerminalOutputFlag(NativeTerminalFlags.OutputFlags.getFormFeedDelayMask());
     public static final TerminalOutputFlag NLDLY =
-            new TerminalOutputFlag(OutputFlags.getNewLineDelayMask());
+            new TerminalOutputFlag(NativeTerminalFlags.OutputFlags.getNewLineDelayMask());
     public static final TerminalOutputFlag OCRNL =
-            new TerminalOutputFlag(OutputFlags.getMapCarriageReturnToNewLine());
+            new TerminalOutputFlag(NativeTerminalFlags.OutputFlags.getMapCarriageReturnToNewLine());
     public static final TerminalOutputFlag OFDEL =
-            new TerminalOutputFlag(OutputFlags.getUsePredefinedFillCharacters());
+            new TerminalOutputFlag(NativeTerminalFlags.OutputFlags.getUsePredefinedFillCharacters());
     public static final TerminalOutputFlag OFILL =
-            new TerminalOutputFlag(OutputFlags.getUseFillCharacters());
+            new TerminalOutputFlag(NativeTerminalFlags.OutputFlags.getUseFillCharacters());
     public static final TerminalOutputFlag OLCUC =
-            new TerminalOutputFlag(OutputFlags.getMapLowercaseToUppercase());
+            new TerminalOutputFlag(NativeTerminalFlags.OutputFlags.getMapLowercaseToUppercase());
     public static final TerminalOutputFlag ONLCR =
-            new TerminalOutputFlag(OutputFlags.getMapNewLineToCarriageReturn());
+            new TerminalOutputFlag(NativeTerminalFlags.OutputFlags.getMapNewLineToCarriageReturn());
     public static final TerminalOutputFlag ONLRET =
-            new TerminalOutputFlag(OutputFlags.getNewLineAsCarriageReturn());
+            new TerminalOutputFlag(NativeTerminalFlags.OutputFlags.getNewLineAsCarriageReturn());
     public static final TerminalOutputFlag ONOCR =
-            new TerminalOutputFlag(OutputFlags.getNoCarriageReturnDuplicateOutput());
+            new TerminalOutputFlag(NativeTerminalFlags.OutputFlags.getNoCarriageReturnDuplicateOutput());
     public static final TerminalOutputFlag OPOST =
-            new TerminalOutputFlag(OutputFlags.getPerformOutputPostProcessing());
+            new TerminalOutputFlag(NativeTerminalFlags.OutputFlags.getPerformOutputPostProcessing());
     public static final TerminalOutputFlag TABDLY =
-            new TerminalOutputFlag(OutputFlags.getHorizontalTabDelayMask());
+            new TerminalOutputFlag(NativeTerminalFlags.OutputFlags.getHorizontalTabDelayMask());
     public static final TerminalOutputFlag VTDLY =
-            new TerminalOutputFlag(OutputFlags.getVerticalTabDelayMask());
+            new TerminalOutputFlag(NativeTerminalFlags.OutputFlags.getVerticalTabDelayMask());
 
     private TerminalOutputFlag(final int value) {
         super(value);
@@ -70,37 +68,37 @@ public final class TerminalOutputFlag extends TerminalFlag {
 
     public static final class MaskBits {
         public static final TerminalOutputFlag BS0 =
-                new TerminalOutputFlag(OutputFlags.MaskBits.getBackspace0());
+                new TerminalOutputFlag(NativeTerminalFlags.OutputFlags.MaskBits.getBackspace0());
         public static final TerminalOutputFlag BS1 =
-                new TerminalOutputFlag(OutputFlags.MaskBits.getBackspace1());
+                new TerminalOutputFlag(NativeTerminalFlags.OutputFlags.MaskBits.getBackspace1());
         public static final TerminalOutputFlag CR0 =
-                new TerminalOutputFlag(OutputFlags.MaskBits.getCarriageReturn0());
+                new TerminalOutputFlag(NativeTerminalFlags.OutputFlags.MaskBits.getCarriageReturn0());
         public static final TerminalOutputFlag CR1 =
-                new TerminalOutputFlag(OutputFlags.MaskBits.getCarriageReturn1());
+                new TerminalOutputFlag(NativeTerminalFlags.OutputFlags.MaskBits.getCarriageReturn1());
         public static final TerminalOutputFlag CR2 =
-                new TerminalOutputFlag(OutputFlags.MaskBits.getCarriageReturn2());
+                new TerminalOutputFlag(NativeTerminalFlags.OutputFlags.MaskBits.getCarriageReturn2());
         public static final TerminalOutputFlag CR3 =
-                new TerminalOutputFlag(OutputFlags.MaskBits.getCarriageReturn3());
+                new TerminalOutputFlag(NativeTerminalFlags.OutputFlags.MaskBits.getCarriageReturn3());
         public static final TerminalOutputFlag FF0 =
-                new TerminalOutputFlag(OutputFlags.MaskBits.getFormFeed0());
+                new TerminalOutputFlag(NativeTerminalFlags.OutputFlags.MaskBits.getFormFeed0());
         public static final TerminalOutputFlag FF1 =
-                new TerminalOutputFlag(OutputFlags.MaskBits.getFormFeed1());
+                new TerminalOutputFlag(NativeTerminalFlags.OutputFlags.MaskBits.getFormFeed1());
         public static final TerminalOutputFlag NL0 =
-                new TerminalOutputFlag(OutputFlags.MaskBits.getNewLineDelay0());
+                new TerminalOutputFlag(NativeTerminalFlags.OutputFlags.MaskBits.getNewLineDelay0());
         public static final TerminalOutputFlag NL1 =
-                new TerminalOutputFlag(OutputFlags.MaskBits.getNewLineDelay1());
+                new TerminalOutputFlag(NativeTerminalFlags.OutputFlags.MaskBits.getNewLineDelay1());
         public static final TerminalOutputFlag TAB0 =
-                new TerminalOutputFlag(OutputFlags.MaskBits.getHorizontalTabDelay0());
+                new TerminalOutputFlag(NativeTerminalFlags.OutputFlags.MaskBits.getHorizontalTabDelay0());
         public static final TerminalOutputFlag TAB1 =
-                new TerminalOutputFlag(OutputFlags.MaskBits.getHorizontalTabDelay1());
+                new TerminalOutputFlag(NativeTerminalFlags.OutputFlags.MaskBits.getHorizontalTabDelay1());
         public static final TerminalOutputFlag TAB2 =
-                new TerminalOutputFlag(OutputFlags.MaskBits.getHorizontalTabDelay2());
+                new TerminalOutputFlag(NativeTerminalFlags.OutputFlags.MaskBits.getHorizontalTabDelay2());
         public static final TerminalOutputFlag TAB3 =
-                new TerminalOutputFlag(OutputFlags.MaskBits.getHorizontalTabDelay3());
+                new TerminalOutputFlag(NativeTerminalFlags.OutputFlags.MaskBits.getHorizontalTabDelay3());
         public static final TerminalOutputFlag VT0 =
-                new TerminalOutputFlag(OutputFlags.MaskBits.getVerticalTabDelay0());
+                new TerminalOutputFlag(NativeTerminalFlags.OutputFlags.MaskBits.getVerticalTabDelay0());
         public static final TerminalOutputFlag VT1 =
-                new TerminalOutputFlag(OutputFlags.MaskBits.getVerticalTabDelay1());
+                new TerminalOutputFlag(NativeTerminalFlags.OutputFlags.MaskBits.getVerticalTabDelay1());
 
         private MaskBits() {
         }
