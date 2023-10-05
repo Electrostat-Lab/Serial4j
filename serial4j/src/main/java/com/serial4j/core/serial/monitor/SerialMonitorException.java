@@ -41,8 +41,13 @@ public class SerialMonitorException extends IllegalStateException {
     /**
      * Provides a default message for quick usages.
      */
-    public static final String DEFAULT_MSG = "Cannot Access the monitor without opening the port !";
+    public static final String DEFAULT_MSG = "Cannot Access the monitor without opening the port!";
 
+    /**
+     * Instantiates a monitor exception with message.
+     *
+     * @param msg a message to display
+     */
     public SerialMonitorException(String msg) {
         super(msg);
     }

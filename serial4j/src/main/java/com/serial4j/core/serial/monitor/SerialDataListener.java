@@ -32,39 +32,44 @@
 package com.serial4j.core.serial.monitor;
 
 /**
- * Listens to Serial Monitor entities {@link serial.entity.impl.SerialReadEntity} and {@link serial.entity.impl.SerialWriteEntity}.
+ * Listens to Serial Monitor entities {@link com.serial4j.core.serial.entity.impl.SerialReadEntity}
+ * and {@link com.serial4j.core.serial.entity.impl.SerialWriteEntity}.
  *
  * @author pavl_g.
  */
 public interface SerialDataListener {
 
     /**
-     * Dispatched when the data is received at the {@link serial.entity.impl.SerialReadEntity} end
-     * on its thread.
+     * Dispatched when the data is received at the {@link com.serial4j.core.serial.entity.impl.SerialReadEntity}.
      *
-     * This method is dispatched on the {@link serial.entity.impl.SerialReadEntity} thread.
+     * <p>
+     * This method is dispatched on the {@link com.serial4j.core.serial.entity.impl.SerialReadEntity}.
+     * </p>
      *
      * @param data the data received serially in 8-bit format.
      */
     void onDataReceived(final int data);
 
     /**
-     * Dispatched when the capsular data is transmitted at the {@link serial.entity.impl.SerialWriteEntity}
-     * end on its thread.
+     * Dispatched when the capsular data is transmitted at the {@link com.serial4j.core.serial.entity.impl.SerialWriteEntity}.
      *
-     * This method is dispatched on the {@link serial.entity.impl.SerialWriteEntity} thread.
+     * <p>
+     * This method is dispatched on the {@link com.serial4j.core.serial.entity.impl.SerialWriteEntity}.
+     * </p>
      *
      * @param data the data transmitted serially in 8-bit format.
      */
     void onDataTransmitted(final int data);
 
     /**
-     * Dispatched whenever a data frame is completely received at the {@link serial.entity.impl.SerialReadEntity} end
-     * when [Return-Carriage/Newline] check is enabled as it specifies a particular data frame.
+     * Dispatched whenever a data frame is completely received at the {@link com.serial4j.core.serial.entity.impl.SerialReadEntity} end
+     * when "Return-Carriage/Newline" check is enabled as it specifies a particular data frame.
      *
-     * This method is dispatched on the {@link serial.entity.impl.SerialReadEntity} thread.
+     * <p>
+     * This method is dispatched on the {@link com.serial4j.core.serial.entity.impl.SerialReadEntity}.
+     * </p>
      *
-     * @param data the data frame.
+     * @param data the data frame terminated by '\r\n'
      */
     void onDataReceived(final String data);
 }
