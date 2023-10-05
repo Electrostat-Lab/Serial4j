@@ -94,8 +94,8 @@ Stack: [0x00007f870d353000,0x00007f870d454000],  sp=0x00007f870d4528d0,  free sp
 Native frames: (J=compiled Java code, j=interpreted, Vv=VM code, C=native code)
 C  [libserial4j.so+0x4a12]  Logger::setLoggingEnabled()+0xc
 C  [libserial4j.so+0x4193]  Java_com_serial4j_core_serial_NativeTerminalDevice_setLoggingEnabled0+0x22
-j  com.serial4j.core.serial.NativeTerminalDevice.setLoggingEnabled0()V+0
-j  com.serial4j.core.serial.TerminalDevice.setNativeLoggingEnabled()V+4
+j  com.serial4j.core.terminal.NativeTerminalDevice.setLoggingEnabled0()V+0
+j  com.serial4j.core.terminal.TerminalDevice.setNativeLoggingEnabled()V+4
 j  com.serial4j.example.HelloNativeSerial4J.run()V+12
 v  ~StubRoutines::call_stub
 V  [libjvm.so+0x68825b]  JavaCalls::call_helper(JavaValue*, methodHandle*, JavaCallArguments*, Thread*)+0xddb
@@ -108,8 +108,8 @@ V  [libjvm.so+0x90d922]  java_start(Thread*)+0x102
 C  [libpthread.so.0+0x8f27]  start_thread+0xd7
 
 Java frames: (J=compiled Java code, j=interpreted, Vv=VM code)
-j  com.serial4j.core.serial.NativeTerminalDevice.setLoggingEnabled0()V+0
-j  com.serial4j.core.serial.TerminalDevice.setNativeLoggingEnabled()V+4
+j  com.serial4j.core.terminal.NativeTerminalDevice.setLoggingEnabled0()V+0
+j  com.serial4j.core.terminal.TerminalDevice.setNativeLoggingEnabled()V+4
 j  com.serial4j.example.HelloNativeSerial4J.run()V+12
 v  ~StubRoutines::call_stub
 

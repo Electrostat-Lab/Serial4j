@@ -95,9 +95,9 @@ Native frames: (J=compiled Java code, j=interpreted, Vv=VM code, C=native code)
 C  [libserial4j.so+0x4d2b]  DynamicBuffer::add(void*)+0x47
 C  [libserial4j.so+0x3756]  Terminal::TerminalDevice::fetchSerialPorts()+0xfa
 C  [libserial4j.so+0x444c]  Java_com_serial4j_core_serial_NativeTerminalDevice_fetchSerialPorts0+0x1f
-j  com.serial4j.core.serial.NativeTerminalDevice.fetchSerialPorts0()I+0
-j  com.serial4j.core.serial.TerminalDevice.fetchSerialPorts()V+22
-j  com.serial4j.core.serial.TerminalDevice.getSerialPorts()[Ljava/lang/String;+1
+j  com.serial4j.core.terminal.NativeTerminalDevice.fetchSerialPorts0()I+0
+j  com.serial4j.core.terminal.TerminalDevice.fetchSerialPorts()V+22
+j  com.serial4j.core.terminal.TerminalDevice.getSerialPorts()[Ljava/lang/String;+1
 j  com.serial4j.example.HelloNativeSerial4J.run()V+349
 v  ~StubRoutines::call_stub
 V  [libjvm.so+0x68825b]  JavaCalls::call_helper(JavaValue*, methodHandle*, JavaCallArguments*, Thread*)+0xddb
@@ -110,9 +110,9 @@ V  [libjvm.so+0x90d922]  java_start(Thread*)+0x102
 C  [libpthread.so.0+0x8f27]  start_thread+0xd7
 
 Java frames: (J=compiled Java code, j=interpreted, Vv=VM code)
-j  com.serial4j.core.serial.NativeTerminalDevice.fetchSerialPorts0()I+0
-j  com.serial4j.core.serial.TerminalDevice.fetchSerialPorts()V+22
-j  com.serial4j.core.serial.TerminalDevice.getSerialPorts()[Ljava/lang/String;+1
+j  com.serial4j.core.terminal.NativeTerminalDevice.fetchSerialPorts0()I+0
+j  com.serial4j.core.terminal.TerminalDevice.fetchSerialPorts()V+22
+j  com.serial4j.core.terminal.TerminalDevice.getSerialPorts()[Ljava/lang/String;+1
 j  com.serial4j.example.HelloNativeSerial4J.run()V+349
 v  ~StubRoutines::call_stub
 

@@ -96,8 +96,8 @@ C  [libserial4j.so+0x3e8c]
 C  [libserial4j.so+0x3eb7]
 C  [libserial4j.so+0x3ff8]
 C  [libserial4j.so+0x489f]  Java_com_serial4j_core_serial_NativeTerminalDevice_openPort0+0x75
-j  com.serial4j.core.serial.NativeTerminalDevice.openPort0(Ljava/lang/String;I)I+0
-j  com.serial4j.core.serial.TerminalDevice.openPort(Lcom/serial4j/core/serial/SerialPort;)V+53
+j  com.serial4j.core.terminal.NativeTerminalDevice.openPort0(Ljava/lang/String;I)I+0
+j  com.serial4j.core.terminal.TerminalDevice.openPort(Lcom/serial4j/core/serial/SerialPort;)V+53
 j  com.serial4j.core.serial.monitor.SerialMonitor.startDataMonitoring(Ljava/lang/String;Lcom/serial4j/core/serial/BaudRate;Lcom/serial4j/core/serial/Permissions;)V+49
 j  com.serial4j.example.monitor.HelloSerialMonitor.run()V+25
 j  com.serial4j.example.Launcher.main([Ljava/lang/String;)V+9
@@ -109,8 +109,8 @@ C  [libjli.so+0x889c]  JavaMain+0xa3c
 C  [libpthread.so.0+0x8f27]  start_thread+0xd7
 
 Java frames: (J=compiled Java code, j=interpreted, Vv=VM code)
-j  com.serial4j.core.serial.NativeTerminalDevice.openPort0(Ljava/lang/String;I)I+0
-j  com.serial4j.core.serial.TerminalDevice.openPort(Lcom/serial4j/core/serial/SerialPort;)V+53
+j  com.serial4j.core.terminal.NativeTerminalDevice.openPort0(Ljava/lang/String;I)I+0
+j  com.serial4j.core.terminal.TerminalDevice.openPort(Lcom/serial4j/core/serial/SerialPort;)V+53
 j  com.serial4j.core.serial.monitor.SerialMonitor.startDataMonitoring(Ljava/lang/String;Lcom/serial4j/core/serial/BaudRate;Lcom/serial4j/core/serial/Permissions;)V+49
 j  com.serial4j.example.monitor.HelloSerialMonitor.run()V+25
 j  com.serial4j.example.Launcher.main([Ljava/lang/String;)V+9
