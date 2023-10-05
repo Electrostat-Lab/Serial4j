@@ -30,7 +30,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package com.serial4j.util.natives;
+package com.serial4j.util.loader;
 
 import com.avrsandbox.snaploader.LibraryInfo;
 import com.avrsandbox.snaploader.LoadingCriterion;
@@ -50,9 +50,7 @@ import java.util.logging.Logger;
 public class NativeImageLoader {
 
     private static String jarPath = null;
-
     private static String extractionPath = null;
-
     private static LoadingCriterion defaultLoadingCriterion =
                                         LoadingCriterion.INCREMENTAL_LOADING;
 
@@ -67,7 +65,10 @@ public class NativeImageLoader {
         final File dir = new File(getExtractionPath());
 
         if (!dir.exists()) {
-            dir.mkdir();
+            if (dir.mkdir()) {
+                Logger.getLogger(NativeBinaryLoader.class.getName())
+                        .log(Level.INFO, "Created extraction directory!");
+            }
         }
 
         final LibraryInfo libraryInfo =
@@ -81,7 +82,7 @@ public class NativeImageLoader {
             loader.loadLibrary(defaultLoadingCriterion);
         } catch (IOException e) {
             Logger.getLogger(NativeBinaryLoader.class.getName())
-                  .log(Level.SEVERE, "Loading Serial4j natives failed!", e);
+                  .log(Level.SEVERE, "Loading Serial4j loader failed!", e);
         }
     }
 
@@ -198,7 +199,7 @@ public class NativeImageLoader {
     }
 
     /**
-     * Provides a platform independent constant value for the natives jar file.
+     * Provides a platform independent constant value for the loader jar file.
      *
      * @return the name of the jar file containing
      *         the native dynamic libraries to extract and load
