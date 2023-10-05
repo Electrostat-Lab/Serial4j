@@ -29,43 +29,41 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.serial4j.core.serial.control;
-
-import com.serial4j.core.serial.control.NativeTerminalFlags.LocalFlags;
+package com.serial4j.core.terminal.control;
 
 public final class TerminalLocalFlag extends TerminalFlag {
 
     public static final TerminalLocalFlag EMPTY_INSTANCE = new TerminalLocalFlag(0);
     public static final TerminalLocalFlag ECHO =
-            new TerminalLocalFlag(LocalFlags.getEchoInputCharacters());
+            new TerminalLocalFlag(NativeTerminalFlags.LocalFlags.getEchoInputCharacters());
     public static final TerminalLocalFlag ECHOCTL =
-            new TerminalLocalFlag(LocalFlags.getEchoControlCharacters());
+            new TerminalLocalFlag(NativeTerminalFlags.LocalFlags.getEchoControlCharacters());
     public static final TerminalLocalFlag ECHOE =
-            new TerminalLocalFlag(LocalFlags.getEchoErase());
+            new TerminalLocalFlag(NativeTerminalFlags.LocalFlags.getEchoErase());
     public static final TerminalLocalFlag ECHOK =
-            new TerminalLocalFlag(LocalFlags.getEchoKill());
+            new TerminalLocalFlag(NativeTerminalFlags.LocalFlags.getEchoKill());
     public static final TerminalLocalFlag ECHOKE =
-            new TerminalLocalFlag(LocalFlags.getDisableNewLineAfterEchoKill());
+            new TerminalLocalFlag(NativeTerminalFlags.LocalFlags.getDisableNewLineAfterEchoKill());
     public static final TerminalLocalFlag ECHONL =
-            new TerminalLocalFlag(LocalFlags.getEchoNewLine());
+            new TerminalLocalFlag(NativeTerminalFlags.LocalFlags.getEchoNewLine());
     public static final TerminalLocalFlag ECHOPRT =
-            new TerminalLocalFlag(LocalFlags.getEchoDeletedCharactersBackward());
+            new TerminalLocalFlag(NativeTerminalFlags.LocalFlags.getEchoDeletedCharactersBackward());
     public static final TerminalLocalFlag FLUSHO =
-            new TerminalLocalFlag(LocalFlags.getOutputBeingFlushed());
+            new TerminalLocalFlag(NativeTerminalFlags.LocalFlags.getOutputBeingFlushed());
     public static final TerminalLocalFlag ICANON =
-            new TerminalLocalFlag(LocalFlags.getCanonicalModeInput());
+            new TerminalLocalFlag(NativeTerminalFlags.LocalFlags.getCanonicalModeInput());
     public static final TerminalLocalFlag IEXTEN =
-            new TerminalLocalFlag(LocalFlags.getEnableExtendedProcessingOfInput());
+            new TerminalLocalFlag(NativeTerminalFlags.LocalFlags.getEnableExtendedProcessingOfInput());
     public static final TerminalLocalFlag ISIG =
-            new TerminalLocalFlag(LocalFlags.getEnableSignalGeneratingCharacters());
+            new TerminalLocalFlag(NativeTerminalFlags.LocalFlags.getEnableSignalGeneratingCharacters());
     public static final TerminalLocalFlag NOFLSH =
-            new TerminalLocalFlag(LocalFlags.getDisableFlushing());
+            new TerminalLocalFlag(NativeTerminalFlags.LocalFlags.getDisableFlushing());
     public static final TerminalLocalFlag PENDIN =
-            new TerminalLocalFlag(LocalFlags.getRedisplayPendingInput());
+            new TerminalLocalFlag(NativeTerminalFlags.LocalFlags.getRedisplayPendingInput());
     public static final TerminalLocalFlag TOSTOP =
-            new TerminalLocalFlag(LocalFlags.getGenerateTerminateSignalForBackgroundProcess());
+            new TerminalLocalFlag(NativeTerminalFlags.LocalFlags.getGenerateTerminateSignalForBackgroundProcess());
     public static final TerminalLocalFlag XCASE =
-            new TerminalLocalFlag(LocalFlags.getCanonicalPresentation());
+            new TerminalLocalFlag(NativeTerminalFlags.LocalFlags.getCanonicalPresentation());
 
     private TerminalLocalFlag(final int value) {
         super(value);

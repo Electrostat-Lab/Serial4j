@@ -29,7 +29,7 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.serial4j.core.serial.control;
+package com.serial4j.core.terminal.control;
 
 /**
  * Represents the base implementation for the termios.h terminal flags values.
@@ -38,7 +38,7 @@ package com.serial4j.core.serial.control;
  */
 public class TerminalFlag {
 
-    private long value;
+    private int value;
 
     /**
      * Instantiates a termios flag with a value to be settled from the native side.
@@ -78,8 +78,8 @@ public class TerminalFlag {
      * @return this flag instance for chained append.
      */
     public TerminalFlag append(final TerminalFlag... flags) {
-        for (int i = 0; i < flags.length; i++) {
-            append(flags[i]);
+        for (TerminalFlag flag : flags) {
+            append(flag);
         }
         return this;
     }
@@ -91,8 +91,8 @@ public class TerminalFlag {
      * @return this flag instance for chained call.
      */
     public TerminalFlag disable(final TerminalFlag... flags) {
-        for (int i = 0; i < flags.length; i++) {
-            disable(flags[i]);
+        for (TerminalFlag flag : flags) {
+            disable(flag);
         }
         return this;
     }
@@ -103,7 +103,7 @@ public class TerminalFlag {
      * @return this instance for chained call.
      */
     public TerminalFlag enableAll() {
-        this.value = Long.MAX_VALUE;
+        this.value = Integer.MAX_VALUE;
         return this;
     }
 
@@ -122,7 +122,7 @@ public class TerminalFlag {
      *
      * @return the value of the terminal flag.
      */
-    public long getValue() {
+    public int getValue() {
         return value;
     }
 
@@ -131,7 +131,7 @@ public class TerminalFlag {
      *
      * @param value the value of the terminal flag.
      */
-    public void setValue(final long value) {
+    public void setValue(final int value) {
         this.value = value;
     }
 }
