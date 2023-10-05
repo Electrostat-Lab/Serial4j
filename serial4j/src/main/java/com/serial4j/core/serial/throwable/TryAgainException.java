@@ -36,7 +36,7 @@ import com.serial4j.core.errno.Errno;
 public final class TryAgainException extends SerialThrowable {
 
     public TryAgainException(final String additionalText) {
-        super(Errno.EAGAIN.getDescription() + "\n" + additionalText);
+        super(additionalText);
     }
     
     @Override

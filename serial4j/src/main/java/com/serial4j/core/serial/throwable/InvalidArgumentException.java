@@ -5,7 +5,7 @@ import com.serial4j.core.errno.Errno;
 public class InvalidArgumentException extends SerialThrowable {
     
     public InvalidArgumentException(final String additionalText) {
-        super(Errno.EINVAL.getDescription() + "\n" + additionalText);
+        super(additionalText);
     }
     
     @Override

@@ -36,7 +36,7 @@ import com.serial4j.core.errno.Errno;
 public class NoSpaceLeftException extends SerialThrowable {
     
     public NoSpaceLeftException(final String additionalText) {
-        super(Errno.ENOSPC.getDescription() + "\n" + additionalText);
+        super(additionalText);
     }
     
     @Override

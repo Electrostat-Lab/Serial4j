@@ -36,7 +36,7 @@ import com.serial4j.core.errno.Errno;
 public final class TooManyOpenedFilesException extends SerialThrowable {
 
     public TooManyOpenedFilesException(final String additionalText) {
-        super(Errno.EMFILE.getDescription() + "\n" + additionalText);
+        super(additionalText);
     }
     
     @Override
