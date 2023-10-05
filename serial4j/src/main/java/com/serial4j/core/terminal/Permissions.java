@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with the GNU C Library; if not, see
  * <http://www.gnu.org/licenses/>.
- * 
+ *
  *  -----------------------------------------------------------------------
  *
  * BSD 3-Clause License for Serial4j from the AVR-Sandbox Project.
@@ -54,16 +54,16 @@ package com.serial4j.core.serial;
 /**
  * Provides Unix file system permissions for the specified serial port
  * of the terminal device.
- * 
+ *
  * @author pavl_g.
  */
-public final class Permissions {
+public enum Permissions {
 
-    public static final Permissions O_RDONLY = new Permissions(00, "Read Only");
-    public static final Permissions O_WRONLY = new Permissions(01, "Write Only");
-    public static final Permissions O_RDWR = new Permissions(02, "Read/Write");
-    public static final Permissions O_NOCTTY = new Permissions(0400, "No Control terminal device");
-    public static final Permissions O_NONBLOCK = new Permissions(04000, "Terminal non block");
+    O_RDONLY(00, "Read Only"),
+    O_WRONLY(01, "Write Only"),
+    O_RDWR(02, "Read/Write"),
+    O_NOCTTY(0400, "No Control terminal device"),
+    O_NONBLOCK(04000, "Terminal non block");
 
     private int value;
     private String description;
@@ -71,23 +71,12 @@ public final class Permissions {
     /**
      * Wraps a POSIX IO flag using an integer value.
      *
-     * @param value the value of the permission flag.
+     * @param value       the value of the permission flag.
      * @param description the description of the flag.
      */
-    protected Permissions(final int value, final String description) {
+    Permissions(final int value, final String description) {
         this.value = value;
         this.description = description;
-    }
-    
-    /**
-     * Create a custom permissions object from a source value.
-     *
-     * @param value the value of the permission flag.
-     * @param description the description for this flag.
-     * @return a new Permissions object wrapping the POSIX IO flag.
-     */
-    public static final Permissions createCustomPermissions(final int value, final String description) {
-        return new Permissions(value, description);
     }
 
     /**
@@ -108,9 +97,9 @@ public final class Permissions {
      * @param permissions an array args of the new permissions to append.
      * @return this permissions object with the new appended value.
      */
-    public Permissions append(final Permissions...permissions) {
-        for (int i = 0; i < permissions.length; i++) {
-            append(permissions[i]);
+    public Permissions append(final Permissions... permissions) {
+        for (Permissions permission : permissions) {
+            append(permission);
         }
         return this;
     }

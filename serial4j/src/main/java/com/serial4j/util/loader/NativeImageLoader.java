@@ -30,7 +30,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package com.serial4j.core.util.natives;
+package com.serial4j.util.natives;
 
 import com.avrsandbox.snaploader.LibraryInfo;
 import com.avrsandbox.snaploader.LoadingCriterion;
@@ -52,6 +52,9 @@ public class NativeImageLoader {
     private static String jarPath = null;
 
     private static String extractionPath = null;
+
+    private static LoadingCriterion defaultLoadingCriterion =
+                                        LoadingCriterion.INCREMENTAL_LOADING;
 
     private NativeImageLoader() {
     }
@@ -75,11 +78,15 @@ public class NativeImageLoader {
         loader.setLoggingEnabled(true);
         loader.setRetryWithCleanExtraction(true);
         try {
-            loader.loadLibrary(LoadingCriterion.INCREMENTAL_LOADING);
+            loader.loadLibrary(defaultLoadingCriterion);
         } catch (IOException e) {
             Logger.getLogger(NativeBinaryLoader.class.getName())
                   .log(Level.SEVERE, "Loading Serial4j natives failed!", e);
         }
+    }
+
+    public static void setDefaultLoadingCriterion(LoadingCriterion defaultLoadingCriterion) {
+        NativeImageLoader.defaultLoadingCriterion = defaultLoadingCriterion;
     }
 
     /**

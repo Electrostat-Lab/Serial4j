@@ -31,6 +31,8 @@
  */
 package com.serial4j.core.errno;
 
+import com.serial4j.core.serial.throwable.*;
+
 /**
  * Interprets the native methods bad return values into error codes,
  * used by the java {@link com.serial4j.core.errno.ErrnoToException} 
@@ -39,63 +41,79 @@ package com.serial4j.core.errno;
  * @author pavl_g.
  */
 public enum Errno {
-    /**
-     * Serial4j business errors.
-     */
-    ERR_INVALID_PORT(NativeErrno.getInvalidPortErrno(), "Invalid Port"),
-    ERR_OPERATION_FAILED(NativeErrno.getOperationFailedErrno(), "Operation Failed"),
-    OPERATION_SUCCEEDED(NativeErrno.getOperationSucceededCode(), "Operation Failed"),
-    ERR_NO_AVAILABLE_TTY_DEVICES(NativeErrno.getNoAvailableTtyDevicesErrno(), "No available teletype devices"),
+    /* The API business errors. */
 
     /**
-     * Error codes for open(const char*, int), file names and IO.
+     * Signifies an invalid serial port in an attempt to initialize a non-serial device.
      */
-    EACCES(NativeErrno.getPermissionDeniedErrno(), "Permission denied"),
-    EEXIST(NativeErrno.getFileAlreadyOpenedErrno(), "File exists"),
-    EINTR(NativeErrno.getInterruptedSystemCallErrno(), "Interrupted system call"),
-    EISDIR(NativeErrno.getFileIsDirectoryErrno(), "Is a directory"),
-    EMFILE(NativeErrno.getTooManyOpenedFilesErrno(), "Too many open files"),
-    ENFILE(NativeErrno.getFileTableOverflowErrno(), "File table overflow"),
-    ENOENT(NativeErrno.getNoSuchFileErrno(), "No Such file or directory"),
-    ENOSPC(NativeErrno.getNoSpaceLeftErrno(), "No space left on device"),
-    ENXIO(NativeErrno.getNoSuchDeviceErrno(), "No such device or address"),
-    EROFS(NativeErrno.getReadOnlyFileSystemErrno(), "Read-only file system"),
-    EPIPE(NativeErrno.getBrokenPipeErrno(), "Broken pipe"),
+    ERR_INVALID_PORT(NativeErrno.getInvalidPortErrno(), new InvalidPortException("Invalid Port")),
+
+    /**
+     * Signifies an operation failure.
+     */
+    ERR_OPERATION_FAILED(NativeErrno.getOperationFailedErrno(), new OperationFailedException("Operation Failed")),
+
+    /**
+     * Signifies an operation succession, has no associated throwable, ignored by ErrnoToException.
+     */
+    OPERATION_SUCCEEDED(NativeErrno.getOperationSucceededCode(),null),
+
+    /**
+     * Signifies that there are no available typewriter devices in an attempt to fetch available serial devices.
+     */
+    ERR_NO_AVAILABLE_TTY_DEVICES(NativeErrno.getNoAvailableTtyDevicesErrno(), new NoAvailableTtyDevicesException("No available teletype devices")),
+
+    /* Error codes for open(const char*, int), file names and IO. */
+
+    /**
+     * Signifies a permission denial error in an attempt to especially trying to write to a non-writable device.
+     */
+    EACCES(NativeErrno.getPermissionDeniedErrno(), new PermissionDeniedException("Permission denied")),
+    EEXIST(NativeErrno.getFileAlreadyOpenedErrno(), new FileAlreadyOpenedException("File exists")),
+    EINTR(NativeErrno.getInterruptedSystemCallErrno(), new InterruptedSystemCallException("Interrupted system call")),
+    EISDIR(NativeErrno.getFileIsDirectoryErrno(), new FileIsDirectoryException("Is a directory")),
+    EMFILE(NativeErrno.getTooManyOpenedFilesErrno(), new TooManyOpenedFilesException("Too many open files")),
+    ENFILE(NativeErrno.getFileTableOverflowErrno(), new FileTableOverflowException("File table overflow")),
+    ENOENT(NativeErrno.getNoSuchFileErrno(), new NoSuchFileException("No Such file or directory")),
+    ENOSPC(NativeErrno.getNoSpaceLeftErrno(), new NoSpaceLeftException("No space left on device")),
+    ENXIO(NativeErrno.getNoSuchDeviceErrno(), new NoSuchDeviceException("No such device or address")),
+    EROFS(NativeErrno.getReadOnlyFileSystemErrno(), new ReadOnlyFileSystemException("Read-only file system")),
+    EPIPE(NativeErrno.getBrokenPipeErrno(), new BrokenPipeException("Broken pipe")),
 
     /**
      * Error codes for tcgetattr(int, struct termios*) and tcsetattr(int, struct termios*).
      */
-    EBADF(NativeErrno.getBadFileDescriptorErrno(), "File descriptor in bad state"),
-    ENOTTY(NativeErrno.getNotTtyDeviceErrno(), "Not a typewriter device"),
+    EBADF(NativeErrno.getBadFileDescriptorErrno(), new BadFileDescriptorException("File descriptor in bad state")),
+    ENOTTY(NativeErrno.getNotTtyDeviceErrno(), new NotTtyDeviceException("Not a typewriter device")),
 
     /**
      * tcsetattr(int, struct termios*) only.
      */
-    EINVAL(NativeErrno.getInvalidArgumentErrno(), "Invalid argument"),
+    EINVAL(NativeErrno.getInvalidArgumentErrno(), new InvalidArgumentException("Invalid argument")),
 
     /**
      * Additional error codes for basic R/W from <fcntl.h>
      */
-    EAGAIN(NativeErrno.getTryAgainErrno(), "Try again"),
-    EIO(NativeErrno.getInputOutputErrno(), "I/O Error"),
+    EAGAIN(NativeErrno.getTryAgainErrno(), new TryAgainException("Try again")),
+    EIO(NativeErrno.getInputOutputErrno(), new InputOutputException("I/O Error")),
 
     /**
      * For write(int, void*, int); only.
      */
-    EFBIG(NativeErrno.getFileTooLargeErrno(), "File too large");
+    EFBIG(NativeErrno.getFileTooLargeErrno(), new FileTooLargeException("File too large"));
 
     private final int value;
-    private final String description;
+    private final SerialThrowable associatedThrowable;
 
     /**
      * Creates an error code constant with a value and a description.
      * 
      * @param value the errno value.
-     * @param description the errno description.
+     * @param associatedThrowable the associated throwable.
      */
-    Errno(final int value, final String description) {
+    Errno(final int value, final SerialThrowable associatedThrowable) {
         this.value = value;
-        this.description = description;
+        this.associatedThrowable = associatedThrowable;
     }
 
     /**
@@ -106,13 +124,14 @@ public enum Errno {
     public int getValue() {
         return value;
     }
-    
+
     /**
-     * Gets the native error code descritption.
+     * Retrieves the pre-defined throwable object for this
+     * particular native errno value.
      *
-     * @return the error code description in String format.
+     * @return a reference to the throwable object implementation
      */
-    public String getDescription() {
-        return description;
+    public SerialThrowable getAssociatedThrowable() {
+        return associatedThrowable;
     }
 }

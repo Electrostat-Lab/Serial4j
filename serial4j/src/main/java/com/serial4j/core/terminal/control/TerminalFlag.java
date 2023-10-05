@@ -31,28 +31,27 @@
  */
 package com.serial4j.core.serial.control;
 
-import java.lang.Long;
-
 /**
  * Represents the base implementation for the termios.h terminal flags values.
- * 
+ *
  * @author pavl_g.
  */
-public abstract class TerminalFlag {
+public class TerminalFlag {
 
     private long value;
 
     /**
      * Instantiates a termios flag with a value to be settled from the native side.
+     *
      * @param value the value of the termios flag.
      */
-    protected TerminalFlag(final long value) {
+    protected TerminalFlag(final int value) {
         this.value = value;
     }
 
     /**
      * Appends a flag's value into the current one's value.
-     * 
+     *
      * @param flag a flag to append to this instance.
      * @return this flag instance for chained append.
      */
@@ -63,7 +62,7 @@ public abstract class TerminalFlag {
 
     /**
      * Disables a flag from the current one value.
-     * 
+     *
      * @param flag a flag to disable.
      * @return this flag instance for chained call.
      */
@@ -74,11 +73,11 @@ public abstract class TerminalFlag {
 
     /**
      * Appends a list of flags' values into the current one's value.
-     * 
+     *
      * @param flags an args representing the flags list to append.
      * @return this flag instance for chained append.
      */
-    public TerminalFlag append(final TerminalFlag...flags) {
+    public TerminalFlag append(final TerminalFlag... flags) {
         for (int i = 0; i < flags.length; i++) {
             append(flags[i]);
         }
@@ -87,11 +86,11 @@ public abstract class TerminalFlag {
 
     /**
      * Disables a list of flags from the current flag instance.
-     * 
+     *
      * @param flags flags to disable.
      * @return this flag instance for chained call.
      */
-    public TerminalFlag disable(final TerminalFlag...flags) {
+    public TerminalFlag disable(final TerminalFlag... flags) {
         for (int i = 0; i < flags.length; i++) {
             disable(flags[i]);
         }
@@ -100,7 +99,7 @@ public abstract class TerminalFlag {
 
     /**
      * Enables all the terminal flags for this instance.
-     * 
+     *
      * @return this instance for chained call.
      */
     public TerminalFlag enableAll() {
@@ -110,7 +109,7 @@ public abstract class TerminalFlag {
 
     /**
      * Disables all the terminal flags for this instance.
-     * 
+     *
      * @return this instance for chained call.
      */
     public TerminalFlag disableAll() {
@@ -120,7 +119,7 @@ public abstract class TerminalFlag {
 
     /**
      * Gets the value of the specified termios flag.
-     * 
+     *
      * @return the value of the terminal flag.
      */
     public long getValue() {
@@ -129,7 +128,7 @@ public abstract class TerminalFlag {
 
     /**
      * Adjusts the value of the specified termios flag.
-     * 
+     *
      * @param value the value of the terminal flag.
      */
     public void setValue(final long value) {

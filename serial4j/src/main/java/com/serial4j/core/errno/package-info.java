@@ -31,7 +31,7 @@
  */
 
 /**
- * Provides a native errno to java exception converter {@link ErrnoToException} and {@link Errno} for
- * native errno interpretation.
+ * Provides a native errno to java exception converter {@link com.serial4j.core.errno.ErrnoToException}
+ * and {@link com.serial4j.core.errno.Errno} for native errno interpretation.
  */
 package com.serial4j.core.errno;
