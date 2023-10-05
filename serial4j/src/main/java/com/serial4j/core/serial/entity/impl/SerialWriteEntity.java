@@ -35,13 +35,19 @@ import com.serial4j.core.serial.entity.EntityStatus;
 import com.serial4j.core.serial.entity.SerialMonitorEntity;
 import com.serial4j.core.serial.monitor.SerialMonitor;
 import com.serial4j.core.serial.monitor.SerialMonitorException;
+import com.serial4j.core.terminal.Permissions;
+import com.serial4j.core.terminal.control.BaudRate;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Represents a serial write data entity for the {@link SerialMonitor}.
- * Use {@link SerialMonitor#startDataMonitoring(String, int)} to start this entity.
+ * <p>
+ * Use {@link SerialMonitor#startDataMonitoring(String, BaudRate, Permissions)} to start this entity.
+ * </p>
  *
  * @author pavl_g.
  */
@@ -161,9 +167,7 @@ public class SerialWriteEntity extends SerialMonitorEntity {
     }
 
     /**
-     * Internal-Use-Only.
-     *
-     * Sends data to the {@link OutputStream} of {@link com.fazecast.jSerialComm.SerialPort}.
+     * Sends data to the {@link OutputStream} of {@link com.serial4j.core.serial.SerialPort}.
      *
      * @param data the data to send in integers.
      */
@@ -171,7 +175,8 @@ public class SerialWriteEntity extends SerialMonitorEntity {
         try {
             getEntityStream().write(data);
         } catch (IOException e) {
-            e.printStackTrace();
+            Logger.getLogger(this.getClass().getName())
+                    .log(Level.SEVERE, "Writing data has failed!", e);
         }
     }
 }

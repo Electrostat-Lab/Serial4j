@@ -34,8 +34,8 @@ package com.serial4j.core.serial.entity;
 /**
  * Represents the serial entity status listener.
  *
- * @param <T> generic type for the {@link SerialMonitorEntity} type, either {@link serial.entity.impl.SerialWriteEntity}
- *           or {@link serial.entity.impl.SerialReadEntity}.
+ * @param <T> generic type for the {@link SerialMonitorEntity} type, either {@link com.serial4j.core.serial.entity.impl.SerialWriteEntity}
+ *           or {@link com.serial4j.core.serial.entity.impl.SerialReadEntity}.
  *
  * @author pavl_g.
  */
