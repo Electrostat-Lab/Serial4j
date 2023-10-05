@@ -329,6 +329,10 @@ namespace JniUtils {
         env->SetBooleanArrayRegion(booleanArray, 0, length, buffer);
         return booleanArray;
     }
+
+    static inline jchar* getCharArrayStartAddress(JNIEnv* env, jcharArray array) {
+        return env->GetCharArrayElements(array, JNI_FALSE);
+    }
 }
 
 #endif
