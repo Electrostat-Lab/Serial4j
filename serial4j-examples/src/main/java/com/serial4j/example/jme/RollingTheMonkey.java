@@ -61,10 +61,12 @@ import com.jme3.scene.shape.Sphere;
 import com.jme3.shadow.DirectionalLightShadowFilter;
 import java.io.FileNotFoundException;
 import java.util.concurrent.Callable;
-import com.serial4j.core.serial.BaudRate;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import com.serial4j.core.terminal.control.BaudRate;
 import com.serial4j.core.serial.monitor.SerialDataListener;
 import com.serial4j.core.serial.monitor.SerialMonitor;
-import com.serial4j.core.util.natives.NativeImageLoader;
 
 /**
  * Physics based marble game.
@@ -72,10 +74,6 @@ import com.serial4j.core.util.natives.NativeImageLoader;
  * @author SkidRunner (Mark E. Picknell)
  */
 public class RollingTheMonkey extends SimpleApplication implements SerialDataListener, ActionListener, PhysicsCollisionListener {
-
-    static {
-        NativeImageLoader.setExtractionPathFromUserDir("libs", "bin");
-    }
 
     private static final String MESSAGE         = "Thanks for Playing!";
     private static final String INFO_MESSAGE    = "Collect all the spinning cubes!\nPress the 'R' key any time to reset!";
@@ -95,42 +93,35 @@ public class RollingTheMonkey extends SimpleApplication implements SerialDataLis
     private static final float PLAYER_MASS      = PLAYER_DENSITY * PLAYER_VOLUME;
     private static final float PLAYER_FORCE     = 80000 * PLAYER_ACCEL;  // F = M(4m diameter steel ball) * A
     private static final Vector3f PLAYER_START  = new Vector3f(0.0f, PLAYER_RADIUS * 2, 0.0f);
-    
-    private static final int BACKWARD = 256;
-    private static final int FORWARD = 768;
-    private static final int RIGHT = BACKWARD * 2;
-    private static final int LEFT = FORWARD - 256;
-
+    private static final String START_BAUD = "START_BAUD";
     private static final String INPUT_MAPPING_FORWARD   = "INPUT_MAPPING_FORWARD";
     private static final String INPUT_MAPPING_BACKWARD  = "INPUT_MAPPING_BACKWARD";
     private static final String INPUT_MAPPING_LEFT      = "INPUT_MAPPING_LEFT";
     private static final String INPUT_MAPPING_RIGHT     = "INPUT_MAPPING_RIGHT";
     private static final String INPUT_MAPPING_RESET     = "INPUT_MAPPING_RESET";
-
-    public static void main(String[] args) {
-        RollingTheMonkey app = new RollingTheMonkey();
-        app.start();
-    }
-    
     private boolean keyForward;
     private boolean keyBackward;
     private boolean keyLeft;
     private boolean keyRight;
+    private boolean startBaud;
     private RigidBodyControl player;
     private int score;
     
     private Node pickUps;
     private BitmapText scoreText;
     private BitmapText messageText;
-    
+
+    private SerialMonitor serialMonitor;
+
     @Override
     public void simpleInitApp() {
         try {
-            final SerialMonitor serialMonitor = new SerialMonitor("Embedded-Controller");
+            serialMonitor = new SerialMonitor("Embedded-Controller");
             serialMonitor.startDataMonitoring("/dev/ttyUSB0", BaudRate.B57600, null);
             serialMonitor.addSerialDataListener(this);
         } catch(FileNotFoundException e) {
-            e.printStackTrace();
+            Logger.getLogger(getClass().getName())
+                  .log(Level.SEVERE, "Monitor has failed!", e);
         }
 
         flyCam.setEnabled(false);
@@ -226,7 +217,7 @@ public class RollingTheMonkey extends SimpleApplication implements SerialDataLis
         levelShape.addChildShape(wallNorthShape, new Vector3f(0.0f, 2.0f, -21.5f));
         levelShape.addChildShape(wallSouthShape, new Vector3f(0.0f, 2.0f, 21.5f));
         levelShape.addChildShape(wallEastShape, new Vector3f(-21.5f, 2.0f, 0.0f));
-        levelShape.addChildShape(wallEastShape, new Vector3f(21.5f, 2.0f, 0.0f));
+        levelShape.addChildShape(wallWestShape, new Vector3f(21.5f, 2.0f, 0.0f));
         
         level.addControl(new RigidBodyControl(levelShape, 0));
         
@@ -280,7 +271,8 @@ public class RollingTheMonkey extends SimpleApplication implements SerialDataLis
         
         rootNode.attachChild(playerGeometry);
         space.addAll(playerGeometry);
-        
+
+        inputManager.addMapping(START_BAUD, new KeyTrigger(KeyInput.KEY_0));
         inputManager.addMapping(INPUT_MAPPING_FORWARD, new KeyTrigger(KeyInput.KEY_UP)
                 , new KeyTrigger(KeyInput.KEY_W));
         inputManager.addMapping(INPUT_MAPPING_BACKWARD, new KeyTrigger(KeyInput.KEY_DOWN)
@@ -290,7 +282,7 @@ public class RollingTheMonkey extends SimpleApplication implements SerialDataLis
         inputManager.addMapping(INPUT_MAPPING_RIGHT, new KeyTrigger(KeyInput.KEY_RIGHT)
                 , new KeyTrigger(KeyInput.KEY_D));
         inputManager.addMapping(INPUT_MAPPING_RESET, new KeyTrigger(KeyInput.KEY_R));
-        inputManager.addListener(this, INPUT_MAPPING_FORWARD, INPUT_MAPPING_BACKWARD
+        inputManager.addListener(this, START_BAUD, INPUT_MAPPING_FORWARD, INPUT_MAPPING_BACKWARD
                 , INPUT_MAPPING_LEFT, INPUT_MAPPING_RIGHT, INPUT_MAPPING_RESET);
         
         // init UI
@@ -341,7 +333,8 @@ public class RollingTheMonkey extends SimpleApplication implements SerialDataLis
         if(keyBackward) centralForce.addLocal(cam.getDirection().negate());
         if(keyLeft) centralForce.addLocal(cam.getLeft());
         if(keyRight) centralForce.addLocal(cam.getLeft().negate());
-        
+        if(startBaud) serialMonitor.getTerminalDevice().setBaudRate(BaudRate.B9600);
+
         if(!Vector3f.ZERO.equals(centralForce)) {
             centralForce.setY(0);                   // stop ball from pushing down or flying up
             centralForce.normalizeLocal();          // normalize force
@@ -351,11 +344,15 @@ public class RollingTheMonkey extends SimpleApplication implements SerialDataLis
         }
         
         cam.lookAt(player.getPhysicsLocation(), Vector3f.UNIT_Y);
+
     }
 
     @Override
     public void onAction(String name, boolean isPressed, float tpf) {
         switch(name) {
+            case START_BAUD:
+                startBaud = isPressed;
+                break;
             case INPUT_MAPPING_FORWARD:
                 keyForward = isPressed;
                 break;
@@ -369,12 +366,10 @@ public class RollingTheMonkey extends SimpleApplication implements SerialDataLis
                 keyRight = isPressed;
                 break;
             case INPUT_MAPPING_RESET:
-                enqueue(new Callable<Void>() {
-                    @Override
-                    public Void call() {
-                        reset();
-                        return null;
-                    }
+                enqueue((Callable<Void>) () -> {
+                    reset();
+                    serialMonitor.getTerminalDevice().setBaudRate(BaudRate.B50);
+                    return null;
                 });
                 break;
         }
@@ -421,6 +416,12 @@ public class RollingTheMonkey extends SimpleApplication implements SerialDataLis
     }
 
     @Override
+    public void requestClose(boolean esc) {
+        super.requestClose(esc);
+        serialMonitor.setTerminate();
+    }
+
+    @Override
     public void collision(PhysicsCollisionEvent event) {
         Spatial nodeA = event.getNodeA();
         Spatial nodeB = event.getNodeB();
@@ -453,6 +454,7 @@ public class RollingTheMonkey extends SimpleApplication implements SerialDataLis
     }
     
     private void reset() {
+        resetMoves();
         // Reset the pickups
         for(Spatial pickUp : pickUps.getChildren()) {
             GhostControl pickUpControl = pickUp.getControl(GhostControl.class);

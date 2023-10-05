@@ -31,13 +31,15 @@
  */
 package com.serial4j.example.monitor;
 
-import com.serial4j.core.serial.BaudRate;
+import com.serial4j.core.terminal.control.BaudRate;
 import com.serial4j.core.serial.entity.EntityStatus;
 import com.serial4j.core.serial.entity.impl.WritableCapsule;
 import com.serial4j.core.serial.entity.impl.SerialWriteEntity;
 import com.serial4j.core.serial.monitor.SerialDataListener;
 import com.serial4j.core.serial.monitor.SerialMonitor;
-import com.serial4j.core.util.natives.NativeImageLoader;
+
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Represents an example for UART using jSerialComm.
@@ -45,10 +47,6 @@ import com.serial4j.core.util.natives.NativeImageLoader;
  * @author pavl_g.
  */
 public class HelloSerialMonitor implements SerialDataListener, EntityStatus<SerialWriteEntity>, Runnable {
-
-    static {
-        NativeImageLoader.setExtractionPathFromUserDir("libs", "bin");
-    }
 
     private static boolean isDataSent;
 
@@ -62,16 +60,15 @@ public class HelloSerialMonitor implements SerialDataListener, EntityStatus<Seri
             serialMonitor.setWriteEntityStatus(this);
             serialMonitor.addSerialDataListener(this);
 
-            // /* write data to UART with return-carriage/newline */
-            // delay(2000);
-            // writeInUARTCapsule(serialMonitor, "0\n\r");
+             /* write data to UART with return-carriage/newline */
+             delay(2000);
+             writeInUARTCapsule(serialMonitor, "0\n\r");
 
             /* terminate after 20 seconds */
             delay(20000);
             serialMonitor.setTerminate();
         } catch (Exception e) {
-            e.printStackTrace();
-            System.exit(0);
+            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "Serial Monitor has failed!", e);
         }
     }
 
@@ -85,7 +82,7 @@ public class HelloSerialMonitor implements SerialDataListener, EntityStatus<Seri
         try {
             Thread.sleep(millis);
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "Serial Monitor has failed!", e);
         }
     }
 

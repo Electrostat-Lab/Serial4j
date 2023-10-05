@@ -31,20 +31,19 @@
  */
 package com.serial4j.example.serial4j;
 
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
 import java.io.FileNotFoundException;
-import com.serial4j.core.serial.BaudRate;
+
+import com.serial4j.core.terminal.control.BaudRate;
 import com.serial4j.core.serial.SerialPort;
-import com.serial4j.core.serial.TerminalDevice;
-import com.serial4j.core.serial.ReadConfiguration;
+import com.serial4j.core.terminal.TerminalDevice;
 import com.serial4j.core.serial.throwable.PermissionDeniedException;
 import com.serial4j.core.serial.throwable.BrokenPipeException;
 import com.serial4j.core.serial.throwable.NoSuchDeviceException;
 import com.serial4j.core.serial.throwable.InvalidPortException;
-import com.serial4j.core.serial.Permissions;
-import com.serial4j.core.util.natives.NativeImageLoader;
 
 /**
  * An example showing serial and terminal io using java.io API.
@@ -53,14 +52,10 @@ import com.serial4j.core.util.natives.NativeImageLoader;
  */
 public final class HelloSerial4jIO implements Runnable {
 
-    static {
-        NativeImageLoader.setExtractionPathFromUserDir("libs", "bin");
-    }
-
     /**
      * Provides a java binding to the native terminal device.
      */
-    protected final TerminalDevice ttyDevice = new TerminalDevice();
+    private final TerminalDevice ttyDevice = new TerminalDevice();
 
     @Override
     public void run() {
@@ -76,7 +71,7 @@ public final class HelloSerial4jIO implements Runnable {
                 System.err.println("Cannot open serial port" + " " + ttyDevice.getSerialPort().getFd());
             }
             /* initialize terminal io base POSIX library with the default terminal flags */
-            ttyDevice.initTermios();
+            ttyDevice.initTerminal();
             /* set and apply the baud rate to determine transmission speed */
             ttyDevice.setBaudRate(BaudRate.B57600);
             System.out.println("Available serial ports: " + Arrays.toString(ttyDevice.getSerialPorts()) + " " + ttyDevice.getSerialPorts().length);

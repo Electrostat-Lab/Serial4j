@@ -31,7 +31,10 @@
  */
 package com.serial4j.example;
 
-import com.serial4j.example.monitor.HelloSerialMonitor;
+import com.avrsandbox.snaploader.LoadingCriterion;
+import com.serial4j.example.jme.RollingTheMonkey;
+import com.serial4j.example.serial4j.HelloNativeSerial4J;
+import com.serial4j.util.loader.NativeImageLoader;
 
 /**
  * Starts the applications test cases.
@@ -39,10 +42,14 @@ import com.serial4j.example.monitor.HelloSerialMonitor;
  * @author pavl_g.
  */
 public final class Launcher {
-    public static void main(String args[]) {
-        /* starts the native fctnl io example */
-        // Thread.ofVirtual().start(new HelloNativeSerial4J());
-        new Thread(new HelloSerialMonitor()).start();;
-        while (true);
+
+    static {
+        /* always load with clean extract from the libs/bin folder */
+        NativeImageLoader.setDefaultLoadingCriterion(LoadingCriterion.CLEAN_EXTRACTION);
+        NativeImageLoader.setExtractionPathFromUserDir("libs", "bin");
+    }
+
+    public static void main(String[] args) {
+        new HelloNativeSerial4J().run();
     }
 }
