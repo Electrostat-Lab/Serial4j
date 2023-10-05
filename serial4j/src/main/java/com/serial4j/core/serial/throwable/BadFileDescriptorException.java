@@ -32,11 +32,28 @@
 package com.serial4j.core.serial.throwable;
 
 import com.serial4j.core.errno.Errno;
+import com.serial4j.core.terminal.TerminalDevice;
 
+/**
+ * Provides a translation unit to the {@link Errno#EBADF} which
+ * appears in an attempt to initialize non-terminal devices.
+ *
+ * <p>
+ * A dispatch to {@link TerminalDevice#initTerminal()} after opening a
+ * non-tty device will end-up raising this exception.
+ * </p>
+ *
+ * @author pavl_g
+ */
 public final class BadFileDescriptorException extends SerialThrowable {
 
-    public BadFileDescriptorException(final String additionalText) {
-        super(Errno.EBADF.getDescription() + "\n" + additionalText);
+    /**
+     * Instantiates an exception for the {@link Errno#EBADF}.
+     *
+     * @param message a message to display
+     */
+    public BadFileDescriptorException(final String message) {
+        super(message);
     }
 
     @Override

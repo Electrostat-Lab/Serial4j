@@ -36,7 +36,7 @@ import com.serial4j.core.errno.Errno;
 public final class FileIsDirectoryException extends SerialThrowable {
 
     public FileIsDirectoryException(final String additionalText) {
-        super(Errno.EISDIR.getDescription() + "\n" + additionalText);
+        super(additionalText);
     }
 
     @Override

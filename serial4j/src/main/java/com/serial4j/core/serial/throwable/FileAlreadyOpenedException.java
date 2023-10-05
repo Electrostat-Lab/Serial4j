@@ -36,7 +36,7 @@ import com.serial4j.core.errno.Errno;
 public final class FileAlreadyOpenedException extends SerialThrowable {
 
     public FileAlreadyOpenedException(final String additionalText) {
-        super(Errno.EEXIST.getDescription() + "\n" + additionalText);
+        super(additionalText);
     }
 
     @Override

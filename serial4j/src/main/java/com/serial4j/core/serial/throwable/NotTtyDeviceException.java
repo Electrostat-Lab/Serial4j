@@ -36,7 +36,7 @@ import com.serial4j.core.errno.Errno;
 public final class NotTtyDeviceException extends SerialThrowable {
 
     public NotTtyDeviceException(final String additionalText) {
-        super(Errno.ENOTTY.getDescription() + "\n" + additionalText);
+        super(additionalText);
     }
     
     @Override

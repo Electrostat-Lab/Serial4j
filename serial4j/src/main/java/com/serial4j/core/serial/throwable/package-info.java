@@ -29,33 +29,13 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.serial4j.core.serial.throwable;
-
-import java.io.IOException;
-import com.serial4j.core.errno.Errno;
-import com.serial4j.core.serial.throwable.SerialThrowable;
 
 /**
- * Implements a permission exception for error code [EACCESS] or [13] as defined by <errno.h>.
- * Possibly thrown from non-authorized permissions from a non-root user during an attempt to open
- * a system resource.
+ * Translates the native error codes to a readable, user-friendly and
+ * recoverable Java exceptions.
  *
- * @author pavl_g.
+ * @see com.serial4j.core.errno.ErrnoToException
+ * @see com.serial4j.core.errno.Errno
+ * @see com.serial4j.core.errno.NativeErrno
  */
-public class PermissionDeniedException extends SerialThrowable {
-
-    /**
-     * Instantiates a permission exception with an additionaltext and error code [13].
-     *
-     * @param additionalText additional text for the permission message.
-     */
-    public PermissionDeniedException(final String additionalText) {
-        super(additionalText);
-    }
-
-    @Override
-    public Errno getCausingErrno() {
-        return Errno.EACCES;
-    }
-
-}
+package com.serial4j.core.serial.throwable;

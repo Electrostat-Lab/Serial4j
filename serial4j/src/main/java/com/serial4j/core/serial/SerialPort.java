@@ -31,14 +31,16 @@
  */
 package com.serial4j.core.serial;
 
+import com.serial4j.core.terminal.Permissions;
+
 /**
- * Represents a Unix terminal device port properties wrapper.
+ * Represents a Unix terminal device port properties' wrapper.
  * 
  * @author pavl_g.
  */
 public final class SerialPort {
 
-   private String path;
+   private final String path;
    private int portOpened;
    private int fd;
    private int ioFlag;
@@ -54,9 +56,11 @@ public final class SerialPort {
    }
 
   /**
-   * Gets the io flags defined by the {@link com.serial4j.core.serial.Permissions}.
-   * The io flags setter is assigned from the jni side by {@link com.serial4j.core.serial.NativeTerminalDevice#openPort(String, int)}.
-   * 
+   * Gets the io flags defined by the {@link Permissions}.
+   * <p>
+   * The io flags setter is assigned from the jni side by `NativeTerminalDevice#openPort(String, int)`.
+   * </p>
+   *
    * @return a number format representing the IO flag for the POSIX base file api.
    */
    public int getIOFlag() {
@@ -74,7 +78,9 @@ public final class SerialPort {
    
   /**
    * Gets the virtual file descriptor defining this port.
-   * The fd (file descriptor) setter is assigned from the jni side by {@link com.serial4j.core.serial.NativeTerminalDevice#openPort(String, int)}.
+   * <p>
+   * The fd (file descriptor) setter is assigned from the jni side by `NativeTerminalDevice#openPort(String, int).
+   * </p>
    * 
    * @return a number format representing the file descriptor for this port.
    */
@@ -84,9 +90,11 @@ public final class SerialPort {
 
   /**
    * Tests whether this port is still opened.
-   * This flag setter is assigned from the jni side by {@link com.serial4j.core.serial.NativeTerminalDevice#openPort(String, int)} 
-   * and {@link com.serial4j.core.serial.NativeTerminalDevice#closePort()}. 
-   * 
+   * <p>
+   * This flag setter is assigned from the jni side by `NativeTerminalDevice#openPort(String, int)`
+   * and `NativeTerminalDevice#closePort()`.
+   * </p>
+   *
    * @return true if the port is still alive, false if the port is closed.
    */
    public boolean isPortOpened() {

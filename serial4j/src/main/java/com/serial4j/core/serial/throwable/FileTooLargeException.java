@@ -5,7 +5,7 @@ import com.serial4j.core.errno.Errno;
 public class FileTooLargeException extends SerialThrowable {
     
     public FileTooLargeException(final String additionalText) {
-        super(Errno.EFBIG.getDescription() + "\n" + additionalText);
+        super(additionalText);
     }
     
     @Override

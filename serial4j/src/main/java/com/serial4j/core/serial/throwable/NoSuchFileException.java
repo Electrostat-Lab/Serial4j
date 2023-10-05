@@ -36,7 +36,7 @@ import com.serial4j.core.errno.Errno;
 public final class NoSuchFileException extends SerialThrowable {
 
     public NoSuchFileException(final String additionalText) {
-        super(Errno.ENOENT.getDescription() + "\n" + additionalText);
+        super(additionalText);
     }
     
     @Override

@@ -36,7 +36,7 @@ import com.serial4j.core.errno.Errno;
 public final class FileTableOverflowException extends SerialThrowable {
 
     public FileTableOverflowException(final String additionalText) {
-        super(Errno.ENFILE.getDescription() + "\n" + additionalText);
+        super(additionalText);
     }
 
     @Override

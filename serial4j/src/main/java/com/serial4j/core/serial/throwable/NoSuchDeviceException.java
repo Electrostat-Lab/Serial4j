@@ -36,7 +36,7 @@ import com.serial4j.core.errno.Errno;
 public final class NoSuchDeviceException extends SerialThrowable {
 
     public NoSuchDeviceException(final String additionalText) {
-        super(Errno.ENXIO.getDescription() + "\n" + additionalText);
+        super(additionalText);
     }
     
     @Override
