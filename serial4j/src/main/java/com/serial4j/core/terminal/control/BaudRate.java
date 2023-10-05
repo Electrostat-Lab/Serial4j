@@ -49,48 +49,50 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.serial4j.core.serial;
+package com.serial4j.core.serial.control;
+
+import com.serial4j.core.serial.control.NativeTerminalFlags.ControlFlags.MaskBits;
 
 /**
  * Represents codes for the POSIX Systems baud rates and their real values
- * defined from <./usr/include/x86_64-linux-gnu/bits/termios.h>.
+ * defined from "/usr/include/x86_64-linux-gnu/bits/termios.h".
  * 
  * @author pavl_g.
  */
 public enum BaudRate {
 
-    /** Baudrates for POSIX systems as defined by <termios.h> */
-    B0(0000000, 0),
-    B50(0000001, 50),
-    B75(0000002, 75),
-    B110(0000003, 110),
-    B134(0000004, 134),
-    B150(0000005, 150),
-    B200(0000006, 200),
-    B300(0000007, 300),
-    B600(0000010, 600),
-    B1200(0000011, 1200),
-    B1800(0000012, 1800),
-    B2400(0000013, 2400),
-    B4800(0000014, 4800),
-    B9600(0000015, 9600),
-    B19200(0000016, 19200),
-    B38400(0000017, 38400),
-    B57600(0010001, 57600),
-    B115200(0010002, 115200),
-    B230400(0010003, 230400),
-    B460800(0010004, 460800),
-    B500000(0010005, 500000),
-    B576000(0010006, 576000),
-    B921600(0010007, 921600),
-    B1000000(0010010, 1000000),
-    B1152000(0010011, 1152000),
-    B1500000(0010012, 1500000),
-    B2000000(0010013, 2000000),
-    B2500000(0010014, 2500000),
-    B3000000(0010015, 3000000),
-    B3500000(0010016, 3500000),
-    B4000000(0010017, 4000000),
+    /** Baud-rates for POSIX systems as defined by "termios.h" */
+    B0(MaskBits.getBaud0(), 0),
+    B50(MaskBits.getBaud50(), 50),
+    B75(MaskBits.getBaud75(), 75),
+    B110(MaskBits.getBaud110(), 110),
+    B134(MaskBits.getBaud134(), 134),
+    B150(MaskBits.getBaud150(), 150),
+    B200(MaskBits.getBaud200(), 200),
+    B300(MaskBits.getBaud300(), 300),
+    B600(MaskBits.getBaud600(), 600),
+    B1200(MaskBits.getBaud1200(), 1200),
+    B1800(MaskBits.getBaud1800(), 1800),
+    B2400(MaskBits.getBaud2400(), 2400),
+    B4800(MaskBits.getBaud4800(), 4800),
+    B9600(MaskBits.getBaud9600(), 9600),
+    B19200(MaskBits.getBaud19200(), 19200),
+    B38400(MaskBits.getBaud38400(), 38400),
+    B57600(MaskBits.getBaud57600(), 57600),
+    B115200(MaskBits.getBaud115200(), 115200),
+    B230400(MaskBits.getBaud230400(), 230400),
+    B460800(MaskBits.getBaud460800(), 460800),
+    B500000(MaskBits.getBaud500000(), 500000),
+    B576000(MaskBits.getBaud57600(), 576000),
+    B921600(MaskBits.getBaud921600(), 921600),
+    B1000000(MaskBits.getBaud1000000(), 1000000),
+    B1152000(MaskBits.getBaud115200(), 1152000),
+    B1500000(MaskBits.getBaud1500000(), 1500000),
+    B2000000(MaskBits.getBaud2000000(), 2000000),
+    B2500000(MaskBits.getBaud2500000(), 2500000),
+    B3000000(MaskBits.getBaud3000000(), 3000000),
+    B3500000(MaskBits.getBaud3500000(), 3500000),
+    B4000000(MaskBits.getBaud4000000(), 4000000),
     MAX_BAUD(B4000000.getBaudRate(), B4000000.getRealBaud());
     
     private final int baudRate;
@@ -118,7 +120,7 @@ public enum BaudRate {
     }
 
     /**
-     * Retrieves the baud rate code defined from <termios.h> for
+     * Retrieves the baud rate code defined from "termios.h" for
      * POSIX systems.
      * 
      * @return the code for this baud rate.

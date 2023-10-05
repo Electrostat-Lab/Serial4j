@@ -31,7 +31,7 @@
  */
 package com.serial4j.core.serial;
 
-import com.serial4j.core.util.natives.NativeImageLoader;
+import com.serial4j.util.natives.NativeImageLoader;
 
 /**
  * Represents the native java binding for Serial4j API, represented by 
@@ -51,23 +51,14 @@ public final class NativeTerminalDevice {
     private SerialPort serialPort;
     private String[] serialPorts;
     private char[] readData;
-    private String readBuffer = new String();
+    private final String readBuffer = "";
 
-    protected NativeTerminalDevice() {
-    }
-
-    /**
-     * Initializes the serial port path of the native terminal device before opening the terminal device port.
-     * 
-     * @param serialPort the object to initialize the serial port with.
-     */
-    protected void setSerialPort(final SerialPort serialPort) {
-        this.serialPort = serialPort;
+    NativeTerminalDevice() {
     }
 
     /**
      * Retrieves the serial port associated with this terminal device.
-     * 
+     *
      * @return the serial port object associated with this terminal device.
      */
     public SerialPort getSerialPort() {
@@ -76,7 +67,7 @@ public final class NativeTerminalDevice {
 
     /**
      * Retrieves all the available teletype terminal (tty) devices from the filesystem "/dev".
-     * 
+     *
      * @return the available tty devices in an array of strings format.
      */
     public String[] getSerialPorts() {
@@ -97,11 +88,21 @@ public final class NativeTerminalDevice {
     }
 
     /**
+     * Initializes the serial port path of the native terminal device before opening the terminal device port.
+     * 
+     * @param serialPort the object to initialize the serial port with.
+     */
+    void setSerialPort(final SerialPort serialPort) {
+        this.serialPort = serialPort;
+    }
+
+    /**
      * Sets up the native environment for this terminal device.
      * 
      * @return (-1) if the jni env pointer is NULL, (1) for successful initialization.
      */
-    protected static native int setupJniEnvironment0(); 
+    @Deprecated
+    static native int setupJniEnvironment0();
 
     /**
      * Adjusts the native terminal control [c_cflag] of the [termios] structure variable for this terminal device.
@@ -114,7 +115,7 @@ public final class NativeTerminalDevice {
      * @return errno(-1) for failure, errno(-2) for invalid port, errno(1) for success.
      * @see com.serial4j.core.serial.control.TerminalControlFlag
      */
-    protected native int setTerminalControlFlag(final long flag);
+    native int setTerminalControlFlag(final long flag);
 
     /**
      * Adjusts the native terminal local [c_lflag] of the [termios] structure variable for this terminal device.
@@ -128,7 +129,7 @@ public final class NativeTerminalDevice {
      * @return errno(-1) for failure, errno(-2) for invalid port, errno(1) for success.
      * @see com.serial4j.core.serial.control.TerminalLocalFlag
      */    
-    protected native int setTerminalLocalFlag(final long flag);
+    native int setTerminalLocalFlag(final long flag);
 
     /**
      * Adjusts the native terminal input [c_iflag] of the [termios] structure variable for this terminal device.
@@ -141,7 +142,7 @@ public final class NativeTerminalDevice {
      * @return errno(-1) for failure, errno(-2) for invalid port, errno(1) for success.
      * @see com.serial4j.core.serial.control.TerminalInputFlag
      */    
-    protected native int setTerminalInputFlag(final long flag);
+    native int setTerminalInputFlag(final long flag);
 
     /**
      * Adjusts the native terminal output [c_oflag] of the [termios] structure variable for this terminal device.
@@ -154,35 +155,35 @@ public final class NativeTerminalDevice {
      * @return errno(-1) for failure, errno(-2) for invalid port, errno(1) for success.
      * @see com.serial4j.core.serial.control.TerminalOutputFlag
      */    
-    protected native int setTerminalOutputFlag(final long flag);
+    native int setTerminalOutputFlag(final long flag);
 
     /**
      * Retrieves the terminal control flag from this terminal device port descriptor in 64-bit format.
      * 
      * @return the [c_cflag] value in longs.
      */
-    protected native long getTerminalControlFlag();
+    native long getTerminalControlFlag();
 
     /**
      * Retrieves the terminal local flag from this terminal device port descriptor in 64-bit format.
      * 
      * @return the [c_lflag] value in longs.
      */
-    protected native long getTerminalLocalFlag();
+    native long getTerminalLocalFlag();
 
     /**
      * Retrieves the terminal input flag from this terminal device port descriptor in 64-bit format.
      * 
      * @return the [c_iflag] value in longs.
      */
-    protected native long getTerminalInputFlag();
+    native long getTerminalInputFlag();
 
     /**
      * Retrieves the terminal output flag from this terminal device port descriptor in 64-bit format.
      * 
      * @return the [c_oflag] value in longs.
      */
-    protected native long getTerminalOutputFlag();
+    native long getTerminalOutputFlag();
 
     /**
      * Adjusts the read mode for this terminal device, the read mode is defined by the read timeout value and the minimum
@@ -190,14 +191,12 @@ public final class NativeTerminalDevice {
      * 
      * Default value = BLOCKING_READ_ONE_CHAR {0, 1}; defined by {@link NativeTerminalDevice#initTermios0()}.
      *
-     * @param mode the read mode in a 2 lengthed array format, where first index refers to the timeout config and second index
-     *             refers to the bytes config.
      * @param VTIME_VALUE the value of the read timeout, applied only when the first index of [mode] is 1 (aka read timeout is activated).
      * @param VMIN_VALUE the value of the minimum byte to read in this time.
      * @return errno(-1) for failure, errno(-2) for invalid port, errno(1) for success.
      * @see com.serial4j.core.serial.ReadConfiguration
      */
-    protected native int setReadConfigurationMode0(final int VTIME_VALUE, final int VMIN_VALUE);
+    native int setReadConfigurationMode0(final short VTIME_VALUE, final short VMIN_VALUE);
 
     /**
      * Gets the read configuration for this terminal device defining the timeout value as the first index and 
@@ -205,17 +204,17 @@ public final class NativeTerminalDevice {
      *
      * Default value = BLOCKING_READ_ONE_CHAR {0, 1}; defined by {@link NativeTerminalDevice#initTermios0()}.
      *
-     * @return an array refering to the read mode, where index [0] represents the read timeout, index [1] represents
+     * @return an array referring to the read mode, where index [0] represents the read timeout, index [1] represents
      *         the minimum bytes to read.
      */
-    protected native int[] getReadConfigurationMode0();
+    native short[] getReadConfigurationMode0();
 
     /**
      * Retrieves the last error encountered by the native code,
      *
      * @return the last error code from the native <errno.h>.
      */
-    protected native int getErrno0();
+    native int getErrno0();
 
     /**
      * Fetches the available system teletype terminal devices (tty) located within "/dev" directory
@@ -223,14 +222,14 @@ public final class NativeTerminalDevice {
      *
      * @return errno(-1) for failure, errno(-2) for invalid port, errno(1) for success.
      */
-    protected native int fetchSerialPorts0();
+    native int fetchSerialPorts0();
 
     /**
      * Retrieves the baud rate POSIX code for this terminal process, find more at <./usr/include/x86_64-linux-gnu/bits/termios.h>.
      * 
      * @return the baud rate code in integers.
      */
-    protected native int getBaudRate0();
+    native int getBaudRate0();
 
     /**
      * Writes an integer buffer to this terminal device.
@@ -238,7 +237,7 @@ public final class NativeTerminalDevice {
      * @param data an integer data buffer to write up-to 32-bit.
      * @return the number of written bytes in long format.
      */
-    protected native long writeData0(final int data);
+    native long writeData0(final int data);
 
     /**
      * Reads the data from the terminal device and inserts the result into an integer buffer 
@@ -246,7 +245,7 @@ public final class NativeTerminalDevice {
      *
      * @return the number of read bytes.
      */
-    protected native long readData0();
+    native long readData0();
 
     /**
      * Writes a string buffer (const char*) with a length to this terminal device.
@@ -255,7 +254,7 @@ public final class NativeTerminalDevice {
      * @param length the string buffer length in integers, this minimizes the jni native calls.
      * @return the number of written bytes to this terminal device.
      */
-    protected native long writeBuffer0(final String buffer, final int length);
+    native long writeBuffer0(final String buffer, final int length);
 
     /**
      * Reads the data from this terminal device and insert the result into the {@link NativeTerminalDevice#readBuffer}
@@ -263,16 +262,16 @@ public final class NativeTerminalDevice {
      *
      * @return the number of read bytes from this terminal device.
      */
-    protected native long readBuffer0();
+    native long readBuffer0();
 
     /**
      * Opens this terminal device using the path to the port [port] in strings and the port permissions [flag] in integers.
      *
      * @param port the port path in strings. 
-     * @param int the flag for the base file control native api [fcntl].
+     * @param flag the flag for the base file control native api [fcntl].
      * @return errno(-1) for failure, errno(1) for success.
      */
-    protected native int openPort0(final String port, final int flag);
+    native int openPort0(final String port, final int flag);
 
     /**
      * Initializes this terminal device with the default terminal flags and read timeout properties:
@@ -312,7 +311,7 @@ public final class NativeTerminalDevice {
      * 
      * @return errno(-1) for failure, errno(-2) for invalid port, errno(1) for success.
      */
-    protected native int initTermios0();
+    native int initTermios0();
 
     /**
      * Adjusts the baud rate aka. the speed of data transmission in bits/seconds for this bus.
@@ -320,7 +319,7 @@ public final class NativeTerminalDevice {
      * @param baudRate the baud rate POSIX native code, find more about baud rate codes at <./usr/include/x86_64-linux-gnu/bits/termios.h>.
      * @return errno(-1) for failure, errno(-2) for invalid port, errno(1) for success.
      */    
-    protected native int setBaudRate0(int baudRate);
+    native int setBaudRate0(int baudRate);
 
     /**
      * Closes the serial port of this terminal device releasing the resources.
@@ -329,5 +328,5 @@ public final class NativeTerminalDevice {
      * 
      * @return errno(-1) for failure, errno(-2) for invalid port, errno(1) for success.
      */
-    protected native int closePort0();
+    native int closePort0();
 }

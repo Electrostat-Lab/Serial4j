@@ -40,10 +40,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import com.serial4j.core.errno.Errno;
 import com.serial4j.core.errno.ErrnoToException;
-import com.serial4j.core.serial.control.TerminalControlFlag;
-import com.serial4j.core.serial.control.TerminalLocalFlag;
-import com.serial4j.core.serial.control.TerminalInputFlag;
-import com.serial4j.core.serial.control.TerminalOutputFlag;
+import com.serial4j.core.serial.control.*;
 import com.serial4j.core.serial.throwable.PermissionDeniedException;
 import com.serial4j.core.serial.throwable.BrokenPipeException;
 import com.serial4j.core.serial.throwable.NoSuchDeviceException;
@@ -68,21 +65,11 @@ import com.serial4j.core.serial.throwable.NoAvailableTtyDevicesException;
  */
 public final class TerminalDevice {
 
-    /*
-     * Static initializer for loading and setting up the native image.
-     * This initializer has a static context and therefore it runs only one
-     * time when creating the first object.
-     */
-    static {
-        TerminalDevice.setupJniEnvironment();
-    }
-
     private static final Logger LOGGER = Logger.getLogger(TerminalDevice.class.getName());
     private final NativeTerminalDevice nativeTerminalDevice = new NativeTerminalDevice();
     
     private Permissions permissions = Permissions.O_RDWR.append(Permissions.O_NOCTTY)
                                                         .append(Permissions.O_NONBLOCK);
-    private ReadConfiguration readConfiguration;
     private String permissionsDescription;
     private boolean loggingEnabled;
     private InputStream inputStream;
@@ -92,7 +79,6 @@ public final class TerminalDevice {
      * Instantiates a Unix terminal device object.
      */
     public TerminalDevice() {
-       
     }
 
     /**
@@ -102,6 +88,7 @@ public final class TerminalDevice {
      * @apiNote Native and jvm threads can access the jni pointer from the global jvm pointer without 
      * referencing one of the local jni env pointers stored on another thread stack (as this leads to a thread-transition error).
      */
+    @Deprecated
     private static void setupJniEnvironment() {
         final int errno = NativeTerminalDevice.setupJniEnvironment0();
         ErrnoToException.throwFromErrno(errno, "Jni Environment passed is invalid!");
@@ -305,7 +292,7 @@ public final class TerminalDevice {
         this.permissions = permissions;
     }
 
-    public final Permissions getPermissions() {
+    public Permissions getPermissions() {
         return permissions;
     }
 
@@ -331,17 +318,18 @@ public final class TerminalDevice {
         if (isSerial4jLoggingEnabled()) {
             LOGGER.log(Level.INFO, "Setting reading config to " + readConfiguration.getDescription());
         }
-        final int timoutByteValue = readConfiguration.getMode()[0] * timeoutValue;
-        final int minimumBytesValue = readConfiguration.getMode()[1] * minimumBytes;
-        final int errno = nativeTerminalDevice.setReadConfigurationMode0(Math.min(255, timoutByteValue), Math.min(255, minimumBytesValue));
+        final short timeoutByteValue = (short) (readConfiguration.getMode()[0] * timeoutValue);
+        final short minimumBytesValue = (short) (readConfiguration.getMode()[1] * minimumBytes);
+        final int errno = nativeTerminalDevice.setReadConfigurationMode0((short) Math.min(255, timeoutByteValue),
+                (short) Math.min(255, minimumBytesValue));
         ErrnoToException.throwFromErrno(errno, "port is not invalid.");                                                                            
     }
 
-    public final ReadConfiguration getReadConfigurationMode() {
+    public ReadConfiguration getReadConfigurationMode() {
         return ReadConfiguration.getFromNativeReadConfig(nativeTerminalDevice.getReadConfigurationMode0());
     }
     
-    public final long writeBuffer(final String buffer) throws NoSuchDeviceException,
+    public long writeBuffer(final String buffer) throws NoSuchDeviceException,
                                                           PermissionDeniedException,
                                                           BrokenPipeException,
                                                           InvalidPortException,
@@ -349,7 +337,7 @@ public final class TerminalDevice {
         final long numberOfWrittenBytes = nativeTerminalDevice.writeBuffer0(buffer, buffer.length());
         String message;
         if (numberOfWrittenBytes == -1) {
-            message = "Write Permission [O_WRONLY] isnot granted, [Permissions: " + permissionsDescription + "]";
+            message = "Write Permission [O_WRONLY] isn't granted, [Permissions: " + permissionsDescription + "]";
         } else {
             message = "Invalid Port " + nativeTerminalDevice.getSerialPort().getPath(); 
         }
@@ -392,19 +380,19 @@ public final class TerminalDevice {
         return numberOfWrittenBytes;
     }
 
-    public final long readData() {
+    public long readData() {
         return nativeTerminalDevice.readData0();
     }
 
-    public final long readBuffer() {
+    public long readBuffer() {
         return nativeTerminalDevice.readBuffer0();
     }
 
-    public final String getReadBuffer() {
+    public String getReadBuffer() {
         return nativeTerminalDevice.getReadBuffer();
     }
 
-    public final int getBaudRate() throws NoSuchDeviceException,
+    public int getBaudRate() throws NoSuchDeviceException,
                                     PermissionDeniedException,
                                     BrokenPipeException,
                                     InvalidPortException,
@@ -451,23 +439,23 @@ public final class TerminalDevice {
         this.loggingEnabled = loggingEnabled;
     }
 
-    public final boolean isSerial4jLoggingEnabled() {
+    public boolean isSerial4jLoggingEnabled() {
         return loggingEnabled;
     }
 
-    public final char[] getReadData() {
+    public char[] getReadData() {
         return nativeTerminalDevice.getReadData();
     }
 
-    public final InputStream getInputStream() {
+    public InputStream getInputStream() {
         return inputStream;
     }
 
-    public final OutputStream getOutputStream() {
+    public OutputStream getOutputStream() {
         return outputStream;
     }
 
-    public final SerialPort getSerialPort() {
+    public SerialPort getSerialPort() {
         return nativeTerminalDevice.getSerialPort();
     }
 
