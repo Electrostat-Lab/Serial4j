@@ -26,12 +26,13 @@ int TerminalDevice::fetchSerialPorts(AddressesBuffer* serialPorts) {
     /* start reading available ports */
     while ((dp = readdir(dirp)) != NULL) {
 
+        /* allocates a tty device, must be heap allocation, as this
+           device will be shared with the Java code */
         char* device = (char*) calloc(1, sizeof(char));
-        /* allocates a device */
         device = SerialUtils::concatIntoDevice(device, dp->d_name, DEVICES_DIR);
         
         /* delete the device buffer if it's not a serial port */
-        if (!SerialUtils::isSerialPort(device, DEFAULT_FLAGS)) {
+        if (!SerialUtils::isSerialPort(device, O_RDONLY)) {
             BufferUtils::deleteBuffer(device);
             continue;
         }
