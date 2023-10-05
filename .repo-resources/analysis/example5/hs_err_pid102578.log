@@ -92,9 +92,9 @@ R15=0x00007f84c0251000 is a thread
 Stack: [0x00007f84aad78000,0x00007f84aae79000],  sp=0x00007f84aae77868,  free space=1022k
 Native frames: (J=compiled Java code, j=interpreted, Vv=VM code, C=native code)
 C  [libserial4j.so+0x16]
-j  com.serial4j.core.serial.NativeTerminalDevice.getFileDescriptor0()I+0
-j  com.serial4j.core.serial.TerminalDevice.getPortDescriptor()I+4
-j  com.serial4j.core.serial.TerminalDevice.openPort(Lcom/serial4j/core/serial/SerialPort;)V+68
+j  com.serial4j.core.terminal.NativeTerminalDevice.getFileDescriptor0()I+0
+j  com.serial4j.core.terminal.TerminalDevice.getPortDescriptor()I+4
+j  com.serial4j.core.terminal.TerminalDevice.openPort(Lcom/serial4j/core/serial/SerialPort;)V+68
 j  com.serial4j.example.HelloNativeSerial4J.run()V+195
 v  ~StubRoutines::call_stub
 V  [libjvm.so+0x68825b]  JavaCalls::call_helper(JavaValue*, methodHandle*, JavaCallArguments*, Thread*)+0xddb
@@ -107,9 +107,9 @@ V  [libjvm.so+0x90d922]  java_start(Thread*)+0x102
 C  [libpthread.so.0+0x8f27]  start_thread+0xd7
 
 Java frames: (J=compiled Java code, j=interpreted, Vv=VM code)
-j  com.serial4j.core.serial.NativeTerminalDevice.getFileDescriptor0()I+0
-j  com.serial4j.core.serial.TerminalDevice.getPortDescriptor()I+4
-j  com.serial4j.core.serial.TerminalDevice.openPort(Lcom/serial4j/core/serial/SerialPort;)V+68
+j  com.serial4j.core.terminal.NativeTerminalDevice.getFileDescriptor0()I+0
+j  com.serial4j.core.terminal.TerminalDevice.getPortDescriptor()I+4
+j  com.serial4j.core.terminal.TerminalDevice.openPort(Lcom/serial4j/core/serial/SerialPort;)V+68
 j  com.serial4j.example.HelloNativeSerial4J.run()V+195
 v  ~StubRoutines::call_stub
 
