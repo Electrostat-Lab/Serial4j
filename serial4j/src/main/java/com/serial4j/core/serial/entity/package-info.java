@@ -32,7 +32,5 @@
 
 /**
  * Provides R/W serial monitor entities with a subscriber pattern.
- *
- * @author pavl_g.
  */
 package com.serial4j.core.serial.entity;

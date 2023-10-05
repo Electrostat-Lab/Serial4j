@@ -31,10 +31,10 @@
  */
 package com.serial4j.core.serial.entity;
 
-import com.serial4j.core.serial.TerminalDevice;
+import com.serial4j.core.terminal.TerminalDevice;
 import com.serial4j.core.serial.monitor.SerialDataListener;
 import com.serial4j.core.serial.monitor.SerialMonitor;
-import com.serial4j.core.util.process.Semaphore;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Logger;
 import java.util.logging.Level;
 import java.io.Closeable;
@@ -43,15 +43,17 @@ import java.util.ArrayList;
 
 /**
  * Represents the base implementation for serial monitor Read and Write entities.
- * @see serial.entity.impl.SerialWriteEntity
- * @see serial.entity.impl.SerialReadEntity
  *
+ * @see com.serial4j.core.serial.entity.impl.SerialWriteEntity
+ * @see com.serial4j.core.serial.entity.impl.SerialReadEntity
  * @author pavl_g.
  */
 public abstract class SerialMonitorEntity implements Runnable {
 
-    protected final Semaphore.Mutex MUTEX = new Semaphore.Mutex();
-	protected final Semaphore SEMAPHORE = Semaphore.build(MUTEX);
+    /**
+     * Provides thread-safety for the serial IO streaming operations.
+     */
+    protected final ReentrantLock reentrantLock = new ReentrantLock();
 
     private final Logger entityLogger;
     private boolean hasLoggedMonitor;
@@ -69,18 +71,20 @@ public abstract class SerialMonitorEntity implements Runnable {
         this.entityName = entityName;
 
         entityLogger = Logger.getLogger(entityName);
-        initMutexWithLockData();
     }
 
     @Override
     public void run() {
-        /* using re-entrant block to be optimized by the new vthreads system */
-        SEMAPHORE.lock(this);
-        if (!hasLoggedMonitor) {
-            entityLogger.log(Level.INFO, "Started data monitoring for " + entityName + " thread " + Thread.currentThread());
+        /* using re-entrant block to be optimized by the new v-threads system */
+        try {
+            reentrantLock.lock();
+            if (!hasLoggedMonitor) {
+                entityLogger.log(Level.INFO, "Started data monitoring for " + entityName + " thread " + Thread.currentThread());
+            }
+            onDataMonitored(getSerialMonitor());
+        } finally {
+            reentrantLock.unlock();
         }
-        onDataMonitored(getSerialMonitor());
-        SEMAPHORE.unlock(this);
     }
 
     /**
@@ -92,14 +96,16 @@ public abstract class SerialMonitorEntity implements Runnable {
             hasLoggedMonitor = false;
             entityLogger.log(Level.WARNING, "Terminated data monitoring for " + entityName + " thread " + Thread.currentThread());
         } catch (IOException e) {
-            e.printStackTrace();
+            Logger.getLogger(SerialMonitorEntity.class.getName())
+                    .log(Level.SEVERE, "Termination has failed!", e);
         }
         synchronized (SerialMonitorEntity.class) {
             if (getTerminalDevice().getSerialPort().isPortOpened()) {
                 try {
                     getTerminalDevice().closePort();
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    Logger.getLogger(SerialMonitorEntity.class.getName())
+                            .log(Level.SEVERE, "Port closure has failed!", e);
                 }
             }
         }
@@ -202,15 +208,10 @@ public abstract class SerialMonitorEntity implements Runnable {
     protected abstract void setSerialEntityInitialized(boolean state);
 
     /**
-     * Gets the entity stream provided by the {@link SerialPort}, either {@link java.io.OutputStream}
-     * or {@link java.io.InputStream}.
+     * Retrieves the entity stream provided by the {@link com.serial4j.core.serial.SerialPort},
+     * either {@link java.io.OutputStream} or {@link java.io.InputStream}.
      *
      * @return a stream provided by the SerialPort.
      */
     protected abstract Closeable getEntityStream();
-
-    private void initMutexWithLockData() {
-        MUTEX.setLockData(this);
-        MUTEX.setMonitorObject(this);
-    }
 }
