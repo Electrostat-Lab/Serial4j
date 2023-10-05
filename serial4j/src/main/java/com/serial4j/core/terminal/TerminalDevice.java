@@ -29,7 +29,7 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.serial4j.core.serial;
+package com.serial4j.core.terminal;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -40,7 +40,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import com.serial4j.core.errno.Errno;
 import com.serial4j.core.errno.ErrnoToException;
-import com.serial4j.core.serial.control.*;
+import com.serial4j.core.serial.SerialPort;
 import com.serial4j.core.serial.throwable.PermissionDeniedException;
 import com.serial4j.core.serial.throwable.BrokenPipeException;
 import com.serial4j.core.serial.throwable.NoSuchDeviceException;
@@ -57,6 +57,7 @@ import com.serial4j.core.serial.throwable.NoSuchFileException;
 import com.serial4j.core.serial.throwable.NoSpaceLeftException;
 import com.serial4j.core.serial.throwable.InvalidPortException;
 import com.serial4j.core.serial.throwable.NoAvailableTtyDevicesException;
+import com.serial4j.core.terminal.control.*;
 
 /**
  * The main entry class for the native terminal device for Serial4j api.
@@ -85,13 +86,15 @@ public final class TerminalDevice {
      * Sets up the jvm pointer from jni environment pointer on the heap for the global 
      * multithreaded reference.
      *
-     * @apiNote Native and jvm threads can access the jni pointer from the global jvm pointer without 
+     * <p>
+     * Note: Native and jvm threads can access the jni pointer from the global jvm pointer without
      * referencing one of the local jni env pointers stored on another thread stack (as this leads to a thread-transition error).
+     * </p>
      */
     @Deprecated
     private static void setupJniEnvironment() {
-        final int errno = NativeTerminalDevice.setupJniEnvironment0();
-        ErrnoToException.throwFromErrno(errno, "Jni Environment passed is invalid!");
+        final int errno = NativeTerminalDevice.setupJniEnvironment();
+        ErrnoToException.throwFromErrno(errno);
     }
 
     /**
@@ -124,9 +127,9 @@ public final class TerminalDevice {
             LOGGER.log(Level.INFO, "Opening serial device " + serialPort.getPath());
         }
         this.nativeTerminalDevice.setSerialPort(serialPort);
-        final int returnValue = nativeTerminalDevice.openPort0(serialPort.getPath(), permissions.getValue());
+        final int returnValue = nativeTerminalDevice.openPort(serialPort.getPath(), permissions.getValue());
         if (isOperationFailed(returnValue)) {
-            ErrnoToException.throwFromErrno(nativeTerminalDevice.getErrno0(), serialPort.getPath());
+            ErrnoToException.throwFromErrno(nativeTerminalDevice.getErrno());
         }
         /* update port data natively */
         /* ... */
@@ -140,17 +143,17 @@ public final class TerminalDevice {
      * @throws FileNotFoundException if the device opened before has been ejected.
      * @throws NoAvailableTtyDevicesException if the port is closed while performing the initialization operation.
      */
-    public void initTermios() throws InvalidPortException,
+    public void initTerminal() throws InvalidPortException,
                                      FileNotFoundException,
                                      NoAvailableTtyDevicesException {
         if (isSerial4jLoggingEnabled()) {
             LOGGER.log(Level.INFO, "Initializing serial device " + getSerialPort().getPath());
         }
-        int returnValue = nativeTerminalDevice.initTermios0();
+        int returnValue = nativeTerminalDevice.initTerminal();
         if (isOperationFailed(returnValue)) {
-            returnValue = nativeTerminalDevice.getErrno0();
+            returnValue = nativeTerminalDevice.getErrno();
         }
-        ErrnoToException.throwFromErrno(returnValue, getSerialPort().getPath());
+        ErrnoToException.throwFromErrno(returnValue);
         /* get the java streams from the port after initializing it with the native terminal */
         inputStream = new FileInputStream(getSerialPort().getPath());
         outputStream = new FileOutputStream(getSerialPort().getPath());
@@ -174,9 +177,9 @@ public final class TerminalDevice {
                                        
         int returnValue = nativeTerminalDevice.setTerminalControlFlag(flag.getValue());
         if (isOperationFailed(returnValue)) {
-            returnValue = nativeTerminalDevice.getErrno0();
+            returnValue = nativeTerminalDevice.getErrno();
         }
-        ErrnoToException.throwFromErrno(returnValue, getSerialPort().getPath());
+        ErrnoToException.throwFromErrno(returnValue);
     }
 
     /**
@@ -196,9 +199,9 @@ public final class TerminalDevice {
                                                                           InvalidArgumentException {
         int returnValue = nativeTerminalDevice.setTerminalLocalFlag(flag.getValue());
         if (isOperationFailed(returnValue)) {
-            returnValue = nativeTerminalDevice.getErrno0();
+            returnValue = nativeTerminalDevice.getErrno();
         }
-        ErrnoToException.throwFromErrno(returnValue, getSerialPort().getPath());                                                     
+        ErrnoToException.throwFromErrno(returnValue);
     }
 
     /**
@@ -218,9 +221,9 @@ public final class TerminalDevice {
                                                                           InvalidArgumentException {
         int returnValue = nativeTerminalDevice.setTerminalInputFlag(flag.getValue());
         if (isOperationFailed(returnValue)) {
-            returnValue = nativeTerminalDevice.getErrno0();
+            returnValue = nativeTerminalDevice.getErrno();
         }
-        ErrnoToException.throwFromErrno(returnValue, getSerialPort().getPath());                                                                                           
+        ErrnoToException.throwFromErrno(returnValue);
     }
 
     /**
@@ -239,18 +242,18 @@ public final class TerminalDevice {
                                                                           InvalidArgumentException {
         int returnValue = nativeTerminalDevice.setTerminalOutputFlag(flag.getValue());
         if (isOperationFailed(returnValue)) {
-            returnValue = nativeTerminalDevice.getErrno0();
+            returnValue = nativeTerminalDevice.getErrno();
         }
-        ErrnoToException.throwFromErrno(returnValue, getSerialPort().getPath());   
+        ErrnoToException.throwFromErrno(returnValue);
     }
 
     public TerminalControlFlag getTerminalControlFlag() throws BadFileDescriptorException,
                                                                InvalidPortException,
                                                                NotTtyDeviceException {
         final TerminalControlFlag TCF = TerminalControlFlag.EMPTY_INSTANCE;                                            
-        final long returnValue = nativeTerminalDevice.getTerminalControlFlag();
+        final int returnValue = nativeTerminalDevice.getTerminalControlFlag();
         /* Warning: Force cast the errno to (int) */
-        ErrnoToException.throwFromErrno((int) returnValue, getSerialPort().getPath());   
+        ErrnoToException.throwFromErrno((int) returnValue);
         TCF.setValue(returnValue);
         return TCF;                                        
     }
@@ -259,9 +262,9 @@ public final class TerminalDevice {
                                                             InvalidPortException,
                                                             NotTtyDeviceException {
         final TerminalLocalFlag TLF = TerminalLocalFlag.EMPTY_INSTANCE;                                            
-        final long returnValue = nativeTerminalDevice.getTerminalLocalFlag();
+        final int returnValue = nativeTerminalDevice.getTerminalLocalFlag();
         /* Warning: Force cast the errno to (int) */
-        ErrnoToException.throwFromErrno((int) returnValue, getSerialPort().getPath());   
+        ErrnoToException.throwFromErrno(returnValue);
         TLF.setValue(returnValue);
         return TLF;                                        
     }
@@ -270,9 +273,9 @@ public final class TerminalDevice {
                                                             InvalidPortException,
                                                             NotTtyDeviceException {
         final TerminalInputFlag TIF = TerminalInputFlag.EMPTY_INSTANCE;
-        final long returnValue = nativeTerminalDevice.getTerminalInputFlag();
+        final int returnValue = nativeTerminalDevice.getTerminalInputFlag();
         /* Warning: Force cast the errno to (int) */
-        ErrnoToException.throwFromErrno((int) returnValue, getSerialPort().getPath());   
+        ErrnoToException.throwFromErrno((int) returnValue);
         TIF.setValue(returnValue);
         return TIF;                                        
     }
@@ -281,9 +284,9 @@ public final class TerminalDevice {
                                                             InvalidPortException,
                                                             NotTtyDeviceException {
         final TerminalOutputFlag TOF = TerminalOutputFlag.EMPTY_INSTANCE;
-        final long returnValue = nativeTerminalDevice.getTerminalOutputFlag();
+        final int returnValue = nativeTerminalDevice.getTerminalOutputFlag();
         /* Warning: Force cast the errno to (int) */
-        ErrnoToException.throwFromErrno((int) returnValue, getSerialPort().getPath());   
+        ErrnoToException.throwFromErrno((int) returnValue);
         TOF.setValue(returnValue);
         return TOF;                                        
     }
@@ -302,11 +305,11 @@ public final class TerminalDevice {
         if (isSerial4jLoggingEnabled()) {
             LOGGER.log(Level.INFO, "Setting device baud rate to " + baudRate.getRealBaud());
         }
-        int returnValue = nativeTerminalDevice.setBaudRate0(baudRate.getBaudRate());
+        int returnValue = nativeTerminalDevice.setBaudRate(baudRate.getBaudRate());
         if (isOperationFailed(returnValue)) {
-            returnValue = nativeTerminalDevice.getErrno0();
+            returnValue = nativeTerminalDevice.getErrno();
         }
-        ErrnoToException.throwFromErrno(returnValue, getSerialPort().getPath()); 
+        ErrnoToException.throwFromErrno(returnValue);
     } 
 
     public void setReadConfigurationMode(final ReadConfiguration readConfiguration, final int timeoutValue, final int minimumBytes) throws NoSuchDeviceException,
@@ -320,21 +323,21 @@ public final class TerminalDevice {
         }
         final short timeoutByteValue = (short) (readConfiguration.getMode()[0] * timeoutValue);
         final short minimumBytesValue = (short) (readConfiguration.getMode()[1] * minimumBytes);
-        final int errno = nativeTerminalDevice.setReadConfigurationMode0((short) Math.min(255, timeoutByteValue),
+        final int errno = nativeTerminalDevice.setReadConfigurationMode((short) Math.min(255, timeoutByteValue),
                 (short) Math.min(255, minimumBytesValue));
-        ErrnoToException.throwFromErrno(errno, "port is not invalid.");                                                                            
+        ErrnoToException.throwFromErrno(errno);
     }
 
     public ReadConfiguration getReadConfigurationMode() {
-        return ReadConfiguration.getFromNativeReadConfig(nativeTerminalDevice.getReadConfigurationMode0());
+        return ReadConfiguration.getFromNativeReadConfig(nativeTerminalDevice.getReadConfigurationMode());
     }
     
-    public long writeBuffer(final String buffer) throws NoSuchDeviceException,
+    public long write(final String buffer) throws NoSuchDeviceException,
                                                           PermissionDeniedException,
                                                           BrokenPipeException,
                                                           InvalidPortException,
                                                           NoAvailableTtyDevicesException {
-        final long numberOfWrittenBytes = nativeTerminalDevice.writeBuffer0(buffer, buffer.length());
+        final long numberOfWrittenBytes = nativeTerminalDevice.write(buffer, buffer.length());
         String message;
         if (numberOfWrittenBytes == -1) {
             message = "Write Permission [O_WRONLY] isn't granted, [Permissions: " + permissionsDescription + "]";
@@ -342,50 +345,46 @@ public final class TerminalDevice {
             message = "Invalid Port " + nativeTerminalDevice.getSerialPort().getPath(); 
         }
         if (numberOfWrittenBytes < 1) {
-            ErrnoToException.throwFromErrno(nativeTerminalDevice.getErrno0(), message);                                                                        
+            ErrnoToException.throwFromErrno(nativeTerminalDevice.getErrno());
         }
         return numberOfWrittenBytes;
     }
 
-    public long writeData(final int data) throws NoSuchDeviceException,
+    public long write(final int data) throws NoSuchDeviceException,
                                                  PermissionDeniedException,
                                                  BrokenPipeException,
                                                  InvalidPortException,
                                                  NoAvailableTtyDevicesException {
-        final long numberOfWrittenBytes = nativeTerminalDevice.writeData0(data);
+        final long numberOfWrittenBytes = nativeTerminalDevice.write(data);
         String message;
         if (numberOfWrittenBytes == -1) {
             message = "Write Permission [O_WRONLY] isnot granted.";
         } else {
             message = "Invalid Port " + nativeTerminalDevice.getSerialPort().getPath(); 
         }
-        if (numberOfWrittenBytes < 0) {
-            ErrnoToException.throwFromErrno(nativeTerminalDevice.getErrno0(), message);                                                                            
+        if (numberOfWrittenBytes <= 0) {
+            ErrnoToException.throwFromErrno(nativeTerminalDevice.getErrno());
         }
         return numberOfWrittenBytes;
     }
 
-    public long writeData(final int[] data) throws NoSuchDeviceException,
+    public long write(final int[] data) throws NoSuchDeviceException,
                                                    PermissionDeniedException,
                                                    BrokenPipeException,
                                                    InvalidPortException,
                                                    NoAvailableTtyDevicesException {
         long numberOfWrittenBytes = 0;
         for (int i = 0; i < data.length; i++) {
-           numberOfWrittenBytes += this.writeData(data[i]);
-           if (numberOfWrittenBytes < 0) {
+           numberOfWrittenBytes += this.write(data[i]);
+           if (numberOfWrittenBytes <= 0) {
                break;
            }
         }
         return numberOfWrittenBytes;
     }
 
-    public long readData() {
-        return nativeTerminalDevice.readData0();
-    }
-
-    public long readBuffer() {
-        return nativeTerminalDevice.readBuffer0();
+    public long read() {
+        return nativeTerminalDevice.read();
     }
 
     public String getReadBuffer() {
@@ -400,8 +399,8 @@ public final class TerminalDevice {
         if (isSerial4jLoggingEnabled()) {
             LOGGER.log(Level.INFO, "Getting device baud");
         }
-        final int errno = nativeTerminalDevice.getBaudRate0();
-        ErrnoToException.throwFromErrno(errno, getSerialPort().getPath()); 
+        final int errno = nativeTerminalDevice.getBaudRate();
+        ErrnoToException.throwFromErrno(errno);
         return errno;
     }
 
@@ -419,8 +418,8 @@ public final class TerminalDevice {
                                                        BrokenPipeException,
                                                        InvalidPortException,
                                                        NoAvailableTtyDevicesException {                                                
-        final int errno = nativeTerminalDevice.getErrno0();
-        ErrnoToException.throwFromErrno(errno, "Native Errno: " + errno);
+        final int errno = nativeTerminalDevice.getErrno();
+        ErrnoToException.throwFromErrno(errno);
     }
 
     public void closePort() throws NoSuchDeviceException,
@@ -431,8 +430,8 @@ public final class TerminalDevice {
         if (isSerial4jLoggingEnabled()) {
             LOGGER.log(Level.INFO, "Closing port: " + getSerialPort().getPath());
         }
-        final int errno = nativeTerminalDevice.closePort0();
-        ErrnoToException.throwFromErrno(errno, getSerialPort().getPath());
+        final int errno = nativeTerminalDevice.closePort();
+        ErrnoToException.throwFromErrno(errno);
     }
     
     public void setSerial4jLoggingEnabled(final boolean loggingEnabled) {
@@ -441,10 +440,6 @@ public final class TerminalDevice {
 
     public boolean isSerial4jLoggingEnabled() {
         return loggingEnabled;
-    }
-
-    public char[] getReadData() {
-        return nativeTerminalDevice.getReadData();
     }
 
     public InputStream getInputStream() {
@@ -467,8 +462,8 @@ public final class TerminalDevice {
         if (isSerial4jLoggingEnabled()) {
             LOGGER.log(Level.INFO, "Fetching Serial ports.");
         }
-        final int errno = nativeTerminalDevice.fetchSerialPorts0();
-        ErrnoToException.throwFromErrno(errno, "No available devices !");                                    
+        final int errno = nativeTerminalDevice.fetchSerialPorts();
+        ErrnoToException.throwFromErrno(errno);
     }
 
     private boolean isOperationFailed(final int returnValue) {
