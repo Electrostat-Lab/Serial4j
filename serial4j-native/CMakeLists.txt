@@ -26,10 +26,19 @@ set(headers "${CMAKE_CURRENT_SOURCE_DIR}/src/include/"
             "${CMAKE_CURRENT_SOURCE_DIR}/src/include/jni/"
             "${jni_headers}")
 
-set(sources "${CMAKE_CURRENT_SOURCE_DIR}/src/lib/jni/com_serial4j_core_serial_NativeTerminalDevice.cpp"
-            "${CMAKE_CURRENT_SOURCE_DIR}/src/lib/jni/com_serial4j_core_errno_NativeErrno.cpp"
+set(jni_sources "${CMAKE_CURRENT_SOURCE_DIR}/src/lib/jni/com_serial4j_core_terminal_NativeTerminalDevice.cpp"
+                "${CMAKE_CURRENT_SOURCE_DIR}/src/lib/jni/com_serial4j_core_terminal_NativeFilePermissions.cpp"
+                "${CMAKE_CURRENT_SOURCE_DIR}/src/lib/jni/com_serial4j_core_errno_NativeErrno.cpp"
+                "${CMAKE_CURRENT_SOURCE_DIR}/src/lib/jni/com_serial4j_core_terminal_control_NativeTerminalFlags_ControlFlags.cpp"
+                "${CMAKE_CURRENT_SOURCE_DIR}/src/lib/jni/com_serial4j_core_terminal_control_NativeTerminalFlags_ControlFlags_MaskBits.cpp"
+                "${CMAKE_CURRENT_SOURCE_DIR}/src/lib/jni/com_serial4j_core_terminal_control_NativeTerminalFlags_InputFlags.cpp"
+                "${CMAKE_CURRENT_SOURCE_DIR}/src/lib/jni/com_serial4j_core_terminal_control_NativeTerminalFlags_LocalFlags.cpp"
+                "${CMAKE_CURRENT_SOURCE_DIR}/src/lib/jni/com_serial4j_core_terminal_control_NativeTerminalFlags_OutputFlags.cpp"
+                "${CMAKE_CURRENT_SOURCE_DIR}/src/lib/jni/com_serial4j_core_terminal_control_NativeTerminalFlags_OutputFlags_MaskBits.cpp")
+
+set(sources "${jni_sources}"
             "${CMAKE_CURRENT_SOURCE_DIR}/src/lib/linux/TerminalDevice.cpp"
-            "${CMAKE_CURRENT_SOURCE_DIR}/src/lib/DynamicBuffer.cpp")
+            "${CMAKE_CURRENT_SOURCE_DIR}/src/lib/AddressesBuffer.cpp")
 
 # add a library target
 add_library(${library} SHARED ${sources})
