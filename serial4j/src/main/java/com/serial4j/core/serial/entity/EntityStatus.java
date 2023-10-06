@@ -61,4 +61,11 @@ public interface EntityStatus<T extends SerialMonitorEntity> {
      * @param serialMonitorEntity the serial entity object.
      */
     void onUpdate(final T serialMonitorEntity);
+
+    /**
+     * Fired when an exception is thrown in the monitor entity task.
+     *
+     * @param e the exception thrown on this stack.
+     */
+    void onExceptionThrown(Exception e);
 }
