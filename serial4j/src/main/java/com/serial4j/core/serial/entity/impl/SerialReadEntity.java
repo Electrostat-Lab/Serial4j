@@ -39,8 +39,6 @@ import com.serial4j.core.terminal.Permissions;
 import com.serial4j.core.terminal.control.BaudRate;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Represents a Read entity for the {@link SerialMonitor}.
@@ -68,65 +66,64 @@ public class SerialReadEntity extends SerialMonitorEntity {
 
     @Override
     protected void onDataMonitored(SerialMonitor serialMonitor) {
-        for (; ; ) {
-            /* throws if not initialized yet */
-            if (getTerminalDevice() == null) {
-                throw new SerialMonitorException(SerialMonitorException.DEFAULT_MSG);
-            }
+        /* throws if not initialized yet */
+        if (getTerminalDevice() == null) {
+            throw new SerialMonitorException(SerialMonitorException.DEFAULT_MSG);
+        }
 
-            /* sanity check [terminate] flag */
-            if (isTerminate()) {
-                terminate();
-                if (getSerialEntityStatusListener() != null) {
-                    getSerialEntityStatusListener().onSerialEntityTerminated(this);
-                }
-                return;
-            }
-
-            if (!isSerialEntityInitialized()) {
-                if (getSerialEntityStatusListener() != null) {
-                    getSerialEntityStatusListener().onSerialEntityInitialized(this);
-                }
-                setSerialEntityInitialized(true);
-            }
-
+        /* sanity check [terminate] flag */
+        if (isTerminate()) {
+            terminate();
             if (getSerialEntityStatusListener() != null) {
-                getSerialEntityStatusListener().onUpdate(this);
+                getSerialEntityStatusListener().onSerialEntityTerminated(this);
             }
+            return;
+        }
 
-            /* execute serial data tasks */
-            for (int i = 0; i < getSerialDataListeners().size(); i++) {
-                try {
-                    final int count = getEntityStream().available();
-                    if (count != 0) {
-                        final char data = (char) getEntityStream().read();
+        if (!isSerialEntityInitialized()) {
+            if (getSerialEntityStatusListener() != null) {
+                getSerialEntityStatusListener().onSerialEntityInitialized(this);
+            }
+            setSerialEntityInitialized(true);
+        }
 
-                        /* send characters serially */
-                        getSerialDataListeners().get(i).onDataReceived(data);
+        if (getSerialEntityStatusListener() != null) {
+            getSerialEntityStatusListener().onUpdate(this);
+        }
 
-                        /* get a string buffer from a data frame */
-                        /* send data frames separated by [\n\r] the return carriage/newline */
-                        stringBuffer.append(data);
-        
-                        if (isUsingReturnCarriage()) {
-                            if (stringBuffer.toString().contains("\n\r")) {
-                                getSerialDataListeners().get(i).onDataReceived(stringBuffer.toString());
-                                stringBuffer = new StringBuffer();
-                            }
-                        } else {
+        /* execute serial data tasks */
+        for (int i = 0; i < getSerialDataListeners().size(); i++) {
+            try {
+                final int count = getEntityStream().available();
+                if (count != 0) {
+                    final char data = (char) getEntityStream().read();
+
+                    /* send characters serially */
+                    getSerialDataListeners().get(i).onDataReceived(data);
+
+                    /* get a string buffer from a data frame */
+                    /* send data frames separated by [\n\r] the return carriage/newline */
+                    stringBuffer.append(data);
+
+                    if (isUsingReturnCarriage()) {
+                        if (stringBuffer.toString().contains("\n\r")) {
                             getSerialDataListeners().get(i).onDataReceived(stringBuffer.toString());
                             stringBuffer = new StringBuffer();
                         }
+                    } else {
+                        getSerialDataListeners().get(i).onDataReceived(stringBuffer.toString());
+                        stringBuffer = new StringBuffer();
                     }
-                } catch (IOException e) {
-                    Logger.getLogger(SerialReadEntity.class.getName())
-                          .log(Level.SEVERE, "Serial Reading has failed!", e);
+                }
+            } catch (IOException e) {
+                if (getSerialEntityStatusListener() != null) {
+                    getSerialEntityStatusListener().onExceptionThrown(e);
                 }
             }
+        }
 
-            if (!isMonitoringStarted()) {
-                setMonitoringStarted(true);
-            }
+        if (!isMonitoringStarted()) {
+            setMonitoringStarted(true);
         }
     }
 
