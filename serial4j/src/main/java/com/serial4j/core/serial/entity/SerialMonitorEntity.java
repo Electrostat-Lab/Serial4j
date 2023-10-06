@@ -78,13 +78,20 @@ public abstract class SerialMonitorEntity implements Runnable {
         /* using re-entrant block to be optimized by the new v-threads system */
         try {
             reentrantLock.lock();
-            if (!hasLoggedMonitor) {
-                entityLogger.log(Level.INFO, "Started data monitoring for " + entityName + " thread " + Thread.currentThread());
-            }
+            logStart();
             onDataMonitored(getSerialMonitor());
         } finally {
             reentrantLock.unlock();
         }
+    }
+
+    /**
+     * Provides a JUL logger object for descendant objects to re-use.
+     *
+     * @return this entity logger instance.
+     */
+    protected Logger getEntityLogger() {
+        return entityLogger;
     }
 
     /**
@@ -109,6 +116,15 @@ public abstract class SerialMonitorEntity implements Runnable {
                 }
             }
         }
+    }
+
+    private void logStart() {
+        if(!hasLoggedMonitor) {
+            return;
+        }
+        entityLogger.log(Level.INFO,
+                "Started data monitoring for " + entityName + " thread " + Thread.currentThread());
+        hasLoggedMonitor = false; // shut down logging
     }
 
     /**
