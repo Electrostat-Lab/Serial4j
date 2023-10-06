@@ -31,18 +31,14 @@
  */
 package com.serial4j.core.serial.monitor;
 
-import com.serial4j.core.terminal.Permissions;
-import com.serial4j.core.terminal.control.*;
 import com.serial4j.core.serial.SerialPort;
-import com.serial4j.core.terminal.TerminalDevice;
-import com.serial4j.core.serial.throwable.PermissionDeniedException;
-import com.serial4j.core.serial.throwable.NoAvailableTtyDevicesException;
-import com.serial4j.core.serial.throwable.BrokenPipeException;
-import com.serial4j.core.serial.throwable.NoSuchDeviceException;
-import com.serial4j.core.serial.throwable.InvalidPortException;
+import com.serial4j.core.serial.entity.EntityStatus;
 import com.serial4j.core.serial.entity.impl.SerialReadEntity;
 import com.serial4j.core.serial.entity.impl.SerialWriteEntity;
-import com.serial4j.core.serial.entity.EntityStatus;
+import com.serial4j.core.serial.throwable.*;
+import com.serial4j.core.terminal.Permissions;
+import com.serial4j.core.terminal.TerminalDevice;
+import com.serial4j.core.terminal.control.*;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -87,6 +83,7 @@ public final class SerialMonitor {
     public volatile boolean useReturnCarriage = true;
     private final ArrayList<SerialDataListener> serialDataListeners = new ArrayList<>();
     private final String monitorName;
+    private volatile Thread monitorThread;
     private volatile InputStream readEntityStream;
     private volatile OutputStream writeEntityStream;
     private final TerminalDevice terminalDevice = new TerminalDevice();
@@ -154,10 +151,23 @@ public final class SerialMonitor {
         serialWriteEntity = new SerialWriteEntity(this);
 
         serialReadEntity = new SerialReadEntity(this);
-	    new Thread(() -> {
-            serialReadEntity.run();
-            serialWriteEntity.run();
-        }, monitorName).start();
+	    monitorThread = new Thread(() -> {
+            while (!isTerminate()) {
+                serialReadEntity.run();
+                serialWriteEntity.run();
+            }
+        }, monitorName);
+
+        monitorThread.start();
+    }
+
+    /**
+     * Retrieves a reference to the monitor thread.
+     *
+     * @return the monitor thread instance
+     */
+    public Thread getMonitorThread() {
+        return monitorThread;
     }
 
     /**
