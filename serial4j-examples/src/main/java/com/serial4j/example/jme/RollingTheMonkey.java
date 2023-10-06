@@ -64,16 +64,21 @@ import java.util.concurrent.Callable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.serial4j.core.serial.entity.EntityStatus;
+import com.serial4j.core.serial.entity.impl.SerialReadEntity;
+import com.serial4j.core.serial.entity.impl.SerialWriteEntity;
 import com.serial4j.core.terminal.control.BaudRate;
 import com.serial4j.core.serial.monitor.SerialDataListener;
 import com.serial4j.core.serial.monitor.SerialMonitor;
+
+import javax.swing.*;
 
 /**
  * Physics based marble game.
  * 
  * @author SkidRunner (Mark E. Picknell)
  */
-public class RollingTheMonkey extends SimpleApplication implements SerialDataListener, ActionListener, PhysicsCollisionListener {
+public class RollingTheMonkey extends SimpleApplication implements SerialDataListener, ActionListener, PhysicsCollisionListener, EntityStatus<SerialReadEntity> {
 
     private static final String MESSAGE         = "Thanks for Playing!";
     private static final String INFO_MESSAGE    = "Collect all the spinning cubes!\nPress the 'R' key any time to reset!";
@@ -117,6 +122,7 @@ public class RollingTheMonkey extends SimpleApplication implements SerialDataLis
     public void simpleInitApp() {
         try {
             serialMonitor = new SerialMonitor("Embedded-Controller");
+            serialMonitor.setReadEntityListener(this);
             serialMonitor.startDataMonitoring("/dev/ttyUSB0", BaudRate.B57600, null);
             serialMonitor.addSerialDataListener(this);
         } catch(FileNotFoundException e) {
@@ -472,5 +478,27 @@ public class RollingTheMonkey extends SimpleApplication implements SerialDataLis
         // Reset the message
         messageText.setLocalScale(0.0f);
     }
-    
+
+    @Override
+    public void onSerialEntityInitialized(SerialReadEntity serialMonitorEntity) {
+
+    }
+
+    @Override
+    public void onSerialEntityTerminated(SerialReadEntity serialMonitorEntity) {
+
+    }
+
+    @Override
+    public void onUpdate(SerialReadEntity serialMonitorEntity) {
+
+    }
+
+    @Override
+    public void onExceptionThrown(Exception e) {
+        JOptionPane.showMessageDialog(null, "Reading Serial data has failed, Terminating now!",
+                e.getMessage(), JOptionPane.ERROR_MESSAGE);
+        serialMonitor.setTerminate();
+        stop();
+    }
 }
