@@ -40,8 +40,6 @@ import com.serial4j.core.terminal.control.BaudRate;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Represents a serial write data entity for the {@link SerialMonitor}.
@@ -61,55 +59,54 @@ public class SerialWriteEntity extends SerialMonitorEntity {
 
     @Override
     protected void onDataMonitored(SerialMonitor serialMonitor) {
-        for (; ; ) {
-            /* throws if not initialized yet */
-            if (getTerminalDevice() == null) {
-                throw new SerialMonitorException(SerialMonitorException.DEFAULT_MSG);
-            }
+        /* throws if not initialized yet */
+        if (getTerminalDevice() == null) {
+            throw new SerialMonitorException(SerialMonitorException.DEFAULT_MSG);
+        }
 
-            /* sanity check [terminate] flag */
-            if (isTerminate()) {
-                terminate();
-                if (getSerialEntityStatusListener() != null) {
-                    getSerialEntityStatusListener().onSerialEntityTerminated(this);
-                }
-                return;
+        /* sanity check [terminate] flag */
+        if (isTerminate()) {
+            terminate();
+            if (getSerialEntityStatusListener() != null) {
+                getSerialEntityStatusListener().onSerialEntityTerminated(this);
             }
+            return;
+        }
 
-            /* sanity check data monitoring status */
-            if (!isMonitoringStarted()) {
+        /* sanity check data monitoring status */
+        if (!isMonitoringStarted()) {
+            return;
+        }
+
+        /* initialize and update serial entity */
+        if (!isSerialEntityInitialized()) {
+            if (getSerialEntityStatusListener() != null) {
+                getSerialEntityStatusListener().onSerialEntityInitialized(this);
+            }
+            setSerialEntityInitialized(true);
+        }
+
+        if (getSerialEntityStatusListener() != null) {
+            getSerialEntityStatusListener().onUpdate(this);
+        }
+
+        /* write required data  */
+        for (WritableCapsule capsule : writableCapsules) {
+            /* skip capsules with written data */
+            if (capsule.isDataWritten()) {
                 continue;
             }
-
-            /* initialize and update serial entity */
-            if (!isSerialEntityInitialized()) {
-                if (getSerialEntityStatusListener() != null) {
-                    getSerialEntityStatusListener().onSerialEntityInitialized(this);
+            /* send capsule data to the UART */
+            final String data = capsule.getData();
+            for (int i = 0; i < data.length(); i++) {
+                sendToUART(data.charAt(i));
+                for (int j = 0; j < getSerialDataListeners().size(); j++) {
+                    getSerialDataListeners().get(j).onDataTransmitted(data.charAt(i));
                 }
-                setSerialEntityInitialized(true);
             }
-
-            if (getSerialEntityStatusListener() != null) {
-                getSerialEntityStatusListener().onUpdate(this);
-            }
-
-            /* write required data  */
-            for (WritableCapsule capsule : writableCapsules) {
-                /* skip capsules with written data */
-                if (capsule.isDataWritten()) {
-                    continue;
-                }
-                /* send capsule data to the UART */
-                final String data = capsule.getData();
-                for (int j = 0; j < data.length(); j++) {
-                    sendToUART(data.charAt(j));
-                    for (int k = 0; k < getSerialDataListeners().size(); k++) {
-                        getSerialDataListeners().get(k).onDataTransmitted(data.charAt(j));
-                    }
-                }
-                capsule.setDataWritten(true);
-            }
+            capsule.setDataWritten(true);
         }
+
     }
 
     @Override
@@ -175,8 +172,9 @@ public class SerialWriteEntity extends SerialMonitorEntity {
         try {
             getEntityStream().write(data);
         } catch (IOException e) {
-            Logger.getLogger(this.getClass().getName())
-                    .log(Level.SEVERE, "Writing data has failed!", e);
+            if (getSerialEntityStatusListener() != null) {
+                getSerialEntityStatusListener().onExceptionThrown(e);
+            }
         }
     }
 }
