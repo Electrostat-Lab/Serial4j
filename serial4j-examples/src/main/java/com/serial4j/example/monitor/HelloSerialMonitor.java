@@ -109,6 +109,11 @@ public class HelloSerialMonitor implements SerialDataListener, EntityStatus<Seri
     }
 
     @Override
+    public void onExceptionThrown(Exception e) {
+
+    }
+
+    @Override
     public void onDataReceived(int data) {
         
     }
