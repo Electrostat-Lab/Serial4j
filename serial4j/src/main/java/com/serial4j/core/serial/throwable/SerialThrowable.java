@@ -39,7 +39,13 @@ import com.serial4j.core.errno.Errno;
  * @author pavl_g.
  */
 public abstract class SerialThrowable extends RuntimeException {
-    
+
+    /**
+     * Provides the abstract runtime throwable exception,
+     * the parent of all serial exceptions.
+     *
+     * @param message a message to pass
+     */
     public SerialThrowable(String message) {
         super(message);
     }
@@ -49,5 +55,5 @@ public abstract class SerialThrowable extends RuntimeException {
      *
      * @return the error code causing this exception.
      */
-    abstract Errno getCausingErrno();
+    public abstract Errno getCausingErrno();
 }
