@@ -45,6 +45,8 @@ public final class NativeErrno {
     private NativeErrno() {
     }
 
+    static native int getBadFileNumberErrno();
+
     static native int getBadFileDescriptorErrno();
 
     static native int getBrokenPipeErrno();
