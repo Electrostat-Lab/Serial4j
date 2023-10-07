@@ -122,7 +122,7 @@ public final class TerminalDevice {
                                                              FileTableOverflowException,
                                                              NoSpaceLeftException,
                                                              ReadOnlyFileSystemException,
-                                                             PermissionDeniedException {                                                           
+                                                             PermissionDeniedException {
         if (isSerial4jLoggingEnabled()) {
             LOGGER.log(Level.INFO, "Opening serial device " + serialPort.getPath());
         }
@@ -146,6 +146,9 @@ public final class TerminalDevice {
     public void initTerminal() throws InvalidPortException,
                                      FileNotFoundException,
                                      NoAvailableTtyDevicesException {
+        if (nativeTerminalDevice.getSerialPort() == null) {
+            throw new InvalidPortException("Bad serial port!");
+        }
         if (isSerial4jLoggingEnabled()) {
             LOGGER.log(Level.INFO, "Initializing serial device " + getSerialPort().getPath());
         }
@@ -174,7 +177,7 @@ public final class TerminalDevice {
                                                                               InvalidPortException,
                                                                               NotTtyDeviceException,
                                                                               InvalidArgumentException {
-                                       
+
         int returnValue = nativeTerminalDevice.setTerminalControlFlag(flag.getValue());
         if (isOperationFailed(returnValue)) {
             returnValue = nativeTerminalDevice.getErrno();
@@ -252,8 +255,10 @@ public final class TerminalDevice {
                                                                NotTtyDeviceException {
         final TerminalControlFlag TCF = TerminalControlFlag.EMPTY_INSTANCE;                                            
         final int returnValue = nativeTerminalDevice.getTerminalControlFlag();
-        /* Warning: Force cast the errno to (int) */
-        ErrnoToException.throwFromErrno((int) returnValue);
+        if (isOperationFailed(returnValue)) {
+            /* Warning: Force cast the errno to (int) */
+            ErrnoToException.throwFromErrno(nativeTerminalDevice.getErrno());
+        }
         TCF.setValue(returnValue);
         return TCF;                                        
     }
@@ -264,7 +269,10 @@ public final class TerminalDevice {
         final TerminalLocalFlag TLF = TerminalLocalFlag.EMPTY_INSTANCE;                                            
         final int returnValue = nativeTerminalDevice.getTerminalLocalFlag();
         /* Warning: Force cast the errno to (int) */
-        ErrnoToException.throwFromErrno(returnValue);
+        if (isOperationFailed(returnValue)) {
+            /* Warning: Force cast the errno to (int) */
+            ErrnoToException.throwFromErrno(nativeTerminalDevice.getErrno());
+        }
         TLF.setValue(returnValue);
         return TLF;                                        
     }
@@ -275,7 +283,10 @@ public final class TerminalDevice {
         final TerminalInputFlag TIF = TerminalInputFlag.EMPTY_INSTANCE;
         final int returnValue = nativeTerminalDevice.getTerminalInputFlag();
         /* Warning: Force cast the errno to (int) */
-        ErrnoToException.throwFromErrno((int) returnValue);
+        if (isOperationFailed(returnValue)) {
+            /* Warning: Force cast the errno to (int) */
+            ErrnoToException.throwFromErrno(nativeTerminalDevice.getErrno());
+        }
         TIF.setValue(returnValue);
         return TIF;                                        
     }
@@ -286,7 +297,10 @@ public final class TerminalDevice {
         final TerminalOutputFlag TOF = TerminalOutputFlag.EMPTY_INSTANCE;
         final int returnValue = nativeTerminalDevice.getTerminalOutputFlag();
         /* Warning: Force cast the errno to (int) */
-        ErrnoToException.throwFromErrno((int) returnValue);
+        if (isOperationFailed(returnValue)) {
+            /* Warning: Force cast the errno to (int) */
+            ErrnoToException.throwFromErrno(nativeTerminalDevice.getErrno());
+        }
         TOF.setValue(returnValue);
         return TOF;                                        
     }
@@ -337,14 +351,13 @@ public final class TerminalDevice {
                                                           BrokenPipeException,
                                                           InvalidPortException,
                                                           NoAvailableTtyDevicesException {
-        final long numberOfWrittenBytes = nativeTerminalDevice.write(buffer, buffer.length());
-        String message;
-        if (numberOfWrittenBytes == -1) {
-            message = "Write Permission [O_WRONLY] isn't granted, [Permissions: " + permissionsDescription + "]";
-        } else {
-            message = "Invalid Port " + nativeTerminalDevice.getSerialPort().getPath(); 
+        if (nativeTerminalDevice.getSerialPort() == null) {
+            throw new InvalidPortException("Bad serial port!");
         }
-        if (numberOfWrittenBytes < 1) {
+        final long numberOfWrittenBytes = nativeTerminalDevice.write(buffer, buffer.length());
+        if (numberOfWrittenBytes == Errno.ERR_INVALID_PORT.getValue()) {
+            ErrnoToException.throwFromErrno(Errno.ERR_INVALID_PORT.getValue());
+        } else if (numberOfWrittenBytes <= 0) {
             ErrnoToException.throwFromErrno(nativeTerminalDevice.getErrno());
         }
         return numberOfWrittenBytes;
@@ -355,14 +368,14 @@ public final class TerminalDevice {
                                                  BrokenPipeException,
                                                  InvalidPortException,
                                                  NoAvailableTtyDevicesException {
-        final long numberOfWrittenBytes = nativeTerminalDevice.write(data);
-        String message;
-        if (numberOfWrittenBytes == -1) {
-            message = "Write Permission [O_WRONLY] isnot granted.";
-        } else {
-            message = "Invalid Port " + nativeTerminalDevice.getSerialPort().getPath(); 
+        if (nativeTerminalDevice.getSerialPort() == null) {
+            throw new InvalidPortException("Bad serial port!");
         }
-        if (numberOfWrittenBytes <= 0) {
+
+        final long numberOfWrittenBytes = nativeTerminalDevice.write(data);
+        if (numberOfWrittenBytes == Errno.ERR_INVALID_PORT.getValue()) {
+            ErrnoToException.throwFromErrno(Errno.ERR_INVALID_PORT.getValue());
+        } else if (numberOfWrittenBytes <= 0) {
             ErrnoToException.throwFromErrno(nativeTerminalDevice.getErrno());
         }
         return numberOfWrittenBytes;
@@ -374,17 +387,56 @@ public final class TerminalDevice {
                                                    InvalidPortException,
                                                    NoAvailableTtyDevicesException {
         long numberOfWrittenBytes = 0;
-        for (int i = 0; i < data.length; i++) {
-           numberOfWrittenBytes += this.write(data[i]);
-           if (numberOfWrittenBytes <= 0) {
-               break;
-           }
+        for (int datum : data) {
+            numberOfWrittenBytes += this.write(datum);
+            if (numberOfWrittenBytes <= 0) {
+                break;
+            }
         }
         return numberOfWrittenBytes;
     }
 
     public long read() {
-        return nativeTerminalDevice.read();
+        if (nativeTerminalDevice.getSerialPort() == null) {
+            throw new InvalidPortException("Bad serial port!");
+        }
+        long bytes = nativeTerminalDevice.read();
+        if (bytes == Errno.ERR_OPERATION_FAILED.getValue()) {
+            ErrnoToException.throwFromErrno(nativeTerminalDevice.getErrno());
+        }
+
+        return bytes;
+    }
+
+    public long read(final int length) {
+        if (nativeTerminalDevice.getSerialPort() == null) {
+            throw new InvalidPortException("Bad serial port!");
+        }
+        long bytes = nativeTerminalDevice.read(length);
+        if (bytes == Errno.ERR_OPERATION_FAILED.getValue()) {
+            ErrnoToException.throwFromErrno(nativeTerminalDevice.getErrno());
+        }
+
+        return bytes;
+    }
+
+    /**
+     * Moves the current file-system position by a 64-bit offset value
+     * forwardly or backwardly according to the file-seek criterion (the "whence" parameter).
+     *
+     * @param offset the number of bytes to seek with; based on the criterion applied
+     * @param criterion the file seeking criterion
+     * @return the number of sought bytes in a 64-bit integer format
+     */
+    public long seek(long offset, NativeTerminalDevice.FileSeekCriterion criterion) {
+        if (nativeTerminalDevice.getSerialPort() == null) {
+            throw new InvalidPortException("Bad or not initialized serial port!");
+        }
+        long bytes = nativeTerminalDevice.seek(offset, criterion.getWhence());
+        if (bytes == Errno.ERR_OPERATION_FAILED.getValue()) {
+            ErrnoToException.throwFromErrno(nativeTerminalDevice.getErrno());
+        }
+        return bytes;
     }
 
     public String getReadBuffer() {
@@ -427,11 +479,20 @@ public final class TerminalDevice {
                                    BrokenPipeException,
                                    InvalidPortException,
                                    NoAvailableTtyDevicesException {
+        if (nativeTerminalDevice.getSerialPort() == null) {
+            throw new InvalidPortException("Bad serial port!");
+        }
+
         if (isSerial4jLoggingEnabled()) {
             LOGGER.log(Level.INFO, "Closing port: " + getSerialPort().getPath());
         }
-        final int errno = nativeTerminalDevice.closePort();
-        ErrnoToException.throwFromErrno(errno);
+        final int returnValue = nativeTerminalDevice.closePort();
+        // sanity check for the business error code
+        if (returnValue == Errno.ERR_INVALID_PORT.getValue()) {
+            ErrnoToException.throwFromErrno(Errno.ERR_INVALID_PORT.getValue());
+        } else if (returnValue < Errno.OPERATION_SUCCEEDED.getValue()) {
+            ErrnoToException.throwFromErrno(nativeTerminalDevice.getErrno());
+        }
     }
     
     public void setSerial4jLoggingEnabled(final boolean loggingEnabled) {
@@ -462,8 +523,9 @@ public final class TerminalDevice {
         if (isSerial4jLoggingEnabled()) {
             LOGGER.log(Level.INFO, "Fetching Serial ports.");
         }
-        final int errno = nativeTerminalDevice.fetchSerialPorts();
-        ErrnoToException.throwFromErrno(errno);
+        // throwing the return value here
+        final int returnValue = nativeTerminalDevice.fetchSerialPorts();
+        ErrnoToException.throwFromErrno(returnValue);
     }
 
     private boolean isOperationFailed(final int returnValue) {

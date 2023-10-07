@@ -41,7 +41,7 @@ import com.serial4j.util.loader.NativeImageLoader;
 /**
  * Represents the native Java binding for the Serial-4j API, represented by
  * `com_serial4j_core_terminal_NativeTerminalDevice.h` natively.
- * 
+ *
  * @author pavl_g.
  */
 @SuppressWarnings("all")
@@ -68,12 +68,29 @@ public final class NativeTerminalDevice {
     }
 
     /**
+     * Sets up the native environment for this terminal device.
+     *
+     * @return (- 1) if the jni env pointer is NULL, (1) for successful initialization.
+     */
+    @Deprecated
+    static native int setupJniEnvironment();
+
+    /**
      * Retrieves the serial port associated with this terminal device.
      *
      * @return the serial port object associated with this terminal device.
      */
     public SerialPort getSerialPort() {
         return this.serialPort;
+    }
+
+    /**
+     * Initializes the serial port path of the native terminal device before opening the terminal device port.
+     *
+     * @param serialPort the object to initialize the serial port with.
+     */
+    void setSerialPort(final SerialPort serialPort) {
+        this.serialPort = serialPort;
     }
 
     /**
@@ -101,23 +118,6 @@ public final class NativeTerminalDevice {
     }
 
     /**
-     * Initializes the serial port path of the native terminal device before opening the terminal device port.
-     * 
-     * @param serialPort the object to initialize the serial port with.
-     */
-    void setSerialPort(final SerialPort serialPort) {
-        this.serialPort = serialPort;
-    }
-
-    /**
-     * Sets up the native environment for this terminal device.
-     * 
-     * @return (-1) if the jni env pointer is NULL, (1) for successful initialization.
-     */
-    @Deprecated
-    static native int setupJniEnvironment();
-
-    /**
      * Adjusts the native terminal control [c_cflag] of the [termios] structure variable for this terminal device.
      *
      * <p>
@@ -128,9 +128,9 @@ public final class NativeTerminalDevice {
      * <p>
      * Default value = tty->c_cflag |= (CREAD | CS8 | CLOCAL); defined by {@link NativeTerminalDevice#initTerminal()}.
      * </p>
-     * 
+     *
      * @param flag the flag to set the [c_cflag] to.
-     * @return errno(-1) for failure, errno(-2) for invalid port, errno(1) for success.
+     * @return errno(- 1) for failure, errno(-2) for invalid port, errno(1) for success.
      * @see TerminalControlFlag
      */
     native int setTerminalControlFlag(final int flag);
@@ -144,14 +144,14 @@ public final class NativeTerminalDevice {
      * </p>
      *
      * <p>
-     * Default value = tty->c_lflag &= ~(ICANON | ECHO | ECHOE | ECHOK | ECHOKE | ECHONL | ECHOPRT | ECHOCTL | ISIG | IEXTEN); 
+     * Default value = tty->c_lflag &= ~(ICANON | ECHO | ECHOE | ECHOK | ECHOKE | ECHONL | ECHOPRT | ECHOCTL | ISIG | IEXTEN);
      * defined by {@link NativeTerminalDevice#initTerminal()}.
      * </p>
      *
      * @param flag the flag to set the [c_lflag] to.
-     * @return errno(-1) for failure, errno(-2) for invalid port, errno(1) for success.
+     * @return errno(- 1) for failure, errno(-2) for invalid port, errno(1) for success.
      * @see TerminalLocalFlag
-     */    
+     */
     native int setTerminalLocalFlag(final int flag);
 
     /**
@@ -167,9 +167,9 @@ public final class NativeTerminalDevice {
      * </p>
      *
      * @param flag the flag to set the [c_iflag] to.
-     * @return errno(-1) for failure, errno(-2) for invalid port, errno(1) for success.
+     * @return errno(- 1) for failure, errno(-2) for invalid port, errno(1) for success.
      * @see TerminalInputFlag
-     */    
+     */
     native int setTerminalInputFlag(final int flag);
 
     /**
@@ -185,14 +185,14 @@ public final class NativeTerminalDevice {
      * </p>
      *
      * @param flag the flag to set the [c_oflag] to.
-     * @return errno(-1) for failure, errno(-2) for invalid port, errno(1) for success.
+     * @return errno(- 1) for failure, errno(-2) for invalid port, errno(1) for success.
      * @see TerminalOutputFlag
-     */    
+     */
     native int setTerminalOutputFlag(final int flag);
 
     /**
      * Retrieves the terminal control flag from this terminal device port descriptor in 64-bit format.
-     * 
+     *
      * @return the [c_cflag] value in integers.
      */
     native int getTerminalControlFlag();
@@ -227,8 +227,8 @@ public final class NativeTerminalDevice {
      * </p>
      *
      * @param timeout the value of the read timeout, applied only when the first index of [mode] is 1 (aka read timeout is activated).
-     * @param bytes the value of the minimum byte to read in this time.
-     * @return errno(-1) for failure, errno(-2) for invalid port, errno(1) for success.
+     * @param bytes   the value of the minimum byte to read in this time.
+     * @return errno(- 1) for failure, errno(-2) for invalid port, errno(1) for success.
      * @see ReadConfiguration
      */
     native int setReadConfigurationMode(final short timeout, final short bytes);
@@ -242,7 +242,7 @@ public final class NativeTerminalDevice {
      * </p>
      *
      * @return an array referring to the read mode, where index [0] represents the read timeout, index [1] represents
-     *         the minimum bytes to read.
+     * the minimum bytes to read.
      */
     native short[] getReadConfigurationMode();
 
@@ -257,7 +257,7 @@ public final class NativeTerminalDevice {
      * Fetches the available system teletype terminal devices (tty) located within "/dev" directory
      * and insert the result into {@link NativeTerminalDevice#serialPorts}.
      *
-     * @return errno(-1) for failure, errno(-2) for invalid port, errno(1) for success.
+     * @return errno(- 1) for failure, errno(-2) for invalid port, errno(1) for success.
      */
     native int fetchSerialPorts();
 
@@ -294,11 +294,42 @@ public final class NativeTerminalDevice {
     native long read();
 
     /**
+     * Reads the data from this file-system and inserts the result into the {@link NativeTerminalDevice#readBuffer}
+     * string buffer.
+     *
+     * @param length the length of the reading buffer
+     * @return the number of read bytes
+     */
+    native long read(final int length);
+
+    /**
+     * Seeks the current position of this file-system according to the
+     * "whence" argument by an amount of bytes (offset).
+     *
+     * <p>
+     * Note: a disptach to this native method produces a side effect, the
+     * side effect is related to the seeking strategy used aka. the "whence"
+     * parameter, the file position is a pointer that points to the current byte
+     * ready for I/O operations, if the "whence" parameter is settled to use "SEEK_END"
+     * and the offset value is a positive 64-bit integer, then the file position will
+     * be incremented as (end_position + offset) that means an overflow will take place
+     * and the file size will be extended on the next "write" operation and the
+     * bytes in between "end_position" and "offset" will be written to "0".
+     * </p>
+     *
+     * @param offset the amount of seek
+     * @param whence the criterion of seeking, either from the current
+     *               position, or from the start, or from the end of the file
+     * @return the number of seeked bytes
+     */
+    native long seek(long offset, int whence);
+
+    /**
      * Opens this terminal device using the path to the port [port] in strings and the port permissions [flag] in integers.
      *
-     * @param port the port path in strings. 
+     * @param port the port path in strings.
      * @param flag the flag for the base file control native api [fcntl].
-     * @return errno(-1) for failure, errno(1) for success.
+     * @return errno(- 1) for failure, errno(1) for success.
      */
     native int openPort(final String port, final int flag);
 
@@ -348,7 +379,7 @@ public final class NativeTerminalDevice {
      * Note: This should be called right after {@link NativeTerminalDevice#openPort(String, int)}.
      * </p>
      *
-     * @return errno(-1) for failure, errno(-2) for invalid port, errno(1) for success.
+     * @return errno(- 1) for failure, errno(-2) for invalid port, errno(1) for success.
      */
     native int initTerminal();
 
@@ -356,8 +387,8 @@ public final class NativeTerminalDevice {
      * Adjusts the baud rate aka. the speed of data transmission in bits/seconds for this bus.
      *
      * @param baudRate the baud rate POSIX native code, find more about baud rate codes at `include/x86_64-linux-gnu/bits/termios.h`
-     * @return errno(-1) for failure, errno(-2) for invalid port, errno(1) for success.
-     */    
+     * @return errno(- 1) for failure, errno(-2) for invalid port, errno(1) for success.
+     */
     native int setBaudRate(int baudRate);
 
     /**
@@ -367,8 +398,64 @@ public final class NativeTerminalDevice {
      * Note: This call clears the {@link NativeTerminalDevice#serialPort#portOpened} to 0,
      * the port descriptor {@link NativeTerminalDevice#serialPort#fd} to 0 and the port path {@link NativeTerminalDevice#serialPort#fd} to "".
      * </p>
-     * 
-     * @return errno(-1) for failure, errno(-2) for invalid port, errno(1) for success.
+     *
+     * @return errno(- 1) for failure, errno(-2) for invalid port, errno(1) for success.
      */
     native int closePort();
+
+    /**
+     * The file seek criterion that feeds the {@link NativeTerminalDevice#seek(long, int)}.
+     */
+    public static enum FileSeekCriterion {
+
+        /**
+         * Indicates that a file-system position is to be sought by a number of bytes (referred to by the offset)
+         * from the start of the file-system.
+         */
+        SEEK_SET(getSeekFromStart(), "Seeks the file-system position from the start by an offset value."),
+
+        /**
+         * Indicates that a file-system position is to be sought by a number of bytes (referred to by the offset)
+         * from the current position of the file-system.
+         */
+        SEEK_CUR(getSeekFromCurrent(), "Seeks the file-system position from the current position by an offset value."),
+
+        /**
+         * Indicates that a file-system position is to be sought by a number of bytes (referred to by the offset)
+         * from the end of the file-system.
+         */
+        SEEK_END(getSeekFromEnd(), "Seeks the file-system position from the end by an offset value.");
+
+        private final int whence;
+        private final String descritpion;
+
+        FileSeekCriterion(final int whence, final String description) {
+            this.whence = whence;
+            this.descritpion = description;
+        }
+
+        private static native int getSeekFromStart();
+
+        private static native int getSeekFromCurrent();
+
+        private static native int getSeekFromEnd();
+
+        /**
+         * Retrieves the seek criteria mask.
+         *
+         * @return the seek whence value in integers
+         */
+        public int getWhence() {
+            return whence;
+        }
+
+        /**
+         * Retrieves the description of this criteria.
+         *
+         * @return the description in a string format
+         */
+        public String getDescritpion() {
+            return descritpion;
+        }
+    }
 }
