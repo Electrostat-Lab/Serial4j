@@ -30,39 +30,24 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package com.serial4j.core.errno;
-
-import com.serial4j.core.serial.throwable.NotInterpretableErrnoError;
-import com.serial4j.core.serial.throwable.SerialThrowable;
+package com.serial4j.core.serial.throwable;
 
 /**
- * Reflects C native "errno" into real java exceptions.
- * 
- * @author pavl_g.
+ * Thrown to indicate that the {@link com.serial4j.core.errno.ErrnoToException}
+ * is not capable of interpreting the native error code into a Java exception;
+ * because the error code is not mapped to a Java Exception via {@link com.serial4j.core.errno.Errno}.
+ *
+ * @author pavl_g
  */
-public final class ErrnoToException {
-    
-    private ErrnoToException() {
-    }
+public final class NotInterpretableErrnoError extends Error {
 
     /**
-     * Throws a Java exception from a native errno.
-     * 
-     * @param errno the native error code to which the exception will be thrown against.
-     * @see SerialThrowable
+     * Thrown when the {@link com.serial4j.core.errno.ErrnoToException}
+     * utility cannot interpret a thrown native error code.
+     *
+     * @param errno the native error no. code
      */
-    public static void throwFromErrno(final int errno) {
-        /* linearly matches the native errno with the pre-defined exceptions */
-        for (Errno errnoObj : Errno.class.getEnumConstants()) {
-            SerialThrowable throwable;
-            if (errnoObj.getValue() != errno) {
-                continue;
-            }
-            if ((throwable = errnoObj.getAssociatedThrowable()) == null) {
-                return;
-            }
-            throw throwable;
-        }
-        throw new NotInterpretableErrnoError(errno);
+    public NotInterpretableErrnoError(final int errno) {
+        super("Error code {" + errno + "} is not found, please report this crash-log!");
     }
 }
