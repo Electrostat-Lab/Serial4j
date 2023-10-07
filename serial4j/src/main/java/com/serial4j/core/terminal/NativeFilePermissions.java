@@ -35,8 +35,8 @@ package com.serial4j.core.terminal;
 /**
  * Provides the POSIX file permissions implementation values.
  *
- * @see Permissions
  * @author pavl_g
+ * @see Permissions
  */
 public final class NativeFilePermissions {
 
@@ -89,4 +89,11 @@ public final class NativeFilePermissions {
      * @return the "O_NONBLOCK" value
      */
     static native int getTerminalNonBlock();
+
+    /**
+     * Provides the creating ability to the {@link NativeTerminalDevice#openPort(String, int)}.
+     *
+     * @return the "O_CREAT" value
+     */
+    static native int getCreateFile();
 }
