@@ -35,7 +35,7 @@ import com.serial4j.core.errno.Errno;
 import com.serial4j.core.terminal.TerminalDevice;
 
 /**
- * Provides a translation unit to the {@link Errno#EBADF} which
+ * Provides a translation unit to the {@link Errno#EBADFD} which
  * appears in an attempt to initialize non-terminal devices.
  *
  * <p>
@@ -48,7 +48,7 @@ import com.serial4j.core.terminal.TerminalDevice;
 public final class BadFileDescriptorException extends SerialThrowable {
 
     /**
-     * Instantiates an exception for the {@link Errno#EBADF}.
+     * Instantiates an exception for the {@link Errno#EBADFD}.
      *
      * @param message a message to display
      */
@@ -58,7 +58,6 @@ public final class BadFileDescriptorException extends SerialThrowable {
 
     @Override
     public Errno getCausingErrno() {
-        return Errno.EBADF;
+        return Errno.EBADFD;
     }
-
 }
