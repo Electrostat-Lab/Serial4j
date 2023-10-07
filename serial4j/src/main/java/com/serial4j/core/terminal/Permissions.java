@@ -63,7 +63,12 @@ public enum Permissions {
     /**
      * Applies non-blocking operations for the target terminal device.
      */
-    O_NONBLOCK(NativeFilePermissions.getTerminalNonBlock(), "Terminal non block");
+    O_NONBLOCK(NativeFilePermissions.getTerminalNonBlock(), "Terminal non block"),
+
+    /**
+     * Creates the file if it doesn't exist.
+     */
+    O_CREATE(NativeFilePermissions.getCreateFile(), "Create file if it doesn't exist");
 
     private int value;
     private String description;
