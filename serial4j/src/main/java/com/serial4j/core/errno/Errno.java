@@ -83,7 +83,9 @@ public enum Errno {
     /**
      * Error codes for tcgetattr(int, struct termios*) and tcsetattr(int, struct termios*).
      */
-    EBADF(NativeErrno.getBadFileDescriptorErrno(), new BadFileDescriptorException("File descriptor in bad state")),
+    EBADFD(NativeErrno.getBadFileDescriptorErrno(), new BadFileDescriptorException("File descriptor in bad state")),
+
+    EBADF(NativeErrno.getBadFileNumberErrno(), new BadFileNumberException("Bad file number")),
     ENOTTY(NativeErrno.getNotTtyDeviceErrno(), new NotTtyDeviceException("Not a typewriter device")),
 
     /**
