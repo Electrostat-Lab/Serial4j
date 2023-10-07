@@ -246,6 +246,15 @@ namespace TerminalDevice {
     ssize_t readData(void* buffer, int length, int* fd);
 
     /**
+     * @brief Seeks the file position of the file-system by offset bytes based on the whence criterion.
+     *
+     * @param offset bytes to seek with
+     * @param whence the criterion of seeking
+     * @return the number of seeked bytes
+     */
+    off_t seek(int* fd, off_t offset, int whence);
+
+    /**
      * @brief Closes the serial port device.
      *
      * @return int (1) for success, (-1) for failure, (-2) for invalid port.

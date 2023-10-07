@@ -239,6 +239,13 @@ ssize_t TerminalDevice::readData(void* buffer, int length, int* fd) {
     return read(*fd, buffer, length);
 }
 
+off_t TerminalDevice::seek(int* fd, off_t offset, int whence) {
+    if (*fd <= 0) {
+        return ERR_INVALID_PORT;
+    }
+    return lseek(*fd, offset, whence);
+}
+
 int TerminalDevice::closePort(int* fd) {
     if (*fd <= 0) {
         return ERR_INVALID_PORT;
