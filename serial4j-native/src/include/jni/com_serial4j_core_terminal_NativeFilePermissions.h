@@ -47,6 +47,14 @@ JNIEXPORT jint JNICALL Java_com_serial4j_core_terminal_NativeFilePermissions_get
 JNIEXPORT jint JNICALL Java_com_serial4j_core_terminal_NativeFilePermissions_getTerminalNonBlock
   (JNIEnv *, jclass);
 
+/*
+ * Class:     com_serial4j_core_terminal_NativeFilePermissions
+ * Method:    getCreateFile
+ * Signature: ()I
+ */
+JNIEXPORT jint JNICALL Java_com_serial4j_core_terminal_NativeFilePermissions_getCreateFile
+  (JNIEnv *, jclass);
+
 #ifdef __cplusplus
 }
 #endif

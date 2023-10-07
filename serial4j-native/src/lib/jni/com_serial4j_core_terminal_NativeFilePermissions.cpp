@@ -25,3 +25,8 @@ JNIEXPORT jint JNICALL Java_com_serial4j_core_terminal_NativeFilePermissions_get
   (JNIEnv* env, jclass clazz) {
     return O_NONBLOCK;
 }
+
+JNIEXPORT jint JNICALL Java_com_serial4j_core_terminal_NativeFilePermissions_getCreateFile
+  (JNIEnv* env, jclass clazz) {
+    return O_CREAT;
+}
