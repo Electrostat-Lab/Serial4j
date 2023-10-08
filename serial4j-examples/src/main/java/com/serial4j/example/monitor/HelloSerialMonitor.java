@@ -50,6 +50,10 @@ public class HelloSerialMonitor implements SerialDataListener, EntityStatus<Seri
 
     private static boolean isDataSent;
 
+    public static void main(String[] args) {
+        new HelloSerialMonitor().run();
+    }
+
     @Override
     public void run() {
         System.out.println(Thread.currentThread());

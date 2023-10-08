@@ -117,13 +117,19 @@ public class RollingTheMonkey extends SimpleApplication implements SerialDataLis
     private BitmapText messageText;
 
     private SerialMonitor serialMonitor;
+    private static String[] args;
+
+    public static void main(String[] args) {
+        RollingTheMonkey.args = args;
+        new RollingTheMonkey().start();
+    }
 
     @Override
     public void simpleInitApp() {
         try {
             serialMonitor = new SerialMonitor("Embedded-Controller");
             serialMonitor.setReadEntityListener(this);
-            serialMonitor.startDataMonitoring("/dev/ttyUSB0", BaudRate.B57600, null);
+            serialMonitor.startDataMonitoring(args[0], BaudRate.B57600, null);
             serialMonitor.addSerialDataListener(this);
         } catch(FileNotFoundException e) {
             Logger.getLogger(getClass().getName())

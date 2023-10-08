@@ -57,6 +57,10 @@ public final class HelloSerial4jIO implements Runnable {
      */
     private final TerminalDevice ttyDevice = new TerminalDevice();
 
+    public static void main(String[] args) {
+        new HelloSerial4jIO().run();
+    }
+
     @Override
     public void run() {
         try {

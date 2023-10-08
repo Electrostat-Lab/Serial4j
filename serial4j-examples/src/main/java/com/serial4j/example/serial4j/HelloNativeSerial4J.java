@@ -54,6 +54,9 @@ public final class HelloNativeSerial4J implements Runnable {
 	 */
 	private final TerminalDevice ttyDevice = new TerminalDevice();
 
+	public static void main(String[] args) {
+		new HelloNativeSerial4J().run();
+	}
 	@Override
 	public void run() {
 		System.out.println(Thread.currentThread());
