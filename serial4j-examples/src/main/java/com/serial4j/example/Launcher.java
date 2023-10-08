@@ -32,12 +32,23 @@
 package com.serial4j.example;
 
 import com.avrsandbox.snaploader.LoadingCriterion;
-import com.serial4j.example.jme.RollingTheMonkey;
-import com.serial4j.example.serial4j.HelloNativeSerial4J;
 import com.serial4j.util.loader.NativeImageLoader;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 /**
- * Starts the applications test cases.
+ * The entry point of the API modular test cases, it reflectively runs
+ * the "main" method from a selected test case with the selected port, and
+ * it's fully compatible with a headless CI/CD interface.
+ *
+ * <p>
+ * To run a test case, use this format from your command-line:
+ * └──╼ $./gradlew :serial4j-examples:run --args="com.serial4j.example.monitor.HelloSerialMonitor  /dev/ttyUSB0"
+ * </p>
+ *
+ * <p>
+ * The arguments are delimited by an empty white space.
+ * </p>
  * 
  * @author pavl_g.
  */
@@ -49,7 +60,11 @@ public final class Launcher {
         NativeImageLoader.setExtractionPathFromUserDir("libs", "bin");
     }
 
-    public static void main(String[] args) {
-        new HelloNativeSerial4J().run();
+    public static void main(String[] args) throws ClassNotFoundException
+            , NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        final Class<?> clazz = Class.forName(args[0]);
+        final Method method = clazz.getMethod("main", String[].class);
+        final String[] args0 = new String[] { args[1] };
+        method.invoke(null, (Object) args0);
     }
 }
