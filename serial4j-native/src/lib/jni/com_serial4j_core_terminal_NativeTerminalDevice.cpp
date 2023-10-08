@@ -168,11 +168,33 @@ JNIEXPORT jlong JNICALL Java_com_serial4j_core_terminal_NativeTerminalDevice_rea
     int length = tty.c_cc[VMIN] <= 0 ? 1 : tty.c_cc[VMIN];
 
     char strBuffer[length + 1];
+    /* clear the memory blocks before using */
+    memset(strBuffer, '\0', sizeof(strBuffer));
     long numberOfReadChars = TerminalDevice::readData((void*) strBuffer, length, &fd);
     /* get the java string buffer and setup its data with the buffer */
     JniUtils::setObjectField(env, &object, "readBuffer", "Ljava/lang/String;", env->NewStringUTF(strBuffer));
 
     return numberOfReadChars;
+}
+
+JNIEXPORT jlong JNICALL Java_com_serial4j_core_terminal_NativeTerminalDevice_read__I
+  (JNIEnv* env, jobject object, jint length) {
+    int fd = JniUtils::getPortDescriptorFromSerialPort(env, &object);
+
+    /* use an additional memory block for the null terminating character '\0' */
+    char strBuffer[length + 1];
+    /* clear the memory blocks before using */
+    memset(strBuffer, '\0', sizeof(strBuffer));
+    long numberOfReadChars = TerminalDevice::readData((void*) strBuffer, length, &fd);
+    /* get the java string buffer and setup its data with the buffer */
+    JniUtils::setObjectField(env, &object, "readBuffer", "Ljava/lang/String;", env->NewStringUTF(strBuffer));
+    return numberOfReadChars;
+}
+
+JNIEXPORT jlong JNICALL Java_com_serial4j_core_terminal_NativeTerminalDevice_seek
+  (JNIEnv* env, jobject object, jlong offset, jint whence) {
+    int fd = JniUtils::getPortDescriptorFromSerialPort(env, &object);
+    return TerminalDevice::seek(&fd, offset, whence);
 }
 
 JNIEXPORT jint JNICALL Java_com_serial4j_core_terminal_NativeTerminalDevice_setBaudRate
