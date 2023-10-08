@@ -6,6 +6,11 @@ JNIEXPORT jint JNICALL Java_com_serial4j_core_errno_NativeErrno_getBadFileDescri
     return EBADFD;
 }
 
+JNIEXPORT jint JNICALL Java_com_serial4j_core_errno_NativeErrno_getBadFileNumberErrno
+  (JNIEnv* env, jclass clazz) {
+    return EBADF;
+}
+
 JNIEXPORT jint JNICALL Java_com_serial4j_core_errno_NativeErrno_getBrokenPipeErrno
   (JNIEnv* env, jclass clazz) {
     return EPIPE;
@@ -73,7 +78,7 @@ JNIEXPORT jint JNICALL Java_com_serial4j_core_errno_NativeErrno_getNoSuchFileErr
 
 JNIEXPORT jint JNICALL Java_com_serial4j_core_errno_NativeErrno_getNotTtyDeviceErrno
   (JNIEnv* env, jclass clazz) {
-    return ERR_NO_AVAILABLE_TTY_DEVICES;
+    return ENOTTY;
 }
 
 JNIEXPORT jint JNICALL Java_com_serial4j_core_errno_NativeErrno_getOperationFailedErrno

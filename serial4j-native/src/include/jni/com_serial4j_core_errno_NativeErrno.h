@@ -9,6 +9,14 @@ extern "C" {
 #endif
 /*
  * Class:     com_serial4j_core_errno_NativeErrno
+ * Method:    getBadFileNumberErrno
+ * Signature: ()I
+ */
+JNIEXPORT jint JNICALL Java_com_serial4j_core_errno_NativeErrno_getBadFileNumberErrno
+  (JNIEnv *, jclass);
+
+/*
+ * Class:     com_serial4j_core_errno_NativeErrno
  * Method:    getBadFileDescriptorErrno
  * Signature: ()I
  */
