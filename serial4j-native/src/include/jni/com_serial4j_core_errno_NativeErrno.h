@@ -183,6 +183,14 @@ JNIEXPORT jint JNICALL Java_com_serial4j_core_errno_NativeErrno_getTooManyOpened
 JNIEXPORT jint JNICALL Java_com_serial4j_core_errno_NativeErrno_getTryAgainErrno
   (JNIEnv *, jclass);
 
+/*
+ * Class:     com_serial4j_core_errno_NativeErrno
+ * Method:    getIllegalSeekErrno
+ * Signature: ()I
+ */
+JNIEXPORT jint JNICALL Java_com_serial4j_core_errno_NativeErrno_getIllegalSeekErrno
+  (JNIEnv *, jclass);
+
 #ifdef __cplusplus
 }
 #endif

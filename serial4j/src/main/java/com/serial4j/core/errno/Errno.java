@@ -29,6 +29,7 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 package com.serial4j.core.errno;
 
 import com.serial4j.core.serial.throwable.*;
@@ -79,6 +80,7 @@ public enum Errno {
     ENXIO(NativeErrno.getNoSuchDeviceErrno(), new NoSuchDeviceException("No such device or address")),
     EROFS(NativeErrno.getReadOnlyFileSystemErrno(), new ReadOnlyFileSystemException("Read-only file system")),
     EPIPE(NativeErrno.getBrokenPipeErrno(), new BrokenPipeException("Broken pipe")),
+    ESPIPE(NativeErrno.getIllegalSeekErrno(), new IllegalSeekException("Illegal File Seeking operation")),
 
     /**
      * Error codes for tcgetattr(int, struct termios*) and tcsetattr(int, struct termios*).
