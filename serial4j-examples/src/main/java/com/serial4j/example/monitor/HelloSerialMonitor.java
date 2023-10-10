@@ -1,7 +1,7 @@
 /*
  * BSD 3-Clause License
  *
- * Copyright (c) 2022, Scrappers Team, The AVR-Sandbox Project
+ * Copyright (c) 2022, Scrappers Team, The AVR-Sandbox Project, Serial4j API.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -29,15 +29,16 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 package com.serial4j.example.monitor;
 
+import com.serial4j.core.terminal.Permissions;
 import com.serial4j.core.terminal.control.BaudRate;
 import com.serial4j.core.serial.entity.EntityStatus;
 import com.serial4j.core.serial.entity.impl.WritableCapsule;
 import com.serial4j.core.serial.entity.impl.SerialWriteEntity;
 import com.serial4j.core.serial.monitor.SerialDataListener;
 import com.serial4j.core.serial.monitor.SerialMonitor;
-
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -60,7 +61,10 @@ public class HelloSerialMonitor implements SerialDataListener, EntityStatus<Seri
         System.out.println("---------------Welcome to Serial4j Monitor Testcase---------------");
         try {
             final SerialMonitor serialMonitor = new SerialMonitor("Monitor A");
-            serialMonitor.startDataMonitoring("/dev/ttyUSB0", BaudRate.B57600, null);
+            final Permissions permissions = Permissions.createEmptyPermissions()
+                                                       .append(Permissions.Const.O_RDWR)
+                                                       .append(Permissions.Const.O_NOCTTY);
+            serialMonitor.startDataMonitoring("/dev/ttyUSB0", BaudRate.B57600, permissions);
             serialMonitor.setWriteEntityStatus(this);
             serialMonitor.addSerialDataListener(this);
 

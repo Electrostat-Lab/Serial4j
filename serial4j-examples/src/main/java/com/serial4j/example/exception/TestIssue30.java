@@ -41,7 +41,7 @@ import java.util.logging.Logger;
 
 /**
  * Examines and tests issue no.30 and the {@link com.serial4j.core.serial.throwable.BadFileNumberException}
- * that is thrown if an attempt to write on a file opened as {@link Permissions#O_RDONLY} is made.
+ * that is thrown if an attempt to write on a file opened as {@link Permissions.Const#O_RDONLY} is made.
  *
  * @author pavl_g
  */
@@ -49,7 +49,10 @@ public final class TestIssue30 {
     public static void main(String[] args) {
         final TerminalDevice ttyDevice = new TerminalDevice();
         /* open terminal device in read-only mode! */
-        ttyDevice.setPermissions(Permissions.O_RDONLY);
+        final Permissions permissions = Permissions.createEmptyPermissions()
+                .append(Permissions.Const.O_RDONLY)
+                .append(Permissions.Const.O_NOCTTY);
+        ttyDevice.setPermissions(permissions);
         ttyDevice.openPort(new SerialPort(args[0]));
 
         try {
@@ -70,6 +73,8 @@ public final class TestIssue30 {
 
             Logger.getLogger(TestNoSuchFileException.class.getName())
                     .log(Level.SEVERE, error.getMessage() + " " + ttyDevice.getSerialPort().getPath(), error);
+        } finally {
+            ttyDevice.closePort();
         }
     }
 }

@@ -29,6 +29,7 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 package com.serial4j.example.serial4j;
 
 import java.util.Arrays;
@@ -64,25 +65,24 @@ public final class HelloNativeSerial4J implements Runnable {
 			System.out.println("Started native io example: ");
 			ttyDevice.setSerial4jLoggingEnabled(true);
 			/* set port permissions */
-			final Permissions permissions = Permissions.O_RDWR.append(Permissions.O_NOCTTY);
+			final Permissions permissions = Permissions.createEmptyPermissions()
+					.append(Permissions.Const.O_RDWR)
+					.append(Permissions.Const.O_NOCTTY);
 			ttyDevice.setPermissions(permissions);
 
-			final TerminalFlag CHAR_SIZE = TerminalControlFlag.CSIZE.append(
-					TerminalControlFlag.MaskBits.CS8
-			);
+			final TerminalFlag TCF_VALUE = TerminalFlag.createEmptyFlag().append(TerminalControlFlag.CSIZE)
+																		  .append(TerminalControlFlag.MaskBits.CS8,
+																				  TerminalControlFlag.CLOCAL, TerminalControlFlag.CREAD);
 
 			/* define terminal flags */
-			final TerminalControlFlag TCF_VALUE = (TerminalControlFlag) TerminalControlFlag.CLOCAL
-															.append(CHAR_SIZE, TerminalControlFlag.CREAD);
-			final TerminalLocalFlag TLF_VALUE = (TerminalLocalFlag) TerminalLocalFlag.EMPTY_INSTANCE
-																.disable(TerminalLocalFlag.ECHO, TerminalLocalFlag.ECHOK,
+			final TerminalFlag TLF_VALUE = TerminalFlag.createEmptyFlag().disable(TerminalLocalFlag.ECHO, TerminalLocalFlag.ECHOK,
 																		TerminalLocalFlag.ECHOE, TerminalLocalFlag.ECHOKE,
 																		TerminalLocalFlag.ECHONL, TerminalLocalFlag.ECHOPRT,
 																		TerminalLocalFlag.ECHOCTL, TerminalLocalFlag.ISIG,
 																		TerminalLocalFlag.IEXTEN, TerminalLocalFlag.ICANON);
-			final TerminalOutputFlag TOF_VALUE = (TerminalOutputFlag) TerminalOutputFlag.EMPTY_INSTANCE
+			final TerminalFlag TOF_VALUE = TerminalFlag.createEmptyFlag()
 																.disable(TerminalOutputFlag.OPOST, TerminalOutputFlag.ONLCR);
-			final TerminalInputFlag TIF_VALUE = (TerminalInputFlag) TerminalInputFlag.EMPTY_INSTANCE.disableAll();
+			final TerminalFlag TIF_VALUE = TerminalFlag.createEmptyFlag();
 			/* open the serial port using the path or the name */
 			ttyDevice.openPort(new SerialPort("/dev/ttyUSB0"));
 			/* initialize the terminal IO with the default terminal flags */
@@ -133,7 +133,7 @@ public final class HelloNativeSerial4J implements Runnable {
 					long read;
 					while(true) {
 						/* read data and get the buffer */
-						if ((read = ttyDevice.read()) > 0) {
+						if ((read = ttyDevice.sread()) > 0) {
 							System.out.println("Total number of read bytes = " + read);
 							System.out.println("Serial stream data = " + (ttyDevice.getReadBuffer()));
 							ttyDevice.closePort();

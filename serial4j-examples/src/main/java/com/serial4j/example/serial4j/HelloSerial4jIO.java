@@ -31,23 +31,23 @@
  */
 package com.serial4j.example.serial4j;
 
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.Arrays;
-import java.io.FileNotFoundException;
-
-import com.serial4j.core.terminal.control.BaudRate;
 import com.serial4j.core.serial.SerialPort;
-import com.serial4j.core.terminal.TerminalDevice;
-import com.serial4j.core.serial.throwable.PermissionDeniedException;
 import com.serial4j.core.serial.throwable.BrokenPipeException;
-import com.serial4j.core.serial.throwable.NoSuchDeviceException;
 import com.serial4j.core.serial.throwable.InvalidPortException;
+import com.serial4j.core.serial.throwable.NoSuchDeviceException;
+import com.serial4j.core.serial.throwable.PermissionDeniedException;
+import com.serial4j.core.terminal.TerminalDevice;
+import com.serial4j.core.terminal.control.BaudRate;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.util.Arrays;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * An example showing serial and terminal io using java.io API.
- * 
+ *
  * @author pavl_g.
  */
 public final class HelloSerial4jIO implements Runnable {
@@ -59,6 +59,50 @@ public final class HelloSerial4jIO implements Runnable {
 
     public static void main(String[] args) {
         new HelloSerial4jIO().run();
+    }
+
+    /**
+     * Uses the {@link java.io.FileOutputStream} to write to the pre-initialized port in a new thread.
+     *
+     * @param ttyDevice the terminal device object to get the {@link FileOutputStream} from.
+     * @param millis    a delay before the writing operation starts in ms.
+     */
+    private static void startWriteThread(final TerminalDevice ttyDevice, final long millis) {
+        new Thread(() -> {
+            try {
+                Thread.sleep(millis);
+                /* uses the java io to write to the serial port */
+                ttyDevice.write('A');
+                ttyDevice.write('D');
+                ttyDevice.closePort();
+            } catch (InterruptedException e) {
+                Logger.getLogger(HelloSerial4jIO.class.getName())
+                        .log(Level.SEVERE, "Writing has failed!", e);
+            }
+        }).start();
+    }
+
+    /**
+     * Uses the {@link java.io.FileInputStream} to read from the pre-initialized port in a new thread.
+     *
+     * @param ttyDevice the terminal device object to get the {@link FileInputStream} from.
+     * @param millis    a delay before the writing operation starts in ms.
+     */
+    private static void startReadThread(final TerminalDevice ttyDevice, final long millis) {
+        new Thread(() -> {
+            try {
+                Thread.sleep(millis);
+                while (true) {
+                    /* check for the number of the available charachters to read */
+                    if (ttyDevice.iread(1) > 0) {
+                        System.out.print(ttyDevice.getBuffer());
+                    }
+                }
+            } catch (InterruptedException e) {
+                Logger.getLogger(HelloSerial4jIO.class.getName())
+                        .log(Level.SEVERE, "Reading has failed!", e);
+            }
+        }).start();
     }
 
     @Override
@@ -82,59 +126,13 @@ public final class HelloSerial4jIO implements Runnable {
             /* start R/W threads */
             startReadThread(ttyDevice, 0);
             startWriteThread(ttyDevice, 1000);
-        } catch(NoSuchDeviceException |
-				PermissionDeniedException |
-				BrokenPipeException |
-				InvalidPortException |
-				FileNotFoundException e) {
-			e.printStackTrace();
-		}
-    }
-
-    /**
-     * Uses the {@link java.io.FileOutputStream} to write to the pre-initialized port in a new thread. 
-     * 
-     * @param ttyDevice the terminal device object to get the {@link FileOutputStream} from.
-     * @param millis a delay before the writing operation starts in ms.
-     */
-    private static void startWriteThread(final TerminalDevice ttyDevice, final long millis) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    Thread.sleep(millis);
-                    /* uses the java io to write to the serial port */
-                    ttyDevice.getOutputStream().write('A');
-                    ttyDevice.getOutputStream().write('D');
-                    ttyDevice.closePort();
-                } catch (IOException | InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        }).start();
-    }
-
-    /**
-     * Uses the {@link java.io.FileInputStream} to read from the pre-initialized port in a new thread. 
-     * 
-     * @param ttyDevice the terminal device object to get the {@link FileInputStream} from.
-     * @param millis a delay before the writing operation starts in ms.
-     */
-    private static void startReadThread(final TerminalDevice ttyDevice, final long millis) {
-        new Thread(new Runnable() {
-			public void run() {
-                try {
-                    Thread.sleep(millis);
-                    while(true) {
-                        /* check for the number of the available charachters to read */
-                        if (ttyDevice.getInputStream().available() > 0) {
-                            System.out.print((char) ttyDevice.getInputStream().read());
-                        }
-                    }
-                } catch (IOException | InterruptedException e) {
-                    e.printStackTrace();
-                }
-			}
-		}).start();
+        } catch (NoSuchDeviceException |
+                 PermissionDeniedException |
+                 BrokenPipeException |
+                 InvalidPortException |
+                 FileNotFoundException e) {
+            Logger.getLogger(HelloSerial4jIO.class.getName())
+                    .log(Level.SEVERE, "Monitor has failed!", e);
+        }
     }
 }

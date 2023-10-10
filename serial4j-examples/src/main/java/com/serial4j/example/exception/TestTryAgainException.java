@@ -49,12 +49,15 @@ import java.util.logging.Logger;
 public final class TestTryAgainException {
     public static void main(String[] args) {
         final TerminalDevice ttyDevice = new TerminalDevice();
-        ttyDevice.setPermissions(Permissions.O_RDONLY.append(Permissions.O_NONBLOCK));
+        final Permissions permissions = Permissions.createEmptyPermissions()
+                .append(Permissions.Const.O_RDONLY)
+                .append(Permissions.Const.O_NONBLOCK);
+        ttyDevice.setPermissions(permissions);
         ttyDevice.openPort(new SerialPort(args[0]));
         try {
-            ttyDevice.read();
+            ttyDevice.sread();
         } catch (TryAgainException e) {
-            Logger.getLogger(TestNoSuchFileException.class.getName())
+            Logger.getLogger(TestTryAgainException.class.getName())
                     .log(Level.SEVERE, e.getMessage() + " " + ttyDevice.getSerialPort().getPath(), e);
             System.exit(e.getCausingErrno().getValue());
         }

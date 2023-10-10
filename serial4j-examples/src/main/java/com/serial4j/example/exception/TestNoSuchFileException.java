@@ -54,6 +54,9 @@ public final class TestNoSuchFileException {
             Logger.getLogger(TestNoSuchFileException.class.getName())
                             .log(Level.SEVERE, e.getMessage() + " " + ttyDevice.getSerialPort().getPath(), e);
             System.exit(e.getCausingErrno().getValue());
+        } finally {
+            /* dispatched if the application didn't crash */
+            ttyDevice.closePort();
         }
     }
 }

@@ -41,7 +41,7 @@ import java.util.logging.Logger;
 /**
  * Tests throwing the business exception {@link InvalidPortException}
  * based off the {@link TerminalDevice#closePort()}, {@link TerminalDevice#write(String)}
- * and {@link TerminalDevice#read()}.
+ * and {@link TerminalDevice#sread()}.
  *
  * @author pavl_g
  */
