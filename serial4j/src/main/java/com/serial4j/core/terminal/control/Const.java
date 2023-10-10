@@ -29,33 +29,26 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 package com.serial4j.core.terminal.control;
 
-public enum TerminalLocalFlag implements Const {
-    ECHO(NativeTerminalFlags.LocalFlags.getEchoInputCharacters()),
-    ECHOCTL(NativeTerminalFlags.LocalFlags.getEchoControlCharacters()),
-    ECHOE(NativeTerminalFlags.LocalFlags.getEchoErase()),
-    ECHOK(NativeTerminalFlags.LocalFlags.getEchoKill()),
-    ECHOKE(NativeTerminalFlags.LocalFlags.getDisableNewLineAfterEchoKill()),
-    ECHONL(NativeTerminalFlags.LocalFlags.getEchoNewLine()),
-    ECHOPRT(NativeTerminalFlags.LocalFlags.getEchoDeletedCharactersBackward()),
-    FLUSHO(NativeTerminalFlags.LocalFlags.getOutputBeingFlushed()),
-    ICANON(NativeTerminalFlags.LocalFlags.getCanonicalModeInput()),
-    IEXTEN(NativeTerminalFlags.LocalFlags.getEnableExtendedProcessingOfInput()),
-    ISIG(NativeTerminalFlags.LocalFlags.getEnableSignalGeneratingCharacters()),
-    NOFLSH(NativeTerminalFlags.LocalFlags.getDisableFlushing()),
-    PENDIN(NativeTerminalFlags.LocalFlags.getRedisplayPendingInput()),
-    TOSTOP(NativeTerminalFlags.LocalFlags.getGenerateTerminateSignalForBackgroundProcess()),
-    XCASE(NativeTerminalFlags.LocalFlags.getCanonicalPresentation());
+/**
+ * Defines the type for the {@link TerminalFlag} constants,
+ * inherited by the values of the different types of terminal flags.
+ *
+ * <p>
+ * This represents the super type under which all terminal flags submerge from.
+ * </p>
+ *
+ * @author pavl_g
+ * @see TerminalFlag to construct a terminal flag for your terminal device
+ */
+public interface Const {
 
-    private final int value;
-
-    TerminalLocalFlag(final int value) {
-        this.value = value;
-    }
-
-    @Override
-    public int getValue() {
-        return value;
-    }
+    /**
+     * Retrieves the value of this terminal flag constant.
+     *
+     * @return the value of the flag in 32-bit integer format
+     */
+    int getValue();
 }

@@ -36,39 +36,30 @@ package com.serial4j.core.terminal.control;
  *
  * @author pavl_g.
  */
-public final class TerminalInputFlag extends TerminalFlag {
+public enum TerminalInputFlag implements Const {
+    BRKINT(NativeTerminalFlags.InputFlags.getSignalInterrupt()),
+    ICRNL(NativeTerminalFlags.InputFlags.getMapCarriageReturnToNewLine()),
+    IGNBRK(NativeTerminalFlags.InputFlags.getIgnoreBreakCondition()),
+    IGNCR(NativeTerminalFlags.InputFlags.getIgnoreCarriageReturn()),
+    IMAXBEL(NativeTerminalFlags.InputFlags.getRingBell()),
+    INLCR(NativeTerminalFlags.InputFlags.getMapNewLineToCarriageReturn()),
+    INPCK(NativeTerminalFlags.InputFlags.getEnableParityChecking()),
+    ISTRIP(NativeTerminalFlags.InputFlags.getStripHighBit()),
+    IUTF8(NativeTerminalFlags.InputFlags.getInputIsUnicode8()),
+    IUCLC(NativeTerminalFlags.InputFlags.getMapUppercaseToLowercase()),
+    IXANY(NativeTerminalFlags.InputFlags.getAllowToRestartStoppedOutput()),
+    IXOFF(NativeTerminalFlags.InputFlags.getEnableInputFlowControl()),
+    IXON(NativeTerminalFlags.InputFlags.getEnableOutputFlowControl()),
+    PARMRK(NativeTerminalFlags.InputFlags.getMarkParityErrors());
 
-    public static final TerminalInputFlag EMPTY_INSTANCE = new TerminalInputFlag(0);
-    public static final TerminalInputFlag BRKINT =
-            new TerminalInputFlag(NativeTerminalFlags.InputFlags.getSignalInterrupt());
-    public static final TerminalInputFlag ICRNL =
-            new TerminalInputFlag(NativeTerminalFlags.InputFlags.getMapCarriageReturnToNewLine());
-    public static final TerminalInputFlag IGNBRK =
-            new TerminalInputFlag(NativeTerminalFlags.InputFlags.getIgnoreBreakCondition());
-    public static final TerminalInputFlag IGNCR =
-            new TerminalInputFlag(NativeTerminalFlags.InputFlags.getIgnoreCarriageReturn());
-    public static final TerminalInputFlag IMAXBEL =
-            new TerminalInputFlag(NativeTerminalFlags.InputFlags.getRingBell());
-    public static final TerminalInputFlag INLCR =
-            new TerminalInputFlag(NativeTerminalFlags.InputFlags.getMapNewLineToCarriageReturn());
-    public static final TerminalInputFlag INPCK =
-            new TerminalInputFlag(NativeTerminalFlags.InputFlags.getEnableParityChecking());
-    public static final TerminalInputFlag ISTRIP =
-            new TerminalInputFlag(NativeTerminalFlags.InputFlags.getStripHighBit());
-    public static final TerminalInputFlag IUTF8 =
-            new TerminalInputFlag(NativeTerminalFlags.InputFlags.getInputIsUnicode8());
-    public static final TerminalInputFlag IUCLC =
-            new TerminalInputFlag(NativeTerminalFlags.InputFlags.getMapUppercaseToLowercase());
-    public static final TerminalInputFlag IXANY =
-            new TerminalInputFlag(NativeTerminalFlags.InputFlags.getAllowToRestartStoppedOutput());
-    public static final TerminalInputFlag IXOFF =
-            new TerminalInputFlag(NativeTerminalFlags.InputFlags.getEnableInputFlowControl());
-    public static final TerminalInputFlag IXON =
-            new TerminalInputFlag(NativeTerminalFlags.InputFlags.getEnableOutputFlowControl());
-    public static final TerminalInputFlag PARMRK =
-            new TerminalInputFlag(NativeTerminalFlags.InputFlags.getMarkParityErrors());
+    private final int value;
 
-    private TerminalInputFlag(final int value) {
-        super(value);
+    TerminalInputFlag(final int value) {
+        this.value = value;
+    }
+
+    @Override
+    public int getValue() {
+        return value;
     }
 }
