@@ -36,6 +36,8 @@ import com.serial4j.core.serial.entity.EntityStatus;
 import com.serial4j.core.serial.entity.impl.SerialReadEntity;
 import com.serial4j.core.serial.entity.impl.SerialWriteEntity;
 import com.serial4j.core.serial.throwable.*;
+import com.serial4j.core.terminal.NativeBufferInputStream;
+import com.serial4j.core.terminal.NativeBufferOutputStream;
 import com.serial4j.core.terminal.Permissions;
 import com.serial4j.core.terminal.TerminalDevice;
 import com.serial4j.core.terminal.control.*;
@@ -50,7 +52,7 @@ import java.util.ArrayList;
  *
  * @author pavl_g.
  */
-public final class SerialMonitor {
+public class SerialMonitor {
 
     /**
      * Provides callbacks for the serial read task.
@@ -81,15 +83,15 @@ public final class SerialMonitor {
      * The state of use CR/NL (jump to the start of a new line). Default is "true".
      */
     public volatile boolean useReturnCarriage = true;
-    private final ArrayList<SerialDataListener> serialDataListeners = new ArrayList<>();
-    private final String monitorName;
-    private volatile Thread monitorThread;
-    private volatile InputStream readEntityStream;
-    private volatile OutputStream writeEntityStream;
-    private final TerminalDevice terminalDevice = new TerminalDevice();
-    private volatile boolean terminate = false;
-    private volatile SerialReadEntity serialReadEntity;
-    private volatile SerialWriteEntity serialWriteEntity;
+    protected final ArrayList<SerialDataListener> serialDataListeners = new ArrayList<>();
+    protected final String monitorName;
+    protected volatile Thread monitorThread;
+    protected volatile InputStream readEntityStream;
+    protected volatile OutputStream writeEntityStream;
+    protected final TerminalDevice terminalDevice = new TerminalDevice();
+    protected volatile boolean terminate = false;
+    protected volatile SerialReadEntity serialReadEntity;
+    protected volatile SerialWriteEntity serialWriteEntity;
 
     /**
      * Instantiates a new SerialMonitor with a name.
@@ -120,33 +122,46 @@ public final class SerialMonitor {
         terminalDevice.setSerial4jLoggingEnabled(true);
         if (permissions != null) {
             terminalDevice.setPermissions(permissions);
+            System.out.println(permissions.getDescription());
         }
         terminalDevice.openPort(new SerialPort(port));
         terminalDevice.setBaudRate(baudRate);
         terminalDevice.initTerminal();
         /* define terminal flags */
-        final TerminalFlag CS_MASK = TerminalControlFlag.CSIZE.append(
+        final TerminalFlag CS_MASK = TerminalFlag.createEmptyFlag().append(
+                TerminalControlFlag.CSIZE,
                 TerminalControlFlag.MaskBits.CS8
         );
-        final TerminalControlFlag TCF_VALUE = (TerminalControlFlag) TerminalControlFlag.CLOCAL
-                                                            .append(CS_MASK, TerminalControlFlag.CREAD);
-        final TerminalLocalFlag TLF_VALUE = (TerminalLocalFlag) TerminalLocalFlag.EMPTY_INSTANCE
-                                                            .disable(TerminalLocalFlag.ECHO, TerminalLocalFlag.ECHOK,
-                                                                    TerminalLocalFlag.ECHOE, TerminalLocalFlag.ECHOKE,
-                                                                    TerminalLocalFlag.ECHONL, TerminalLocalFlag.ECHOPRT,
-                                                                    TerminalLocalFlag.ECHOCTL, TerminalLocalFlag.ISIG,
-                                                                    TerminalLocalFlag.IEXTEN, TerminalLocalFlag.ICANON);
-        final TerminalOutputFlag TOF_VALUE = (TerminalOutputFlag) TerminalOutputFlag.EMPTY_INSTANCE
-                                                            .disable(TerminalOutputFlag.OPOST, TerminalOutputFlag.ONLCR);
-        final TerminalInputFlag TIF_VALUE = (TerminalInputFlag) TerminalInputFlag.EMPTY_INSTANCE.disableAll();
+        final TerminalFlag TCF_VALUE = TerminalFlag.createEmptyFlag().append(
+                TerminalControlFlag.CLOCAL,
+                CS_MASK,
+                TerminalControlFlag.CREAD
+        );
+        final TerminalFlag TLF_VALUE = TerminalFlag.createEmptyFlag().disable(
+                TerminalLocalFlag.ECHO,
+                TerminalLocalFlag.ECHOK,
+                TerminalLocalFlag.ECHOE,
+                TerminalLocalFlag.ECHOKE,
+                TerminalLocalFlag.ECHONL,
+                TerminalLocalFlag.ECHOPRT,
+                TerminalLocalFlag.ECHOCTL,
+                TerminalLocalFlag.ISIG,
+                TerminalLocalFlag.IEXTEN,
+                TerminalLocalFlag.ICANON
+        );
+        final TerminalFlag TOF_VALUE = TerminalFlag.createEmptyFlag().disable(
+                TerminalOutputFlag.OPOST,
+                TerminalOutputFlag.ONLCR
+        );
+        final TerminalFlag TIF_VALUE = TerminalFlag.createEmptyFlag();
         
         terminalDevice.setTerminalControlFlag(TCF_VALUE);
         terminalDevice.setTerminalLocalFlag(TLF_VALUE);
         terminalDevice.setTerminalOutputFlag(TOF_VALUE);
         terminalDevice.setTerminalInputFlag(TIF_VALUE);
 
-        readEntityStream = terminalDevice.getInputStream();
-        writeEntityStream = terminalDevice.getOutputStream();
+        readEntityStream = new NativeBufferInputStream(terminalDevice);
+        writeEntityStream = new NativeBufferOutputStream(terminalDevice);
 
         serialWriteEntity = new SerialWriteEntity(this);
 
