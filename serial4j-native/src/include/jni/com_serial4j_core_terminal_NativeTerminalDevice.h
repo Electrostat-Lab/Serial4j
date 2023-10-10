@@ -137,18 +137,26 @@ JNIEXPORT jlong JNICALL Java_com_serial4j_core_terminal_NativeTerminalDevice_wri
 
 /*
  * Class:     com_serial4j_core_terminal_NativeTerminalDevice
- * Method:    read
+ * Method:    sread
  * Signature: ()J
  */
-JNIEXPORT jlong JNICALL Java_com_serial4j_core_terminal_NativeTerminalDevice_read__
+JNIEXPORT jlong JNICALL Java_com_serial4j_core_terminal_NativeTerminalDevice_sread__
   (JNIEnv *, jobject);
 
 /*
  * Class:     com_serial4j_core_terminal_NativeTerminalDevice
- * Method:    read
+ * Method:    sread
  * Signature: (I)J
  */
-JNIEXPORT jlong JNICALL Java_com_serial4j_core_terminal_NativeTerminalDevice_read__I
+JNIEXPORT jlong JNICALL Java_com_serial4j_core_terminal_NativeTerminalDevice_sread__I
+  (JNIEnv *, jobject, jint);
+
+/*
+ * Class:     com_serial4j_core_terminal_NativeTerminalDevice
+ * Method:    iread
+ * Signature: (I)J
+ */
+JNIEXPORT jlong JNICALL Java_com_serial4j_core_terminal_NativeTerminalDevice_iread
   (JNIEnv *, jobject, jint);
 
 /*
