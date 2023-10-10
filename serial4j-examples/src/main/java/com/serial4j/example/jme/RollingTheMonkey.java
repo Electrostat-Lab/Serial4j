@@ -29,6 +29,7 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 package com.serial4j.example.jme;
 
 import com.jme3.app.SimpleApplication;
@@ -63,14 +64,11 @@ import java.io.FileNotFoundException;
 import java.util.concurrent.Callable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import com.serial4j.core.serial.entity.EntityStatus;
 import com.serial4j.core.serial.entity.impl.SerialReadEntity;
-import com.serial4j.core.serial.entity.impl.SerialWriteEntity;
 import com.serial4j.core.terminal.control.BaudRate;
 import com.serial4j.core.serial.monitor.SerialDataListener;
 import com.serial4j.core.serial.monitor.SerialMonitor;
-
 import javax.swing.*;
 
 /**

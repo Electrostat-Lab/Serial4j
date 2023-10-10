@@ -27,40 +27,48 @@
  * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * OF THIS
  */
 
 package com.serial4j.example.exception;
 
-import com.serial4j.core.serial.monitor.SerialMonitor;
-import com.serial4j.core.serial.throwable.NotTtyDeviceException;
+import com.serial4j.core.serial.SerialPort;
+import com.serial4j.core.serial.throwable.BadFileNumberException;
 import com.serial4j.core.terminal.Permissions;
-import com.serial4j.core.terminal.control.BaudRate;
+import com.serial4j.core.terminal.TerminalDevice;
 import java.io.FileNotFoundException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Examines and tests the native exception {@link NotTtyDeviceException}
- * by trying to attach a terminal to a non-terminal device.
+ * Isolates and tests the {@link BadFileNumberException} thrown
+ * as a result of an attempt to write on a pipeline that is not
+ * opened for writing data or trying to read data from a pipeline
+ * that is not opened for data read operations.
  *
  * @author pavl_g
  */
-public final class TestNotTtyDeviceException {
-    public static void main(String[] args) {
-        final SerialMonitor serialMonitor = new SerialMonitor("TestMonitor");
+public final class TestBadFileNumberException {
+    public static void main(String[] args) throws FileNotFoundException {
+        final TerminalDevice ttyDevice = new TerminalDevice();
+        final Permissions permissions = Permissions.createEmptyPermissions().append(
+                Permissions.Const.O_RDONLY,
+                Permissions.Const.O_NOCTTY
+        );
+        ttyDevice.setPermissions(permissions);
+        ttyDevice.openPort(new SerialPort(args[0]));
+        ttyDevice.initTerminal();
+
         try {
-            final Permissions permissions = Permissions.createEmptyPermissions().append(
-                    Permissions.Const.O_RDWR,
-                    Permissions.Const.O_NOCTTY
-            );
-            serialMonitor.startDataMonitoring("/dev/null", BaudRate.B9600, permissions);
-        } catch (FileNotFoundException e0) {
-            throw new RuntimeException(e0);
-        } catch (NotTtyDeviceException e1) {
-            Logger.getLogger(TestNotTtyDeviceException.class.getName())
-                    .log(Level.SEVERE, "Not teletypewriter device!", e1);
-            System.exit(e1.getCausingErrno().getValue());
+            ttyDevice.write('D');
+        } catch (BadFileNumberException e) {
+            Logger.getLogger(TestBadFileNumberException.class.getName())
+                    .log(Level.SEVERE, e.getMessage() + " " + ttyDevice.getSerialPort().getPath(), e);
+            ttyDevice.closePort();
+            System.exit(e.getCausingErrno().getValue());
+        } finally {
+            /* dispatched if the application didn't crash */
+            ttyDevice.closePort();
         }
     }
 }

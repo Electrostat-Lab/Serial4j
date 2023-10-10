@@ -1,7 +1,7 @@
 /*
  * BSD 3-Clause License
  *
- * Copyright (c) 2022, Scrappers Team, The Arithmos Project.
+ * Copyright (c) 2022, Scrappers Team, The AVR-Sandbox Project, Serial4j API.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -50,7 +50,10 @@ public final class TestRawVirtualMonitor {
     public static void main(String[] args) throws InterruptedException {
 
         final TerminalDevice ttyDevice = new TerminalDevice();
-        ttyDevice.setPermissions(Permissions.O_RDWR.append(Permissions.O_CREATE));
+        final Permissions permissions = Permissions.createEmptyPermissions()
+                .append(Permissions.Const.O_RDWR)
+                .append(Permissions.Const.O_CREATE);
+        ttyDevice.setPermissions(permissions);
         ttyDevice.openPort(new SerialPort(args[0]));
         try {
             // change mode access to read/write/execute
@@ -76,7 +79,7 @@ public final class TestRawVirtualMonitor {
             ttyDevice.write(frame);
             Thread.sleep(1000);
             ttyDevice.seek(0, NativeTerminalDevice.FileSeekCriterion.SEEK_SET);
-            if (ttyDevice.read(frame.length()) > 0) {
+            if (ttyDevice.sread(frame.length()) > 0) {
                 if (ttyDevice.getReadBuffer() != null) {
                     System.out.println(ttyDevice.getReadBuffer());
                 }

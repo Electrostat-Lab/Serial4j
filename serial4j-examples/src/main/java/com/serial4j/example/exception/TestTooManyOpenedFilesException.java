@@ -50,7 +50,11 @@ import java.util.logging.Logger;
 public final class TestTooManyOpenedFilesException {
     public static void main(String[] args) {
         final TerminalDevice ttyDevice = new TerminalDevice();
-        ttyDevice.setPermissions(Permissions.O_RDWR);
+        final Permissions permissions = Permissions.createEmptyPermissions().append(
+                Permissions.Const.O_RDWR,
+                Permissions.Const.O_NOCTTY
+        );
+        ttyDevice.setPermissions(permissions);
         for (; ; ) {
             try {
                 ttyDevice.openPort(new SerialPort(args[0]));
