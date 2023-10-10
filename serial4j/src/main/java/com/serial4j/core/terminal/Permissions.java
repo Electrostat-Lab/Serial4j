@@ -38,38 +38,7 @@ package com.serial4j.core.terminal;
  *
  * @author pavl_g.
  */
-public enum Permissions {
-
-    /**
-     * Aliasing Read-only file permission.
-     */
-    O_RDONLY(NativeFilePermissions.getReadOnly(), "Read Only"),
-
-    /**
-     * Aliasing Write-only file permission.
-     */
-    O_WRONLY(NativeFilePermissions.getWriteOnly(), "Write Only"),
-
-    /**
-     * Aliasing R/W file permission.
-     */
-    O_RDWR(NativeFilePermissions.getReadWrite(), "Read/Write"),
-
-    /**
-     * Specifies that the terminal is not the controlling device.
-     */
-    O_NOCTTY(NativeFilePermissions.getNoControlTerminalDevice(), "No Control terminal device"),
-
-    /**
-     * Applies non-blocking operations for the target terminal device.
-     */
-    O_NONBLOCK(NativeFilePermissions.getTerminalNonBlock(), "Terminal non block"),
-
-    /**
-     * Creates the file if it doesn't exist.
-     */
-    O_CREATE(NativeFilePermissions.getCreateFile(), "Create file if it doesn't exist");
-
+public final class Permissions {
     private int value;
     private String description;
 
@@ -79,9 +48,13 @@ public enum Permissions {
      * @param value       the value of the permission flag.
      * @param description the description of the flag.
      */
-    Permissions(final int value, final String description) {
+    public Permissions(final int value, final String description) {
         this.value = value;
         this.description = description;
+    }
+
+    public static Permissions createEmptyPermissions() {
+        return new Permissions(0, "");
     }
 
     /**
@@ -90,9 +63,10 @@ public enum Permissions {
      * @param permissions the new permissions to append.
      * @return this permissions object with the new appended value.
      */
-    public Permissions append(final Permissions permissions) {
+    public Permissions append(final Permissions.Const permissions) {
+        /* append new values */
         this.value |= permissions.getValue();
-        this.description += "-" + permissions.getDescription();
+        this.description += " - " + permissions.getDescription();
         return this;
     }
 
@@ -102,8 +76,8 @@ public enum Permissions {
      * @param permissions an array args of the new permissions to append.
      * @return this permissions object with the new appended value.
      */
-    public Permissions append(final Permissions... permissions) {
-        for (Permissions permission : permissions) {
+    public Permissions append(final Permissions.Const... permissions) {
+        for (Permissions.Const permission : permissions) {
             append(permission);
         }
         return this;
@@ -125,5 +99,53 @@ public enum Permissions {
      */
     public String getDescription() {
         return description;
+    }
+
+    public enum Const {
+        /**
+         * Aliasing Read-only file permission.
+         */
+        O_RDONLY(NativeFilePermissions.getReadOnly(), "READ_ONLY"),
+
+        /**
+         * Aliasing Write-only file permission.
+         */
+        O_WRONLY(NativeFilePermissions.getWriteOnly(), "WRITE_ONLY"),
+
+        /**
+         * Aliasing R/W file permission.
+         */
+        O_RDWR(NativeFilePermissions.getReadWrite(), "READ_WRITE"),
+
+        /**
+         * Specifies that the terminal is not the controlling device.
+         */
+        O_NOCTTY(NativeFilePermissions.getNoControlTerminalDevice(), "NO_CONTROL_TTY_DEVICE"),
+
+        /**
+         * Applies non-blocking operations for the target terminal device.
+         */
+        O_NONBLOCK(NativeFilePermissions.getTerminalNonBlock(), "NON_BLOCK_READ"),
+
+        /**
+         * Creates the file if it doesn't exist.
+         */
+        O_CREATE(NativeFilePermissions.getCreateFile(), "CREATE_NEW_FILE");
+
+        private final int value;
+        private final String description;
+
+        Const(final int value, final String description) {
+            this.value = value;
+            this.description = description;
+        }
+
+        public int getValue() {
+            return value;
+        }
+
+        public String getDescription() {
+            return description;
+        }
     }
 }
