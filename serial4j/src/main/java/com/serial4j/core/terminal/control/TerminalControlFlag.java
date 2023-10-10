@@ -31,53 +31,56 @@
  */
 package com.serial4j.core.terminal.control;
 
-public final class TerminalControlFlag extends TerminalFlag {
+public enum TerminalControlFlag implements Const {
+    CIBAUD(NativeTerminalFlags.ControlFlags.getInputBaudRate()),
+    CLOCAL(NativeTerminalFlags.ControlFlags.getIgnoreModemStatusLines()),
+    CREAD(NativeTerminalFlags.ControlFlags.getAllowInput()),
+    CMSPAR(NativeTerminalFlags.ControlFlags.getUseStickParity()),
+    CRTSCTS(NativeTerminalFlags.ControlFlags.getEnableHardwareFlowControl()),
+    CSIZE(NativeTerminalFlags.ControlFlags.getCharacterSizeMask()),
+    CSTOPB(NativeTerminalFlags.ControlFlags.getUse2StopBitsPerCharacter()),
+    HUPCL(NativeTerminalFlags.ControlFlags.getHangUpOnLastClose()),
+    PARENB(NativeTerminalFlags.ControlFlags.getParityEnable()),
+    PARODD(NativeTerminalFlags.ControlFlags.getUseOddParity());
 
-    public static final TerminalControlFlag EMPTY_INSTANCE = new TerminalControlFlag(0);
-    public static final TerminalControlFlag CIBAUD =
-            new TerminalControlFlag(NativeTerminalFlags.ControlFlags.getInputBaudRate());
-    public static final TerminalControlFlag CLOCAL =
-            new TerminalControlFlag(NativeTerminalFlags.ControlFlags.getIgnoreModemStatusLines());
-    public static final TerminalControlFlag CREAD =
-            new TerminalControlFlag(NativeTerminalFlags.ControlFlags.getAllowInput());
-    public static final TerminalControlFlag CMSPAR =
-            new TerminalControlFlag(NativeTerminalFlags.ControlFlags.getUseStickParity());
-    public static final TerminalControlFlag CRTSCTS =
-            new TerminalControlFlag(NativeTerminalFlags.ControlFlags.getEnableHardwareFlowControl());
-    public static final TerminalControlFlag CSIZE =
-            new TerminalControlFlag(NativeTerminalFlags.ControlFlags.getCharacterSizeMask());
-    public static final TerminalControlFlag CSTOPB =
-            new TerminalControlFlag(NativeTerminalFlags.ControlFlags.getUse2StopBitsPerCharacter());
-    public static final TerminalControlFlag HUPCL =
-            new TerminalControlFlag(NativeTerminalFlags.ControlFlags.getHangUpOnLastClose());
-    public static final TerminalControlFlag PARENB =
-            new TerminalControlFlag(NativeTerminalFlags.ControlFlags.getParityEnable());
-    public static final TerminalControlFlag PARODD =
-            new TerminalControlFlag(NativeTerminalFlags.ControlFlags.getUseOddParity());
+    private final int value;
 
-    private TerminalControlFlag(final int value) {
-        super(value);
+    TerminalControlFlag(final int value) {
+        this.value = value;
     }
 
-    public static final class MaskBits {
-        public static final TerminalControlFlag B0 = new TerminalControlFlag(NativeTerminalFlags.ControlFlags.MaskBits.getBaud0());
-        public static final TerminalControlFlag B2400 = new TerminalControlFlag(NativeTerminalFlags.ControlFlags.MaskBits.getBaud2400());
-        public static final TerminalControlFlag B9600 = new TerminalControlFlag(NativeTerminalFlags.ControlFlags.MaskBits.getBaud9600());
-        public static final TerminalControlFlag B38400 = new TerminalControlFlag(NativeTerminalFlags.ControlFlags.MaskBits.getBaud38400());
-        public static final TerminalControlFlag CS5 = new TerminalControlFlag(NativeTerminalFlags.ControlFlags
+    @Override
+    public int getValue() {
+        return value;
+    }
+
+    public enum MaskBits implements Const {
+        B0(NativeTerminalFlags.ControlFlags.MaskBits.getBaud0()),
+        B2400(NativeTerminalFlags.ControlFlags.MaskBits.getBaud2400()),
+        B9600(NativeTerminalFlags.ControlFlags.MaskBits.getBaud9600()),
+        B38400(NativeTerminalFlags.ControlFlags.MaskBits.getBaud38400()),
+        CS5(NativeTerminalFlags.ControlFlags
                 .MaskBits
-                .getCharacterSize5bits());
-        public static final TerminalControlFlag CS6 = new TerminalControlFlag(NativeTerminalFlags.ControlFlags
+                .getCharacterSize5bits()),
+        CS6(NativeTerminalFlags.ControlFlags
                 .MaskBits
-                .getCharacterSize6bits());
-        public static final TerminalControlFlag CS7 = new TerminalControlFlag(NativeTerminalFlags.ControlFlags
+                .getCharacterSize6bits()),
+        CS7(NativeTerminalFlags.ControlFlags
                 .MaskBits
-                .getCharacterSize7bits());
-        public static final TerminalControlFlag CS8 = new TerminalControlFlag(NativeTerminalFlags.ControlFlags
+                .getCharacterSize7bits()),
+        CS8(NativeTerminalFlags.ControlFlags
                 .MaskBits
                 .getCharacterSize8bits());
 
-        private MaskBits() {
+        private final int value;
+
+        MaskBits(final int value) {
+            this.value = value;
+        }
+
+        @Override
+        public int getValue() {
+            return value;
         }
     }
 }

@@ -36,7 +36,7 @@ package com.serial4j.core.terminal.control;
  *
  * @author pavl_g.
  */
-public class TerminalFlag {
+public final class TerminalFlag implements Const {
 
     private int value;
 
@@ -45,8 +45,12 @@ public class TerminalFlag {
      *
      * @param value the value of the termios flag.
      */
-    protected TerminalFlag(final int value) {
+    public TerminalFlag(final int value) {
         this.value = value;
+    }
+
+    public static TerminalFlag createEmptyFlag() {
+        return new TerminalFlag(0);
     }
 
     /**
@@ -55,7 +59,7 @@ public class TerminalFlag {
      * @param flag a flag to append to this instance.
      * @return this flag instance for chained append.
      */
-    public TerminalFlag append(final TerminalFlag flag) {
+    public TerminalFlag append(final Const flag) {
         this.value |= flag.getValue();
         return this;
     }
@@ -66,7 +70,7 @@ public class TerminalFlag {
      * @param flag a flag to disable.
      * @return this flag instance for chained call.
      */
-    public TerminalFlag disable(final TerminalFlag flag) {
+    public TerminalFlag disable(final Const flag) {
         this.value &= ~flag.getValue();
         return this;
     }
@@ -77,8 +81,8 @@ public class TerminalFlag {
      * @param flags an args representing the flags list to append.
      * @return this flag instance for chained append.
      */
-    public TerminalFlag append(final TerminalFlag... flags) {
-        for (TerminalFlag flag : flags) {
+    public TerminalFlag append(final Const... flags) {
+        for (Const flag : flags) {
             append(flag);
         }
         return this;
@@ -90,8 +94,8 @@ public class TerminalFlag {
      * @param flags flags to disable.
      * @return this flag instance for chained call.
      */
-    public TerminalFlag disable(final TerminalFlag... flags) {
-        for (TerminalFlag flag : flags) {
+    public TerminalFlag disable(final Const... flags) {
+        for (Const flag : flags) {
             disable(flag);
         }
         return this;
@@ -118,20 +122,16 @@ public class TerminalFlag {
     }
 
     /**
-     * Gets the value of the specified termios flag.
-     *
-     * @return the value of the terminal flag.
-     */
-    public int getValue() {
-        return value;
-    }
-
-    /**
      * Adjusts the value of the specified termios flag.
      *
      * @param value the value of the terminal flag.
      */
     public void setValue(final int value) {
         this.value = value;
+    }
+
+    @Override
+    public int getValue() {
+        return value;
     }
 }
