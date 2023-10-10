@@ -29,12 +29,14 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 package com.serial4j.core.serial.entity.impl;
 
 import com.serial4j.core.serial.entity.EntityStatus;
 import com.serial4j.core.serial.entity.SerialMonitorEntity;
 import com.serial4j.core.serial.monitor.SerialMonitor;
 import com.serial4j.core.serial.monitor.SerialMonitorException;
+import com.serial4j.core.terminal.NativeBufferInputStream;
 import com.serial4j.core.terminal.Permissions;
 import com.serial4j.core.terminal.control.BaudRate;
 import java.io.IOException;
@@ -91,32 +93,31 @@ public class SerialReadEntity extends SerialMonitorEntity {
             getSerialEntityStatusListener().onUpdate(this);
         }
 
+        final NativeBufferInputStream nbis = (NativeBufferInputStream) getEntityStream();
+
         /* execute serial data tasks */
         for (int i = 0; i < getSerialDataListeners().size(); i++) {
             try {
-                final int count = getEntityStream().available();
-                if (count != 0) {
-                    final char data = (char) getEntityStream().read();
-
+                while (getEntityStream().read() > 0) {
                     /* send characters serially */
-                    getSerialDataListeners().get(i).onDataReceived(data);
+                    getSerialDataListeners().get(i).onDataReceived(nbis.getBuffer()[0]);
 
                     /* get a string buffer from a data frame */
-                    /* send data frames separated by [\n\r] the return carriage/newline */
-                    stringBuffer.append(data);
+                    stringBuffer.append(nbis.getBuffer());
 
-                    if (isUsingReturnCarriage()) {
-                        if (stringBuffer.toString().contains("\n\r")) {
-                            getSerialDataListeners().get(i).onDataReceived(stringBuffer.toString());
-                            stringBuffer = new StringBuffer();
-                        }
-                    } else {
+                    /* send data frames separated by [\n\r] the return carriage/newline */
+                    if (!isUsingReturnCarriage()) {
+                        continue;
+                    }
+
+                    if (stringBuffer.toString().endsWith("\n\r")) {
                         getSerialDataListeners().get(i).onDataReceived(stringBuffer.toString());
                         stringBuffer = new StringBuffer();
+                        break;
                     }
                 }
             } catch (IOException e) {
-                if (getSerialEntityStatusListener() != null) {
+                if (getSerialDataListeners() != null) {
                     getSerialEntityStatusListener().onExceptionThrown(e);
                 }
             }
