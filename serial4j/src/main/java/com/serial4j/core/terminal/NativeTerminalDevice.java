@@ -29,6 +29,7 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 package com.serial4j.core.terminal;
 
 import com.serial4j.core.serial.SerialPort;
@@ -57,6 +58,8 @@ public final class NativeTerminalDevice {
     private SerialPort serialPort;
     private String[] serialPorts;
     private String readBuffer;
+
+    private char[] buffer;
 
     /**
      * Creates a native terminal device after
@@ -104,17 +107,26 @@ public final class NativeTerminalDevice {
 
     /**
      * Retrieves the read buffer in a string format after
-     * dispatching {@link NativeTerminalDevice#read()}.
+     * dispatching {@link NativeTerminalDevice#sread()}.
      *
      * <p>
      * The read buffer is a native const char*, settled natively by reading data
-     * frames using {@link NativeTerminalDevice#read()}.
+     * frames using {@link NativeTerminalDevice#sread()}.
      * </p>
      *
      * @return the buffer in string format
      */
     public String getReadBuffer() {
         return this.readBuffer;
+    }
+
+    /**
+     * Retrieves the buffer output of the "iread(int)" operation.
+     *
+     * @return the output of the "iread(int)" operation
+     */
+    public char[] getBuffer() {
+        return buffer;
     }
 
     /**
@@ -291,7 +303,7 @@ public final class NativeTerminalDevice {
      *
      * @return the number of read bytes from this terminal device.
      */
-    native long read();
+    native long sread();
 
     /**
      * Reads the data from this file-system and inserts the result into the {@link NativeTerminalDevice#readBuffer}
@@ -300,7 +312,16 @@ public final class NativeTerminalDevice {
      * @param length the length of the reading buffer
      * @return the number of read bytes
      */
-    native long read(final int length);
+    native long sread(final int length);
+
+    /**
+     * Reads the data from this file-system and inserts the result into the {@link NativeTerminalDevice#getBuffer()}
+     * buffer.
+     *
+     * @param length the number of the bytes to read into the buffer
+     * @return the number of the read bytes
+     */
+    native long iread(final int length);
 
     /**
      * Seeks the current position of this file-system according to the
