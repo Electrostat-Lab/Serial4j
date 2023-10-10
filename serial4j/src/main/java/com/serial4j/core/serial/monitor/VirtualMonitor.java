@@ -8,9 +8,15 @@ import com.serial4j.core.terminal.NativeBufferInputStream;
 import com.serial4j.core.terminal.NativeBufferOutputStream;
 import com.serial4j.core.terminal.Permissions;
 import com.serial4j.core.terminal.control.BaudRate;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 
+/**
+ * A virtual monitor isolates the {@link SerialReadEntity} and the {@link SerialWriteEntity}
+ * actions from the terminal based operations, the virtual monitor can act on both regular and
+ * terminal files, as well, it just isolates the native IO operations.
+ *
+ * @author pavl_g
+ */
 public class VirtualMonitor extends SerialMonitor {
 
     /**
@@ -27,12 +33,14 @@ public class VirtualMonitor extends SerialMonitor {
     }
 
     @Override
-    public void startDataMonitoring(String port, BaudRate baudRate, Permissions permissions) throws NoSuchDeviceException, PermissionDeniedException, BrokenPipeException, InvalidPortException, NoAvailableTtyDevicesException, FileNotFoundException {
+    public void startDataMonitoring(String port, BaudRate baudRate, Permissions permissions) throws NoSuchDeviceException,
+            PermissionDeniedException, BrokenPipeException, InvalidPortException, NoAvailableTtyDevicesException {
+
         terminalDevice.setSerial4jLoggingEnabled(true);
         if (permissions != null) {
             terminalDevice.setPermissions(permissions);
         }
-        terminalDevice.setSerial4jLoggingEnabled(false);
+
         readEntityStream = new NativeBufferInputStream(terminalDevice);
         writeEntityStream = new NativeBufferOutputStream(terminalDevice);
 
@@ -52,6 +60,13 @@ public class VirtualMonitor extends SerialMonitor {
         monitorThread.start();
     }
 
+    /**
+     * Changes the mode access of a script and runs an action aftermath.
+     *
+     * @param flags                 the mode access flags (eg: +rwx)
+     * @param script                the script or the file to grant it the permissions
+     * @param afterChangeModeAccess a runnable action to execute afterward
+     */
     protected void chmod(String flags, String script, Runnable afterChangeModeAccess) {
         try {
             // change mode access to read/write/execute
