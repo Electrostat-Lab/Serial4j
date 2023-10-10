@@ -16,6 +16,11 @@ JNIEXPORT jint JNICALL Java_com_serial4j_core_errno_NativeErrno_getBrokenPipeErr
     return EPIPE;
 }
 
+JNIEXPORT jint JNICALL Java_com_serial4j_core_errno_NativeErrno_getIllegalSeekErrno
+  (JNIEnv* env, jclass clazz) {
+    return ESPIPE;
+}
+
 JNIEXPORT jint JNICALL Java_com_serial4j_core_errno_NativeErrno_getFileAlreadyOpenedErrno
   (JNIEnv* env, jclass clazz) {
     return EEXIST;

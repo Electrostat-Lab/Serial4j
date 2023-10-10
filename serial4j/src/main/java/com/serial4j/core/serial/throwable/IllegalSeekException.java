@@ -30,64 +30,35 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package com.serial4j.core.errno;
+package com.serial4j.core.serial.throwable;
+
+import com.serial4j.core.errno.Errno;
+import com.serial4j.core.terminal.NativeTerminalDevice;
 
 /**
- * Provides the native error code that can be
- * utilized by the API.
+ * Provides a translation unit to {@link Errno#ESPIPE} for the
+ * illegal seek operations including seeking on a terminal device.
  *
- * @see Errno
- * @see ErrnoToException
+ * <p>
+ * A dispatch to {@link com.serial4j.core.terminal.TerminalDevice#seek(long, NativeTerminalDevice.FileSeekCriterion)}
+ * in a real terminal device (not virtual) will crash the application with this exception.
+ * </p>
+ *
  * @author pavl_g
  */
-public final class NativeErrno {
-    
-    private NativeErrno() {
+public class IllegalSeekException extends SerialThrowable {
+
+    /**
+     * Instantiates an illegal seek operation exception with a message.
+     *
+     * @param message user message to display
+     */
+    public IllegalSeekException(String message) {
+        super(message);
     }
 
-    static native int getBadFileNumberErrno();
-
-    static native int getBadFileDescriptorErrno();
-
-    static native int getBrokenPipeErrno();
-
-    static native int getFileAlreadyOpenedErrno();
-
-    static native int getFileIsDirectoryErrno();
-
-    static native int getFileTableOverflowErrno();
-
-    static native int getFileTooLargeErrno();
-
-    static native int getInputOutputErrno();
-
-    static native int getInterruptedSystemCallErrno();
-
-    static native int getInvalidArgumentErrno();
-
-    static native int getInvalidPortErrno();
-
-    static native int getNoAvailableTtyDevicesErrno();
-
-    static native int getNoSpaceLeftErrno();
-
-    static native int getNoSuchDeviceErrno();
-
-    static native int getNoSuchFileErrno();
-
-    static native int getNotTtyDeviceErrno();
-
-    static native int getOperationFailedErrno();
-
-    static native int getOperationSucceededCode();
-
-    static native int getPermissionDeniedErrno();
-
-    static native int getReadOnlyFileSystemErrno();
-
-    static native int getTooManyOpenedFilesErrno();
-
-    static native int getTryAgainErrno();
-
-    static native int getIllegalSeekErrno();
+    @Override
+    public Errno getCausingErrno() {
+        return Errno.ESPIPE;
+    }
 }
