@@ -31,107 +31,26 @@
  */
 package com.serial4j.core.terminal.control;
 
+import com.serial4j.core.flag.AppendableFlag;
+
 /**
  * Represents the base implementation for the termios.h terminal flags values.
  *
  * @author pavl_g.
  */
-public final class TerminalFlag implements Const {
-
-    private int value;
+public final class TerminalFlag extends AppendableFlag {
 
     /**
-     * Instantiates a termios flag with a value to be settled from the native side.
+     * Wraps a POSIX IO flag using an integer value.
      *
-     * @param value the value of the termios flag.
+     * @param value       the value of the permission flag.
+     * @param description the description of the flag.
      */
-    public TerminalFlag(final int value) {
-        this.value = value;
+    public TerminalFlag(int value, String description) {
+        super(value, description);
     }
 
-    public static TerminalFlag createEmptyFlag() {
-        return new TerminalFlag(0);
-    }
-
-    /**
-     * Appends a flag's value into the current one's value.
-     *
-     * @param flag a flag to append to this instance.
-     * @return this flag instance for chained append.
-     */
-    public TerminalFlag append(final Const flag) {
-        this.value |= flag.getValue();
-        return this;
-    }
-
-    /**
-     * Disables a flag from the current one value.
-     *
-     * @param flag a flag to disable.
-     * @return this flag instance for chained call.
-     */
-    public TerminalFlag disable(final Const flag) {
-        this.value &= ~flag.getValue();
-        return this;
-    }
-
-    /**
-     * Appends a list of flags' values into the current one's value.
-     *
-     * @param flags an args representing the flags list to append.
-     * @return this flag instance for chained append.
-     */
-    public TerminalFlag append(final Const... flags) {
-        for (Const flag : flags) {
-            append(flag);
-        }
-        return this;
-    }
-
-    /**
-     * Disables a list of flags from the current flag instance.
-     *
-     * @param flags flags to disable.
-     * @return this flag instance for chained call.
-     */
-    public TerminalFlag disable(final Const... flags) {
-        for (Const flag : flags) {
-            disable(flag);
-        }
-        return this;
-    }
-
-    /**
-     * Enables all the terminal flags for this instance.
-     *
-     * @return this instance for chained call.
-     */
-    public TerminalFlag enableAll() {
-        this.value = Integer.MAX_VALUE;
-        return this;
-    }
-
-    /**
-     * Disables all the terminal flags for this instance.
-     *
-     * @return this instance for chained call.
-     */
-    public TerminalFlag disableAll() {
-        this.value = 0;
-        return this;
-    }
-
-    /**
-     * Adjusts the value of the specified termios flag.
-     *
-     * @param value the value of the terminal flag.
-     */
-    public void setValue(final int value) {
-        this.value = value;
-    }
-
-    @Override
-    public int getValue() {
-        return value;
+    public static TerminalFlag build() {
+        return (TerminalFlag) AppendableFlag.build(TerminalFlag.class);
     }
 }

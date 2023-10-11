@@ -31,7 +31,9 @@
  */
 package com.serial4j.core.terminal.control;
 
-public enum TerminalLocalFlag implements Const {
+import com.serial4j.core.flag.FlagConst;
+
+public enum TerminalLocalFlag implements FlagConst {
     ECHO(NativeTerminalFlags.LocalFlags.getEchoInputCharacters()),
     ECHOCTL(NativeTerminalFlags.LocalFlags.getEchoControlCharacters()),
     ECHOE(NativeTerminalFlags.LocalFlags.getEchoErase()),
@@ -57,5 +59,10 @@ public enum TerminalLocalFlag implements Const {
     @Override
     public int getValue() {
         return value;
+    }
+
+    @Override
+    public String getDescription() {
+        return null;
     }
 }

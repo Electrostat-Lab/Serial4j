@@ -31,12 +31,14 @@
  */
 package com.serial4j.core.terminal.control;
 
+import com.serial4j.core.flag.FlagConst;
+
 /**
  * Provides Unix [c_iflag] termios bits.
  *
  * @author pavl_g.
  */
-public enum TerminalInputFlag implements Const {
+public enum TerminalInputFlag implements FlagConst {
     BRKINT(NativeTerminalFlags.InputFlags.getSignalInterrupt()),
     ICRNL(NativeTerminalFlags.InputFlags.getMapCarriageReturnToNewLine()),
     IGNBRK(NativeTerminalFlags.InputFlags.getIgnoreBreakCondition()),
@@ -61,5 +63,10 @@ public enum TerminalInputFlag implements Const {
     @Override
     public int getValue() {
         return value;
+    }
+
+    @Override
+    public String getDescription() {
+        return null;
     }
 }

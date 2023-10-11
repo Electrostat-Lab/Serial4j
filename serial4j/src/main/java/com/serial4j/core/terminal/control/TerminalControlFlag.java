@@ -31,7 +31,9 @@
  */
 package com.serial4j.core.terminal.control;
 
-public enum TerminalControlFlag implements Const {
+import com.serial4j.core.flag.FlagConst;
+
+public enum TerminalControlFlag implements FlagConst {
     CIBAUD(NativeTerminalFlags.ControlFlags.getInputBaudRate()),
     CLOCAL(NativeTerminalFlags.ControlFlags.getIgnoreModemStatusLines()),
     CREAD(NativeTerminalFlags.ControlFlags.getAllowInput()),
@@ -54,7 +56,12 @@ public enum TerminalControlFlag implements Const {
         return value;
     }
 
-    public enum MaskBits implements Const {
+    @Override
+    public String getDescription() {
+        return null;
+    }
+
+    public enum MaskBits implements FlagConst {
         B0(NativeTerminalFlags.ControlFlags.MaskBits.getBaud0()),
         B2400(NativeTerminalFlags.ControlFlags.MaskBits.getBaud2400()),
         B9600(NativeTerminalFlags.ControlFlags.MaskBits.getBaud9600()),
@@ -81,6 +88,11 @@ public enum TerminalControlFlag implements Const {
         @Override
         public int getValue() {
             return value;
+        }
+
+        @Override
+        public String getDescription() {
+            return null;
         }
     }
 }

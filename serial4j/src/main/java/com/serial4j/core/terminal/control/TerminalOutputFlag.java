@@ -31,7 +31,9 @@
  */
 package com.serial4j.core.terminal.control;
 
-public enum TerminalOutputFlag implements Const {
+import com.serial4j.core.flag.FlagConst;
+
+public enum TerminalOutputFlag implements FlagConst {
     BSDLY(NativeTerminalFlags.OutputFlags.getBackspaceDelayMask()),
     CRDLY(NativeTerminalFlags.OutputFlags.getCarriageReturnDelayMask()),
     FFDLY(NativeTerminalFlags.OutputFlags.getFormFeedDelayMask()),
@@ -58,7 +60,12 @@ public enum TerminalOutputFlag implements Const {
         return value;
     }
 
-    public enum MaskBits implements Const {
+    @Override
+    public String getDescription() {
+        return null;
+    }
+
+    public enum MaskBits implements FlagConst {
         BS0(NativeTerminalFlags.OutputFlags.MaskBits.getBackspace0()),
         BS1(NativeTerminalFlags.OutputFlags.MaskBits.getBackspace1()),
         CR0(NativeTerminalFlags.OutputFlags.MaskBits.getCarriageReturn0()),
@@ -85,6 +92,11 @@ public enum TerminalOutputFlag implements Const {
         @Override
         public int getValue() {
             return value;
+        }
+
+        @Override
+        public String getDescription() {
+            return null;
         }
     }
 }
