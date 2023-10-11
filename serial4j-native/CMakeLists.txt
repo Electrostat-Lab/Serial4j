@@ -35,7 +35,9 @@ set(jni_sources "${CMAKE_CURRENT_SOURCE_DIR}/src/lib/jni/com_serial4j_core_termi
                 "${CMAKE_CURRENT_SOURCE_DIR}/src/lib/jni/com_serial4j_core_terminal_control_NativeTerminalFlags_LocalFlags.cpp"
                 "${CMAKE_CURRENT_SOURCE_DIR}/src/lib/jni/com_serial4j_core_terminal_control_NativeTerminalFlags_OutputFlags.cpp"
                 "${CMAKE_CURRENT_SOURCE_DIR}/src/lib/jni/com_serial4j_core_terminal_control_NativeTerminalFlags_OutputFlags_MaskBits.cpp"
-                "${CMAKE_CURRENT_SOURCE_DIR}/src/lib/jni/com_serial4j_core_terminal_NativeTerminalDevice_FileSeekCriterion.cpp")
+                "${CMAKE_CURRENT_SOURCE_DIR}/src/lib/jni/com_serial4j_core_terminal_NativeTerminalDevice_FileSeekCriterion.cpp"
+                "${CMAKE_CURRENT_SOURCE_DIR}/src/lib/jni/com_serial4j_core_terminal_NativeFileAccessPermissions.cpp")
+
 set(sources "${jni_sources}"
             "${CMAKE_CURRENT_SOURCE_DIR}/src/lib/linux/TerminalDevice.cpp"
             "${CMAKE_CURRENT_SOURCE_DIR}/src/lib/AddressesBuffer.cpp")
