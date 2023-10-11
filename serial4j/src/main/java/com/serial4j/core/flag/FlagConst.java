@@ -1,7 +1,7 @@
 /*
  * BSD 3-Clause License
  *
- * Copyright (c) 2022, Scrappers Team, The AVR-Sandbox Project, Serial4j API.
+ * Copyright (c) 2022, Scrappers Team, The AVR-Sandbox Project
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -30,25 +30,26 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package com.serial4j.core.terminal.control;
+package com.serial4j.core.flag;
 
 /**
- * Defines the type for the {@link TerminalFlag} constants,
- * inherited by the values of the different types of terminal flags.
- *
- * <p>
- * This represents the super type under which all terminal flags submerge from.
- * </p>
+ * Defines the type of the native flag instance.
  *
  * @author pavl_g
- * @see TerminalFlag to construct a terminal flag for your terminal device
  */
-public interface Const {
+public interface FlagConst {
 
     /**
-     * Retrieves the value of this terminal flag constant.
+     * Retrieves the value of this flag.
      *
-     * @return the value of the flag in 32-bit integer format
+     * @return the value of the flag in integers
      */
     int getValue();
+
+    /**
+     * The description of this flag.
+     *
+     * @return the description in strings
+     */
+    String getDescription();
 }

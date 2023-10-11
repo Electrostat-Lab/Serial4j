@@ -38,68 +38,8 @@ package com.serial4j.core.terminal;
  *
  * @author pavl_g.
  */
-public final class Permissions {
-    private int value;
-    private String description;
+public final class FileOperativePermissions {
 
-    /**
-     * Wraps a POSIX IO flag using an integer value.
-     *
-     * @param value       the value of the permission flag.
-     * @param description the description of the flag.
-     */
-    public Permissions(final int value, final String description) {
-        this.value = value;
-        this.description = description;
-    }
-
-    public static Permissions createEmptyPermissions() {
-        return new Permissions(0, "");
-    }
-
-    /**
-     * Appends new permissions to this permissions object.
-     *
-     * @param permissions the new permissions to append.
-     * @return this permissions object with the new appended value.
-     */
-    public Permissions append(final Permissions.Const permissions) {
-        /* append new values */
-        this.value |= permissions.getValue();
-        this.description += " - " + permissions.getDescription();
-        return this;
-    }
-
-    /**
-     * Appends some new permissions to this permissions object.
-     *
-     * @param permissions an array args of the new permissions to append.
-     * @return this permissions object with the new appended value.
-     */
-    public Permissions append(final Permissions.Const... permissions) {
-        for (Permissions.Const permission : permissions) {
-            append(permission);
-        }
-        return this;
-    }
-
-    /**
-     * Retrieves the value of this permissions object.
-     *
-     * @return the value of this permissions object.
-     */
-    public int getValue() {
-        return value;
-    }
-
-    /**
-     * Retrieves the description of this permissions object.
-     *
-     * @return the description of this permissions object.
-     */
-    public String getDescription() {
-        return description;
-    }
 
     public enum Const {
         /**
