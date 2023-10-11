@@ -34,14 +34,14 @@ package com.serial4j.example.exception;
 
 import com.serial4j.core.serial.SerialPort;
 import com.serial4j.core.serial.throwable.NotInterpretableErrnoError;
-import com.serial4j.core.terminal.Permissions;
+import com.serial4j.core.terminal.FilePermissions;
 import com.serial4j.core.terminal.TerminalDevice;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
  * Examines and tests issue no.30 and the {@link com.serial4j.core.serial.throwable.BadFileNumberException}
- * that is thrown if an attempt to write on a file opened as {@link Permissions.Const#O_RDONLY} is made.
+ * that is thrown if an attempt to write on a file opened as {@link FilePermissions.OperativeConst#O_RDONLY} is made.
  *
  * @author pavl_g
  */
@@ -49,10 +49,10 @@ public final class TestIssue30 {
     public static void main(String[] args) {
         final TerminalDevice ttyDevice = new TerminalDevice();
         /* open terminal device in read-only mode! */
-        final Permissions permissions = Permissions.createEmptyPermissions()
-                .append(Permissions.Const.O_RDONLY)
-                .append(Permissions.Const.O_NOCTTY);
-        ttyDevice.setPermissions(permissions);
+        final FilePermissions filePermissions = (FilePermissions) FilePermissions.build()
+                .append(FilePermissions.OperativeConst.O_RDONLY)
+                .append(FilePermissions.OperativeConst.O_NOCTTY);
+        ttyDevice.setPermissions(filePermissions);
         ttyDevice.openPort(new SerialPort(args[0]));
 
         try {

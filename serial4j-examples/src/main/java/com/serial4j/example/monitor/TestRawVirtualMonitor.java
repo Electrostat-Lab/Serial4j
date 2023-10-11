@@ -33,12 +33,9 @@
 package com.serial4j.example.monitor;
 
 import com.serial4j.core.serial.SerialPort;
+import com.serial4j.core.terminal.FilePermissions;
 import com.serial4j.core.terminal.NativeTerminalDevice;
-import com.serial4j.core.terminal.Permissions;
 import com.serial4j.core.terminal.TerminalDevice;
-import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Examines and tests a raw virtual monitor on the native low-level file-system API
@@ -50,19 +47,17 @@ public final class TestRawVirtualMonitor {
     public static void main(String[] args) throws InterruptedException {
 
         final TerminalDevice ttyDevice = new TerminalDevice();
-        final Permissions permissions = Permissions.createEmptyPermissions()
-                .append(Permissions.Const.O_RDWR)
-                .append(Permissions.Const.O_CREATE);
-        ttyDevice.setPermissions(permissions);
+        final FilePermissions filePermissions = (FilePermissions) FilePermissions.build()
+                .append(FilePermissions.OperativeConst.O_RDWR)
+                .append(FilePermissions.OperativeConst.O_CREATE);
+        final FilePermissions accessModePermissions = (FilePermissions) FilePermissions.build().append(
+                FilePermissions.AccessModeConst.S_IRUSR,
+                FilePermissions.AccessModeConst.S_IWUSR,
+                FilePermissions.AccessModeConst.S_IXUSR
+        );
+        ttyDevice.setPermissions(filePermissions);
         ttyDevice.openPort(new SerialPort(args[0]));
-        try {
-            // change mode access to read/write/execute
-            Process process = new ProcessBuilder().command("chmod", "+rwx", args[0]).start();
-            process.destroy();
-        } catch (IOException e) {
-            Logger.getLogger(TestRawVirtualMonitor.class.getName())
-                    .log(Level.SEVERE, "Change mode Process failure!");
-        }
+        ttyDevice.chmod(accessModePermissions);
 
         int x = 0;
         int y = 0;

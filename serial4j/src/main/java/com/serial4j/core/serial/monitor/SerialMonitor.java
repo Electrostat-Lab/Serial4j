@@ -36,9 +36,9 @@ import com.serial4j.core.serial.entity.EntityStatus;
 import com.serial4j.core.serial.entity.impl.SerialReadEntity;
 import com.serial4j.core.serial.entity.impl.SerialWriteEntity;
 import com.serial4j.core.serial.throwable.*;
+import com.serial4j.core.terminal.FilePermissions;
 import com.serial4j.core.terminal.NativeBufferInputStream;
 import com.serial4j.core.terminal.NativeBufferOutputStream;
-import com.serial4j.core.terminal.Permissions;
 import com.serial4j.core.terminal.TerminalDevice;
 import com.serial4j.core.terminal.control.*;
 import java.io.FileNotFoundException;
@@ -96,7 +96,7 @@ public class SerialMonitor {
     /**
      * Instantiates a new SerialMonitor with a name.
      * <p>
-     * Use {@link SerialMonitor#startDataMonitoring(String, BaudRate, Permissions)} to initialize and start
+     * Use {@link SerialMonitor#startDataMonitoring(String, BaudRate, FilePermissions)} to initialize and start
      * data monitoring.
      * </p>
      *
@@ -112,32 +112,33 @@ public class SerialMonitor {
      * @param port specify the serial port.
      * @param baudRate specify the baud rate aka bits/seconds based for the connected FOsc.
      */
-    public void startDataMonitoring(final String port, final BaudRate baudRate, final Permissions permissions)  throws NoSuchDeviceException,
-                                                                                                                       PermissionDeniedException,
-                                                                                                                       BrokenPipeException,
-                                                                                                                       InvalidPortException,
-                                                                                                                       NoAvailableTtyDevicesException,
-                                                                                                                       FileNotFoundException {  
+    public void startDataMonitoring(final String port, final BaudRate baudRate, final FilePermissions filePermissions) throws
+            NoSuchDeviceException,
+            PermissionDeniedException,
+            BrokenPipeException,
+            InvalidPortException,
+            NoAvailableTtyDevicesException,
+            FileNotFoundException {
         /* ignore timeout strategy */
         terminalDevice.setSerial4jLoggingEnabled(true);
-        if (permissions != null) {
-            terminalDevice.setPermissions(permissions);
-            System.out.println(permissions.getDescription());
+        if (filePermissions != null) {
+            terminalDevice.setPermissions(filePermissions);
+            System.out.println(filePermissions.getDescription());
         }
         terminalDevice.openPort(new SerialPort(port));
         terminalDevice.setBaudRate(baudRate);
         terminalDevice.initTerminal();
         /* define terminal flags */
-        final TerminalFlag CS_MASK = TerminalFlag.createEmptyFlag().append(
+        final TerminalFlag CS_MASK = (TerminalFlag) TerminalFlag.build().append(
                 TerminalControlFlag.CSIZE,
                 TerminalControlFlag.MaskBits.CS8
         );
-        final TerminalFlag TCF_VALUE = TerminalFlag.createEmptyFlag().append(
+        final TerminalFlag TCF_VALUE = (TerminalFlag) TerminalFlag.build().append(
                 TerminalControlFlag.CLOCAL,
                 CS_MASK,
                 TerminalControlFlag.CREAD
         );
-        final TerminalFlag TLF_VALUE = TerminalFlag.createEmptyFlag().disable(
+        final TerminalFlag TLF_VALUE = (TerminalFlag) TerminalFlag.build().disable(
                 TerminalLocalFlag.ECHO,
                 TerminalLocalFlag.ECHOK,
                 TerminalLocalFlag.ECHOE,
@@ -149,11 +150,11 @@ public class SerialMonitor {
                 TerminalLocalFlag.IEXTEN,
                 TerminalLocalFlag.ICANON
         );
-        final TerminalFlag TOF_VALUE = TerminalFlag.createEmptyFlag().disable(
+        final TerminalFlag TOF_VALUE = (TerminalFlag) TerminalFlag.build().disable(
                 TerminalOutputFlag.OPOST,
                 TerminalOutputFlag.ONLCR
         );
-        final TerminalFlag TIF_VALUE = TerminalFlag.createEmptyFlag();
+        final TerminalFlag TIF_VALUE = TerminalFlag.build();
         
         terminalDevice.setTerminalControlFlag(TCF_VALUE);
         terminalDevice.setTerminalLocalFlag(TLF_VALUE);

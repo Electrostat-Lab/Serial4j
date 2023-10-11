@@ -34,7 +34,7 @@ package com.serial4j.example.exception;
 
 import com.serial4j.core.serial.monitor.SerialMonitor;
 import com.serial4j.core.serial.throwable.NotTtyDeviceException;
-import com.serial4j.core.terminal.Permissions;
+import com.serial4j.core.terminal.FilePermissions;
 import com.serial4j.core.terminal.control.BaudRate;
 import java.io.FileNotFoundException;
 import java.util.logging.Level;
@@ -50,11 +50,11 @@ public final class TestNotTtyDeviceException {
     public static void main(String[] args) {
         final SerialMonitor serialMonitor = new SerialMonitor("TestMonitor");
         try {
-            final Permissions permissions = Permissions.createEmptyPermissions().append(
-                    Permissions.Const.O_RDWR,
-                    Permissions.Const.O_NOCTTY
+            final FilePermissions filePermissions = (FilePermissions) FilePermissions.build().append(
+                    FilePermissions.OperativeConst.O_RDWR,
+                    FilePermissions.OperativeConst.O_NOCTTY
             );
-            serialMonitor.startDataMonitoring("/dev/null", BaudRate.B9600, permissions);
+            serialMonitor.startDataMonitoring("/dev/null", BaudRate.B9600, filePermissions);
         } catch (FileNotFoundException e0) {
             throw new RuntimeException(e0);
         } catch (NotTtyDeviceException e1) {

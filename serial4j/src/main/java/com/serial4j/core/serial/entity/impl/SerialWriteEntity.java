@@ -35,7 +35,7 @@ import com.serial4j.core.serial.entity.EntityStatus;
 import com.serial4j.core.serial.entity.SerialMonitorEntity;
 import com.serial4j.core.serial.monitor.SerialMonitor;
 import com.serial4j.core.serial.monitor.SerialMonitorException;
-import com.serial4j.core.terminal.Permissions;
+import com.serial4j.core.terminal.FilePermissions;
 import com.serial4j.core.terminal.control.BaudRate;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -44,7 +44,7 @@ import java.util.ArrayList;
 /**
  * Represents a serial write data entity for the {@link SerialMonitor}.
  * <p>
- * Use {@link SerialMonitor#startDataMonitoring(String, BaudRate, Permissions)} to start this entity.
+ * Use {@link SerialMonitor#startDataMonitoring(String, BaudRate, FilePermissions)} to start this entity.
  * </p>
  *
  * @author pavl_g.

@@ -33,10 +33,11 @@
 package com.serial4j.core.terminal;
 
 /**
- * Provides the POSIX file permissions implementation values.
+ * Provides the POSIX file permissions values for the
+ * operative methods (open, create, mkdir, mknod).
  *
  * @author pavl_g
- * @see Permissions
+ * @see FilePermissions.OperativeConst
  */
 public final class NativeFilePermissions {
 

@@ -34,9 +34,10 @@ package com.serial4j.example.exception;
 
 import com.serial4j.core.serial.SerialPort;
 import com.serial4j.core.serial.throwable.BadFileNumberException;
-import com.serial4j.core.terminal.Permissions;
+import com.serial4j.core.terminal.FilePermissions;
 import com.serial4j.core.terminal.TerminalDevice;
 import java.io.FileNotFoundException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -51,11 +52,11 @@ import java.util.logging.Logger;
 public final class TestBadFileNumberException {
     public static void main(String[] args) throws FileNotFoundException {
         final TerminalDevice ttyDevice = new TerminalDevice();
-        final Permissions permissions = Permissions.createEmptyPermissions().append(
-                Permissions.Const.O_RDONLY,
-                Permissions.Const.O_NOCTTY
+        final FilePermissions filePermissions = (FilePermissions) FilePermissions.build().append(
+                FilePermissions.OperativeConst.O_RDONLY,
+                FilePermissions.OperativeConst.O_NOCTTY
         );
-        ttyDevice.setPermissions(permissions);
+        ttyDevice.setPermissions(filePermissions);
         ttyDevice.openPort(new SerialPort(args[0]));
         ttyDevice.initTerminal();
 
