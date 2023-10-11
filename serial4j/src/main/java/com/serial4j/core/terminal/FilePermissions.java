@@ -32,16 +32,58 @@
 
 package com.serial4j.core.terminal;
 
+import com.serial4j.core.flag.AppendableFlag;
+import com.serial4j.core.flag.FlagConst;
+
 /**
  * Provides Unix file system permissions for the specified serial port
  * of the terminal device.
  *
  * @author pavl_g.
  */
-public final class FileOperativePermissions {
+public final class FilePermissions extends AppendableFlag {
+
+    /**
+     * Wraps a POSIX IO flag using an integer value.
+     *
+     * @param value       the value of the permission flag.
+     * @param description the description of the flag.
+     */
+    public FilePermissions(int value, String description) {
+        super(value, description);
+    }
+
+    public static FilePermissions build() {
+        return (FilePermissions) AppendableFlag.build(FilePermissions.class);
+    }
+
+    public enum AccessModeConst implements FlagConst {
+        S_IRUSR(NativeFileAccessPermissions.getGrantReadByOwner(), "Read by owner"),
+        S_IWUSR(NativeFileAccessPermissions.getGrantWriteByOwner(), "Write by owner"),
+        S_IXUSR(NativeFileAccessPermissions.getGrantExecuteByOwner(), "Execute by owner"),
+        S_IRWXU(NativeFileAccessPermissions.getGrantFullPermissions(), "Grant full permissions (+rwx)");
+
+        private final int value;
+        private final String description;
 
 
-    public enum Const {
+        AccessModeConst(int value, String description) {
+            this.value = value;
+            this.description = description;
+        }
+
+        @Override
+        public int getValue() {
+            return value;
+        }
+
+        @Override
+        public String getDescription() {
+            return description;
+        }
+    }
+
+    public enum OperativeConst implements FlagConst {
         /**
          * Aliasing Read-only file permission.
          */
@@ -75,15 +117,17 @@ public final class FileOperativePermissions {
         private final int value;
         private final String description;
 
-        Const(final int value, final String description) {
+        OperativeConst(final int value, final String description) {
             this.value = value;
             this.description = description;
         }
 
+        @Override
         public int getValue() {
             return value;
         }
 
+        @Override
         public String getDescription() {
             return description;
         }
