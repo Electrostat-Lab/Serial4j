@@ -33,8 +33,8 @@
 package com.serial4j.example.serial4j;
 
 import com.serial4j.core.serial.SerialPort;
+import com.serial4j.core.terminal.FilePermissions;
 import com.serial4j.core.terminal.NativeBufferInputStream;
-import com.serial4j.core.terminal.Permissions;
 import com.serial4j.core.terminal.TerminalDevice;
 
 /**
@@ -45,9 +45,9 @@ import com.serial4j.core.terminal.TerminalDevice;
 public final class TestNativeInputStream {
     public static void main(String[] args) {
         final TerminalDevice ttyDevice = new TerminalDevice();
-        final Permissions permissions = Permissions.createEmptyPermissions()
-                        .append(Permissions.Const.O_CREATE, Permissions.Const.O_RDWR);
-        ttyDevice.setPermissions(permissions);
+        final FilePermissions filePermissions = (FilePermissions) FilePermissions.build()
+                        .append(FilePermissions.OperativeConst.O_CREATE, FilePermissions.OperativeConst.O_RDWR);
+        ttyDevice.setPermissions(filePermissions);
         ttyDevice.openPort(new SerialPort(args[0]));
         try (final NativeBufferInputStream inputStream = new NativeBufferInputStream(ttyDevice)) {
             final StringBuffer buffer = new StringBuffer();

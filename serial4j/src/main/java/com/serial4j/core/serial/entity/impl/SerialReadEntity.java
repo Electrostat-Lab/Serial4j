@@ -36,8 +36,8 @@ import com.serial4j.core.serial.entity.EntityStatus;
 import com.serial4j.core.serial.entity.SerialMonitorEntity;
 import com.serial4j.core.serial.monitor.SerialMonitor;
 import com.serial4j.core.serial.monitor.SerialMonitorException;
+import com.serial4j.core.terminal.FilePermissions;
 import com.serial4j.core.terminal.NativeBufferInputStream;
-import com.serial4j.core.terminal.Permissions;
 import com.serial4j.core.terminal.control.BaudRate;
 import java.io.IOException;
 import java.io.InputStream;
@@ -45,7 +45,7 @@ import java.io.InputStream;
 /**
  * Represents a Read entity for the {@link SerialMonitor}.
  * <p>
- * Use {@link SerialMonitor#startDataMonitoring(String, BaudRate, Permissions)} to start this entity.
+ * Use {@link SerialMonitor#startDataMonitoring(String, BaudRate, FilePermissions)} to start this entity.
  * </p>
  *
  * @author pavl_g.
@@ -57,7 +57,7 @@ public class SerialReadEntity extends SerialMonitorEntity {
     /**
      * Defines a read entity instance to read serial data from UART.
      * <p>
-     * Use {@link SerialMonitor#startDataMonitoring(String, BaudRate, Permissions)} to start this entity.
+     * Use {@link SerialMonitor#startDataMonitoring(String, BaudRate, FilePermissions)} to start this entity.
      * </p>
      *
      * @param serialMonitor the head serial monitor object.

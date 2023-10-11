@@ -4,11 +4,12 @@ import com.serial4j.core.serial.SerialPort;
 import com.serial4j.core.serial.entity.impl.SerialReadEntity;
 import com.serial4j.core.serial.entity.impl.SerialWriteEntity;
 import com.serial4j.core.serial.throwable.*;
+import com.serial4j.core.terminal.FilePermissions;
 import com.serial4j.core.terminal.NativeBufferInputStream;
 import com.serial4j.core.terminal.NativeBufferOutputStream;
-import com.serial4j.core.terminal.Permissions;
 import com.serial4j.core.terminal.control.BaudRate;
-import java.io.IOException;
+
+import java.io.FileNotFoundException;
 
 /**
  * A virtual monitor isolates the {@link SerialReadEntity} and the {@link SerialWriteEntity}
@@ -22,7 +23,7 @@ public class VirtualMonitor extends SerialMonitor {
     /**
      * Instantiates a new virtual monitor with a name (acting on filesystem only).
      * <p>
-     * Use {@link SerialMonitor#startDataMonitoring(String, BaudRate, Permissions)} to initialize and start
+     * Use {@link SerialMonitor#startDataMonitoring(String, BaudRate, FilePermissions)} to initialize and start
      * data monitoring.
      * </p>
      *
@@ -33,12 +34,16 @@ public class VirtualMonitor extends SerialMonitor {
     }
 
     @Override
-    public void startDataMonitoring(String port, BaudRate baudRate, Permissions permissions) throws NoSuchDeviceException,
+    public void startDataMonitoring(String port, BaudRate baudRate, FilePermissions filePermissions) throws NoSuchDeviceException, PermissionDeniedException, BrokenPipeException, InvalidPortException, NoAvailableTtyDevicesException, FileNotFoundException {
+        throw new UnsupportedOperationException();
+    }
+
+    public void startDataMonitoring(String port, BaudRate baudRate, FilePermissions operativePermissions, FilePermissions accessPermissions) throws NoSuchDeviceException,
             PermissionDeniedException, BrokenPipeException, InvalidPortException, NoAvailableTtyDevicesException {
 
         terminalDevice.setSerial4jLoggingEnabled(true);
-        if (permissions != null) {
-            terminalDevice.setPermissions(permissions);
+        if (operativePermissions != null) {
+            terminalDevice.setPermissions(operativePermissions);
         }
 
         readEntityStream = new NativeBufferInputStream(terminalDevice);
@@ -49,40 +54,16 @@ public class VirtualMonitor extends SerialMonitor {
 
         terminalDevice.openPort(new SerialPort(port));
 
-        chmod("+rw", port, () -> monitorThread = new Thread(() -> {
+        terminalDevice.chmod(accessPermissions);
+
+        monitorThread = new Thread(() -> {
             while (!isTerminate()) {
                 /* change mode access and start data monitoring */
                 serialWriteEntity.run();
                 serialReadEntity.run();
             }
-        }, monitorName));
+        }, monitorName);
 
         monitorThread.start();
-    }
-
-    /**
-     * Changes the mode access of a script and runs an action aftermath.
-     *
-     * @param flags                 the mode access flags (eg: +rwx)
-     * @param script                the script or the file to grant it the permissions
-     * @param afterChangeModeAccess a runnable action to execute afterward
-     */
-    protected void chmod(String flags, String script, Runnable afterChangeModeAccess) {
-        try {
-            // change mode access to read/write/execute
-            ProcessBuilder builder = new ProcessBuilder().command("chmod", flags, script);
-            builder.start().onExit().thenApply(process -> {
-                afterChangeModeAccess.run();
-                process.destroy();
-                return null;
-            });
-        } catch (IOException e) {
-            if (serialReadEntityEntityStatus != null) {
-                serialReadEntityEntityStatus.onExceptionThrown(e);
-            }
-            if (serialWriteEntityEntityStatus != null) {
-                serialWriteEntityEntityStatus.onExceptionThrown(e);
-            }
-        }
     }
 }

@@ -34,7 +34,7 @@ package com.serial4j.example.exception;
 
 import com.serial4j.core.serial.SerialPort;
 import com.serial4j.core.serial.throwable.TooManyOpenedFilesException;
-import com.serial4j.core.terminal.Permissions;
+import com.serial4j.core.terminal.FilePermissions;
 import com.serial4j.core.terminal.TerminalDevice;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -50,11 +50,11 @@ import java.util.logging.Logger;
 public final class TestTooManyOpenedFilesException {
     public static void main(String[] args) {
         final TerminalDevice ttyDevice = new TerminalDevice();
-        final Permissions permissions = Permissions.createEmptyPermissions().append(
-                Permissions.Const.O_RDWR,
-                Permissions.Const.O_NOCTTY
+        final FilePermissions filePermissions = (FilePermissions) FilePermissions.build().append(
+                FilePermissions.OperativeConst.O_RDWR,
+                FilePermissions.OperativeConst.O_NOCTTY
         );
-        ttyDevice.setPermissions(permissions);
+        ttyDevice.setPermissions(filePermissions);
         for (; ; ) {
             try {
                 ttyDevice.openPort(new SerialPort(args[0]));

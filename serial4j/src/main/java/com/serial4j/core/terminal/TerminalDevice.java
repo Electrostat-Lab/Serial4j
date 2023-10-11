@@ -50,8 +50,10 @@ public final class TerminalDevice {
     private static final Logger LOGGER = Logger.getLogger(TerminalDevice.class.getName());
     final NativeTerminalDevice nativeTerminalDevice = new NativeTerminalDevice();
 
-    private Permissions permissions = new Permissions(0, "").append(Permissions.Const.O_RDWR)
-            .append(Permissions.Const.O_NOCTTY);
+    private FilePermissions filePermissions = (FilePermissions) FilePermissions.build().append(
+            FilePermissions.OperativeConst.O_RDWR,
+            FilePermissions.OperativeConst.O_NOCTTY
+    );
     private boolean loggingEnabled;
 
     /**
@@ -104,7 +106,7 @@ public final class TerminalDevice {
             LOGGER.log(Level.INFO, "Opening serial device " + serialPort.getPath());
         }
         this.nativeTerminalDevice.setSerialPort(serialPort);
-        final int returnValue = nativeTerminalDevice.openPort(serialPort.getPath(), permissions.getValue());
+        final int returnValue = nativeTerminalDevice.openPort(serialPort.getPath(), filePermissions.getValue());
         if (isOperationFailed(returnValue)) {
             ErrnoToException.throwFromErrno(nativeTerminalDevice.getErrno());
         }
@@ -136,10 +138,21 @@ public final class TerminalDevice {
         ErrnoToException.throwFromErrno(returnValue);
     }
 
+    public void chmod(final FilePermissions filePermissions) {
+        if (nativeTerminalDevice.getSerialPort() == null) {
+            throw new InvalidPortException("Bad serial port!");
+        }
+        final int returnValue = NativeFileAccessPermissions.fileChmod(nativeTerminalDevice.getSerialPort().getFd(),
+                filePermissions.getValue());
+        if (isOperationFailed(returnValue)) {
+            ErrnoToException.throwFromErrno(nativeTerminalDevice.getErrno());
+        }
+    }
+
     public TerminalFlag getTerminalControlFlag() throws BadFileDescriptorException,
             InvalidPortException,
             NotTtyDeviceException {
-        final TerminalFlag TCF = TerminalFlag.createEmptyFlag();
+        final TerminalFlag TCF = TerminalFlag.build();
         final int returnValue = nativeTerminalDevice.getTerminalControlFlag();
         if (isOperationFailed(returnValue)) {
             /* Warning: Force cast the errno to (int) */
@@ -175,7 +188,7 @@ public final class TerminalDevice {
     public TerminalFlag getTerminalLocalFlag() throws BadFileDescriptorException,
             InvalidPortException,
             NotTtyDeviceException {
-        final TerminalFlag TLF = TerminalFlag.createEmptyFlag();
+        final TerminalFlag TLF = TerminalFlag.build();
         final int returnValue = nativeTerminalDevice.getTerminalLocalFlag();
         /* Warning: Force cast the errno to (int) */
         if (isOperationFailed(returnValue)) {
@@ -211,7 +224,7 @@ public final class TerminalDevice {
     public TerminalFlag getTerminalInputFlag() throws BadFileDescriptorException,
             InvalidPortException,
             NotTtyDeviceException {
-        final TerminalFlag TIF = TerminalFlag.createEmptyFlag();
+        final TerminalFlag TIF = TerminalFlag.build();
         final int returnValue = nativeTerminalDevice.getTerminalInputFlag();
         /* Warning: Force cast the errno to (int) */
         if (isOperationFailed(returnValue)) {
@@ -247,7 +260,7 @@ public final class TerminalDevice {
     public TerminalFlag getTerminalOutputFlag() throws BadFileDescriptorException,
             InvalidPortException,
             NotTtyDeviceException {
-        final TerminalFlag TOF = TerminalFlag.createEmptyFlag();
+        final TerminalFlag TOF = TerminalFlag.build();
         final int returnValue = nativeTerminalDevice.getTerminalOutputFlag();
         /* Warning: Force cast the errno to (int) */
         if (isOperationFailed(returnValue)) {
@@ -279,12 +292,12 @@ public final class TerminalDevice {
         ErrnoToException.throwFromErrno(returnValue);
     }
 
-    public Permissions getPermissions() {
-        return permissions;
+    public FilePermissions getPermissions() {
+        return filePermissions;
     }
 
-    public void setPermissions(final Permissions permissions) {
-        this.permissions = permissions;
+    public void setPermissions(final FilePermissions filePermissions) {
+        this.filePermissions = filePermissions;
     }
 
     public void setReadConfigurationMode(final ReadConfiguration readConfiguration, final int timeoutValue, final int minimumBytes) throws NoSuchDeviceException,

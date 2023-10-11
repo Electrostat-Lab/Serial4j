@@ -32,7 +32,7 @@
 
 package com.serial4j.example.monitor;
 
-import com.serial4j.core.terminal.Permissions;
+import com.serial4j.core.terminal.FilePermissions;
 import com.serial4j.core.terminal.control.BaudRate;
 import com.serial4j.core.serial.entity.EntityStatus;
 import com.serial4j.core.serial.entity.impl.WritableCapsule;
@@ -61,10 +61,10 @@ public class HelloSerialMonitor implements SerialDataListener, EntityStatus<Seri
         System.out.println("---------------Welcome to Serial4j Monitor Testcase---------------");
         try {
             final SerialMonitor serialMonitor = new SerialMonitor("Monitor A");
-            final Permissions permissions = Permissions.createEmptyPermissions()
-                                                       .append(Permissions.Const.O_RDWR)
-                                                       .append(Permissions.Const.O_NOCTTY);
-            serialMonitor.startDataMonitoring("/dev/ttyUSB0", BaudRate.B57600, permissions);
+            final FilePermissions filePermissions = (FilePermissions) FilePermissions.build()
+                                                       .append(FilePermissions.OperativeConst.O_RDWR)
+                                                       .append(FilePermissions.OperativeConst.O_NOCTTY);
+            serialMonitor.startDataMonitoring("/dev/ttyUSB0", BaudRate.B57600, filePermissions);
             serialMonitor.setWriteEntityStatus(this);
             serialMonitor.addSerialDataListener(this);
 

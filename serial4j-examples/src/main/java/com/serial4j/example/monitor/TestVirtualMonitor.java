@@ -38,8 +38,8 @@ import com.serial4j.core.serial.entity.impl.SerialWriteEntity;
 import com.serial4j.core.serial.entity.impl.WritableCapsule;
 import com.serial4j.core.serial.monitor.SerialDataListener;
 import com.serial4j.core.serial.monitor.VirtualMonitor;
+import com.serial4j.core.terminal.FilePermissions;
 import com.serial4j.core.terminal.NativeTerminalDevice;
-import com.serial4j.core.terminal.Permissions;
 import com.serial4j.core.terminal.control.BaudRate;
 import java.io.IOException;
 
@@ -131,9 +131,15 @@ public final class TestVirtualMonitor {
             }
         });
 
-        final Permissions permissions = Permissions.createEmptyPermissions()
-                .append(Permissions.Const.O_RDWR)
-                .append(Permissions.Const.O_CREATE);
-        virtualMonitor.startDataMonitoring(args[0], BaudRate.B0, permissions);
+        final FilePermissions filePermissions = (FilePermissions) FilePermissions.build().append(
+                FilePermissions.OperativeConst.O_RDWR,
+                FilePermissions.OperativeConst.O_CREATE
+        );
+        final FilePermissions accessModePermissions = (FilePermissions) FilePermissions.build().append(
+                FilePermissions.AccessModeConst.S_IRUSR,
+                FilePermissions.AccessModeConst.S_IWUSR,
+                FilePermissions.AccessModeConst.S_IXUSR
+        );
+        virtualMonitor.startDataMonitoring(args[0], BaudRate.B0, filePermissions, accessModePermissions);
     }
 }

@@ -31,7 +31,7 @@
  */
 package com.serial4j.core.serial;
 
-import com.serial4j.core.terminal.Permissions;
+import com.serial4j.core.terminal.FilePermissions;
 
 /**
  * Represents a Unix terminal device port properties' wrapper.
@@ -56,7 +56,7 @@ public final class SerialPort {
    }
 
   /**
-   * Gets the io flags defined by the {@link Permissions}.
+   * Gets the io flags defined by the {@link FilePermissions}.
    * <p>
    * The io flags setter is assigned from the jni side by `NativeTerminalDevice#openPort(String, int)`.
    * </p>

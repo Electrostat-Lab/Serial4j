@@ -36,8 +36,8 @@ import java.util.Arrays;
 import java.io.FileNotFoundException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import com.serial4j.core.terminal.FilePermissions;
 import com.serial4j.core.terminal.ReadConfiguration;
-import com.serial4j.core.terminal.Permissions;
 import com.serial4j.core.terminal.control.*;
 import com.serial4j.core.serial.SerialPort;
 import com.serial4j.core.terminal.TerminalDevice;
@@ -65,24 +65,24 @@ public final class HelloNativeSerial4J implements Runnable {
 			System.out.println("Started native io example: ");
 			ttyDevice.setSerial4jLoggingEnabled(true);
 			/* set port permissions */
-			final Permissions permissions = Permissions.createEmptyPermissions()
-					.append(Permissions.Const.O_RDWR)
-					.append(Permissions.Const.O_NOCTTY);
-			ttyDevice.setPermissions(permissions);
+			final FilePermissions filePermissions = (FilePermissions) FilePermissions.build()
+					.append(FilePermissions.OperativeConst.O_RDWR)
+					.append(FilePermissions.OperativeConst.O_NOCTTY);
+			ttyDevice.setPermissions(filePermissions);
 
-			final TerminalFlag TCF_VALUE = TerminalFlag.createEmptyFlag().append(TerminalControlFlag.CSIZE)
+			final TerminalFlag TCF_VALUE = (TerminalFlag) TerminalFlag.build().append(TerminalControlFlag.CSIZE)
 																		  .append(TerminalControlFlag.MaskBits.CS8,
 																				  TerminalControlFlag.CLOCAL, TerminalControlFlag.CREAD);
 
 			/* define terminal flags */
-			final TerminalFlag TLF_VALUE = TerminalFlag.createEmptyFlag().disable(TerminalLocalFlag.ECHO, TerminalLocalFlag.ECHOK,
+			final TerminalFlag TLF_VALUE = (TerminalFlag) TerminalFlag.build().disable(TerminalLocalFlag.ECHO, TerminalLocalFlag.ECHOK,
 																		TerminalLocalFlag.ECHOE, TerminalLocalFlag.ECHOKE,
 																		TerminalLocalFlag.ECHONL, TerminalLocalFlag.ECHOPRT,
 																		TerminalLocalFlag.ECHOCTL, TerminalLocalFlag.ISIG,
 																		TerminalLocalFlag.IEXTEN, TerminalLocalFlag.ICANON);
-			final TerminalFlag TOF_VALUE = TerminalFlag.createEmptyFlag()
+			final TerminalFlag TOF_VALUE = (TerminalFlag) TerminalFlag.build()
 																.disable(TerminalOutputFlag.OPOST, TerminalOutputFlag.ONLCR);
-			final TerminalFlag TIF_VALUE = TerminalFlag.createEmptyFlag();
+			final TerminalFlag TIF_VALUE = TerminalFlag.build();
 			/* open the serial port using the path or the name */
 			ttyDevice.openPort(new SerialPort("/dev/ttyUSB0"));
 			/* initialize the terminal IO with the default terminal flags */
