@@ -9,12 +9,14 @@ import com.serial4j.core.terminal.NativeBufferInputStream;
 import com.serial4j.core.terminal.NativeBufferOutputStream;
 import com.serial4j.core.terminal.control.BaudRate;
 
-import java.io.FileNotFoundException;
-
 /**
  * A virtual monitor isolates the {@link SerialReadEntity} and the {@link SerialWriteEntity}
  * actions from the terminal based operations, the virtual monitor can act on both regular and
  * terminal files, as well, it just isolates the native IO operations.
+ *
+ * <p>
+ * The virtual monitor is a unit test API by itself that should be
+ * used to assert the correctness of the changes to the terminal IO API before pushing changes.
  *
  * @author pavl_g
  */
@@ -34,16 +36,12 @@ public class VirtualMonitor extends SerialMonitor {
     }
 
     @Override
-    public void startDataMonitoring(String port, BaudRate baudRate, FilePermissions filePermissions) throws NoSuchDeviceException, PermissionDeniedException, BrokenPipeException, InvalidPortException, NoAvailableTtyDevicesException, FileNotFoundException {
-        throw new UnsupportedOperationException();
-    }
-
-    public void startDataMonitoring(String port, BaudRate baudRate, FilePermissions operativePermissions, FilePermissions accessPermissions) throws NoSuchDeviceException,
+    public void startDataMonitoring(String port, BaudRate baudRate, FilePermissions filePermissions) throws NoSuchDeviceException,
             PermissionDeniedException, BrokenPipeException, InvalidPortException, NoAvailableTtyDevicesException {
 
         terminalDevice.setSerial4jLoggingEnabled(true);
-        if (operativePermissions != null) {
-            terminalDevice.setPermissions(operativePermissions);
+        if (filePermissions != null) {
+            terminalDevice.setOperativeFilePermissions(filePermissions);
         }
 
         readEntityStream = new NativeBufferInputStream(terminalDevice);
@@ -54,7 +52,10 @@ public class VirtualMonitor extends SerialMonitor {
 
         terminalDevice.openPort(new SerialPort(port));
 
-        terminalDevice.chmod(accessPermissions);
+        final FilePermissions userAccessPermissions = (FilePermissions) FilePermissions.build()
+                                                .append(FilePermissions.AccessModeConst.S_IRWXU);
+
+        terminalDevice.chmod(userAccessPermissions);
 
         monitorThread = new Thread(() -> {
             while (!isTerminate()) {
