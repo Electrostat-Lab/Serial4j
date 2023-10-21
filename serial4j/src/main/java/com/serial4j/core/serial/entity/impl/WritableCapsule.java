@@ -80,15 +80,16 @@ public final class WritableCapsule implements Cloneable {
     }
 
     /**
-     * Performs a deep copy operation.
+     * Creates a new instance and performs a deep copy operation to the internal value of {@link WritableCapsule#getData()},
+     * and reverts the state {@link WritableCapsule#isDataWritten()} back to false.
      *
      * @return a new object with the same writable data
      */
     @Override
-    @SuppressWarnings("all")
-    protected Object clone() {
-        final WritableCapsule writableCapsule = new WritableCapsule();
-        writableCapsule.write(this.data);
+    public WritableCapsule clone() throws CloneNotSupportedException {
+        // creates a new instance with same values as the original
+        final WritableCapsule writableCapsule = (WritableCapsule) super.clone();
+        writableCapsule.setDataWritten(false); // revert back to false
         return writableCapsule;
     }
 }
