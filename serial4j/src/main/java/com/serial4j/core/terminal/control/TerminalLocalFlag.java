@@ -33,6 +33,12 @@ package com.serial4j.core.terminal.control;
 
 import com.serial4j.core.flag.FlagConst;
 
+/**
+ * Provides the POSIX terminal flags that control
+ * the local display (user interface) of the characters on the terminal.
+ *
+ * @author pavl_g
+ */
 public enum TerminalLocalFlag implements FlagConst {
     ECHO(NativeTerminalFlags.LocalFlags.getEchoInputCharacters()),
     ECHOCTL(NativeTerminalFlags.LocalFlags.getEchoControlCharacters()),

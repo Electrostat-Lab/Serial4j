@@ -34,7 +34,7 @@ package com.serial4j.core.terminal.control;
 import com.serial4j.core.flag.AppendableFlag;
 
 /**
- * Represents the base implementation for the termios.h terminal flags values.
+ * Represents the base implementation for the "termios.h" terminal flags values.
  *
  * @author pavl_g.
  */
