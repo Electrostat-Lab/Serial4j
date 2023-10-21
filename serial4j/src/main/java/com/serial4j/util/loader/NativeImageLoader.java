@@ -52,7 +52,7 @@ public class NativeImageLoader {
     private static String jarPath = null;
     private static String extractionPath = null;
     private static LoadingCriterion defaultLoadingCriterion =
-                                        LoadingCriterion.INCREMENTAL_LOADING;
+            LoadingCriterion.INCREMENTAL_LOADING;
 
     private NativeImageLoader() {
     }
@@ -75,36 +75,19 @@ public class NativeImageLoader {
                 new LibraryInfo(getJarPath(), null, getLibraryBaseName(), getExtractionPath());
 
         final NativeBinaryLoader loader = new NativeBinaryLoader(libraryInfo)
-                                                .initPlatformLibrary();
+                .initPlatformLibrary();
         loader.setLoggingEnabled(true);
         loader.setRetryWithCleanExtraction(true);
         try {
             loader.loadLibrary(defaultLoadingCriterion);
         } catch (IOException e) {
             Logger.getLogger(NativeBinaryLoader.class.getName())
-                  .log(Level.SEVERE, "Loading Serial4j loader failed!", e);
+                    .log(Level.SEVERE, "Loading Serial4j loader failed!", e);
         }
     }
 
     public static void setDefaultLoadingCriterion(LoadingCriterion defaultLoadingCriterion) {
         NativeImageLoader.defaultLoadingCriterion = defaultLoadingCriterion;
-    }
-
-    /**
-     * Sets the jar absolute path, that is the source to extract the
-     * native library from.
-     * <p>
-     * Default path to use the classpath to
-     * locate the native library to extract.
-     * </p>
-     *
-     * @param parts the path parts starting from the root directory without file separators
-     */
-    public static void setJarPath(String... parts) {
-        NativeImageLoader.jarPath = "";
-        for (String part: parts) {
-            NativeImageLoader.jarPath += PropertiesProvider.FILE_SEPARATOR.getSystemProperty() + part;
-        }
     }
 
     /**
@@ -114,24 +97,8 @@ public class NativeImageLoader {
      */
     public static void setJarPathFromUserDir(String... parts) {
         NativeImageLoader.jarPath = PropertiesProvider.USER_DIR.getSystemProperty();
-        for (String part: parts) {
+        for (String part : parts) {
             NativeImageLoader.jarPath += PropertiesProvider.FILE_SEPARATOR.getSystemProperty() + part;
-        }
-    }
-
-    /**
-     * Sets the extraction path, that is the directory for extracting the native
-     * library.
-     * <p>
-     * Default path is {@link NativeImageLoader#getDefaultExtractionPath()}.
-     * </p>
-     *
-     * @param parts the path parts in string format without file separators
-     */
-    public static void setExtractionPath(String... parts) {
-        NativeImageLoader.extractionPath = "";
-        for (String part: parts) {
-            NativeImageLoader.extractionPath += PropertiesProvider.FILE_SEPARATOR.getSystemProperty() + part;
         }
     }
 
@@ -142,7 +109,7 @@ public class NativeImageLoader {
      */
     public static void setExtractionPathFromUserDir(String... path) {
         NativeImageLoader.extractionPath = PropertiesProvider.USER_DIR.getSystemProperty();
-        for (String part: path) {
+        for (String part : path) {
             NativeImageLoader.extractionPath += PropertiesProvider.FILE_SEPARATOR.getSystemProperty() + part;
         }
     }
@@ -162,6 +129,22 @@ public class NativeImageLoader {
     }
 
     /**
+     * Sets the extraction path, that is the directory for extracting the native
+     * library.
+     * <p>
+     * Default path is {@link NativeImageLoader#getDefaultExtractionPath()}.
+     * </p>
+     *
+     * @param parts the path parts in string format without file separators
+     */
+    public static void setExtractionPath(String... parts) {
+        NativeImageLoader.extractionPath = "";
+        for (String part : parts) {
+            NativeImageLoader.extractionPath += PropertiesProvider.FILE_SEPARATOR.getSystemProperty() + part;
+        }
+    }
+
+    /**
      * Retrieves the jar path to locate the jar file from which
      * the native library will be extracted or the default {@link NativeImageLoader#getDefaultJarPath()}
      * if the user jar path is "null".
@@ -173,6 +156,23 @@ public class NativeImageLoader {
             return jarPath;
         }
         return getDefaultJarPath();
+    }
+
+    /**
+     * Sets the jar absolute path, that is the source to extract the
+     * native library from.
+     * <p>
+     * Default path to use the classpath to
+     * locate the native library to extract.
+     * </p>
+     *
+     * @param parts the path parts starting from the root directory without file separators
+     */
+    public static void setJarPath(String... parts) {
+        NativeImageLoader.jarPath = "";
+        for (String part : parts) {
+            NativeImageLoader.jarPath += PropertiesProvider.FILE_SEPARATOR.getSystemProperty() + part;
+        }
     }
 
     /**
@@ -195,14 +195,14 @@ public class NativeImageLoader {
     public static String getDefaultJarPath() {
         setJarPathFromUserDir("libs");
         return jarPath + PropertiesProvider.FILE_SEPARATOR.getSystemProperty()
-                            + getJarFile();
+                + getJarFile();
     }
 
     /**
      * Provides a platform independent constant value for the loader jar file.
      *
      * @return the name of the jar file containing
-     *         the native dynamic libraries to extract and load
+     * the native dynamic libraries to extract and load
      */
     public static String getJarFile() {
         return "serial4j-native-" + NativeVariant.NAME.getProperty().toLowerCase() + ".jar";
