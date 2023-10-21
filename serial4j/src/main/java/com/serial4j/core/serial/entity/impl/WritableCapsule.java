@@ -78,4 +78,17 @@ public final class WritableCapsule implements Cloneable {
     public void setDataWritten(boolean dataWritten) {
         this.dataWritten = dataWritten;
     }
+
+    /**
+     * Performs a deep copy operation.
+     *
+     * @return a new object with the same writable data
+     */
+    @Override
+    @SuppressWarnings("all")
+    protected Object clone() {
+        final WritableCapsule writableCapsule = new WritableCapsule();
+        writableCapsule.write(this.data);
+        return writableCapsule;
+    }
 }

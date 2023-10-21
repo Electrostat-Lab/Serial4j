@@ -31,9 +31,7 @@
  */
 
 /**
- * An implementation code for {@link serial.entity.SerialMonitorEntity} providing both read and
- * write serial monitor entities.
- *
- * @author pavl_g.
+ * An implementation code for {@link com.serial4j.core.serial.entity.SerialMonitorEntity}
+ * providing both read and write serial monitor entities.
  */
 package com.serial4j.core.serial.entity.impl;
