@@ -55,7 +55,7 @@ public final class TestRawVirtualMonitor {
                 FilePermissions.AccessModeConst.S_IWUSR,
                 FilePermissions.AccessModeConst.S_IXUSR
         );
-        ttyDevice.setPermissions(filePermissions);
+        ttyDevice.setOperativeFilePermissions(filePermissions);
         ttyDevice.openPort(new SerialPort(args[0]));
         ttyDevice.chmod(accessModePermissions);
 

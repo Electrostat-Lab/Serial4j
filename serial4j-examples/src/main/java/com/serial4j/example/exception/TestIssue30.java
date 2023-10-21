@@ -52,7 +52,7 @@ public final class TestIssue30 {
         final FilePermissions filePermissions = (FilePermissions) FilePermissions.build()
                 .append(FilePermissions.OperativeConst.O_RDONLY)
                 .append(FilePermissions.OperativeConst.O_NOCTTY);
-        ttyDevice.setPermissions(filePermissions);
+        ttyDevice.setOperativeFilePermissions(filePermissions);
         ttyDevice.openPort(new SerialPort(args[0]));
 
         try {

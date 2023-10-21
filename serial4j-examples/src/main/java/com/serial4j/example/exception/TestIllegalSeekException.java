@@ -38,7 +38,6 @@ import com.serial4j.core.terminal.FilePermissions;
 import com.serial4j.core.terminal.NativeTerminalDevice;
 import com.serial4j.core.terminal.TerminalDevice;
 import java.io.FileNotFoundException;
-import java.lang.reflect.InvocationTargetException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -57,7 +56,7 @@ public final class TestIllegalSeekException {
                 FilePermissions.OperativeConst.O_RDWR,
                 FilePermissions.OperativeConst.O_NOCTTY
         );
-        ttyDevice.setPermissions(filePermissions);
+        ttyDevice.setOperativeFilePermissions(filePermissions);
         ttyDevice.openPort(new SerialPort(args[0]));
         ttyDevice.initTerminal();
         if (ttyDevice.sread(255) > 0) {

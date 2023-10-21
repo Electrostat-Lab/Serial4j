@@ -37,7 +37,6 @@ import com.serial4j.core.serial.throwable.BadFileNumberException;
 import com.serial4j.core.terminal.FilePermissions;
 import com.serial4j.core.terminal.TerminalDevice;
 import java.io.FileNotFoundException;
-import java.lang.reflect.InvocationTargetException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -56,7 +55,7 @@ public final class TestBadFileNumberException {
                 FilePermissions.OperativeConst.O_RDONLY,
                 FilePermissions.OperativeConst.O_NOCTTY
         );
-        ttyDevice.setPermissions(filePermissions);
+        ttyDevice.setOperativeFilePermissions(filePermissions);
         ttyDevice.openPort(new SerialPort(args[0]));
         ttyDevice.initTerminal();
 

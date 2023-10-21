@@ -135,11 +135,6 @@ public final class TestVirtualMonitor {
                 FilePermissions.OperativeConst.O_RDWR,
                 FilePermissions.OperativeConst.O_CREATE
         );
-        final FilePermissions accessModePermissions = (FilePermissions) FilePermissions.build().append(
-                FilePermissions.AccessModeConst.S_IRUSR,
-                FilePermissions.AccessModeConst.S_IWUSR,
-                FilePermissions.AccessModeConst.S_IXUSR
-        );
-        virtualMonitor.startDataMonitoring(args[0], BaudRate.B0, filePermissions, accessModePermissions);
+        virtualMonitor.startDataMonitoring(args[0], BaudRate.B0, filePermissions);
     }
 }

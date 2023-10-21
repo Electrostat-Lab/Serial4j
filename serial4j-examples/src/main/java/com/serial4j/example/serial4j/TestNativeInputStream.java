@@ -47,7 +47,7 @@ public final class TestNativeInputStream {
         final TerminalDevice ttyDevice = new TerminalDevice();
         final FilePermissions filePermissions = (FilePermissions) FilePermissions.build()
                         .append(FilePermissions.OperativeConst.O_CREATE, FilePermissions.OperativeConst.O_RDWR);
-        ttyDevice.setPermissions(filePermissions);
+        ttyDevice.setOperativeFilePermissions(filePermissions);
         ttyDevice.openPort(new SerialPort(args[0]));
         try (final NativeBufferInputStream inputStream = new NativeBufferInputStream(ttyDevice)) {
             final StringBuffer buffer = new StringBuffer();
