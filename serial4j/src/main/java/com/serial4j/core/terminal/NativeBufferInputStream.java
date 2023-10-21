@@ -159,7 +159,7 @@ public class NativeBufferInputStream extends InputStream {
      * @return the number of the read bytes
      */
     public long readOffset(int offset, int length) {
-         // seek to an offset
+        // seek to an offset
         terminalDevice.seek(offset, NativeTerminalDevice.FileSeekCriterion.SEEK_SET);
         // read from that offset into a buffer
         return terminalDevice.iread(length);
