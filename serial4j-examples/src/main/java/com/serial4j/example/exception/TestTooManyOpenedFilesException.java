@@ -54,7 +54,7 @@ public final class TestTooManyOpenedFilesException {
                 FilePermissions.OperativeConst.O_RDWR,
                 FilePermissions.OperativeConst.O_NOCTTY
         );
-        ttyDevice.setPermissions(filePermissions);
+        ttyDevice.setOperativeFilePermissions(filePermissions);
         for (; ; ) {
             try {
                 ttyDevice.openPort(new SerialPort(args[0]));

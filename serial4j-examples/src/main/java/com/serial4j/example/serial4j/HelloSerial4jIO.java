@@ -39,7 +39,6 @@ import com.serial4j.core.serial.throwable.PermissionDeniedException;
 import com.serial4j.core.terminal.TerminalDevice;
 import com.serial4j.core.terminal.control.BaudRate;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.util.Arrays;
 import java.util.logging.Level;
@@ -129,8 +128,7 @@ public final class HelloSerial4jIO implements Runnable {
         } catch (NoSuchDeviceException |
                  PermissionDeniedException |
                  BrokenPipeException |
-                 InvalidPortException |
-                 FileNotFoundException e) {
+                 InvalidPortException e) {
             Logger.getLogger(HelloSerial4jIO.class.getName())
                     .log(Level.SEVERE, "Monitor has failed!", e);
         }

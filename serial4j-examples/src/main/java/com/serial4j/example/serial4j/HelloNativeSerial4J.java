@@ -61,60 +61,55 @@ public final class HelloNativeSerial4J implements Runnable {
 	@Override
 	public void run() {
 		System.out.println(Thread.currentThread());
-		try {
-			System.out.println("Started native io example: ");
-			ttyDevice.setSerial4jLoggingEnabled(true);
-			/* set port permissions */
-			final FilePermissions filePermissions = (FilePermissions) FilePermissions.build()
-					.append(FilePermissions.OperativeConst.O_RDWR)
-					.append(FilePermissions.OperativeConst.O_NOCTTY);
-			ttyDevice.setPermissions(filePermissions);
+		System.out.println("Started native io example: ");
+		ttyDevice.setSerial4jLoggingEnabled(true);
+		/* set port permissions */
+		final FilePermissions filePermissions = (FilePermissions) FilePermissions.build()
+				.append(FilePermissions.OperativeConst.O_RDWR)
+				.append(FilePermissions.OperativeConst.O_NOCTTY);
+		ttyDevice.setOperativeFilePermissions(filePermissions);
 
-			final TerminalFlag TCF_VALUE = (TerminalFlag) TerminalFlag.build().append(TerminalControlFlag.CSIZE)
-																		  .append(TerminalControlFlag.MaskBits.CS8,
-																				  TerminalControlFlag.CLOCAL, TerminalControlFlag.CREAD);
+		final TerminalFlag TCF_VALUE = (TerminalFlag) TerminalFlag.build().append(TerminalControlFlag.CSIZE)
+																	  .append(TerminalControlFlag.MaskBits.CS8,
+																			  TerminalControlFlag.CLOCAL, TerminalControlFlag.CREAD);
 
-			/* define terminal flags */
-			final TerminalFlag TLF_VALUE = (TerminalFlag) TerminalFlag.build().disable(TerminalLocalFlag.ECHO, TerminalLocalFlag.ECHOK,
-																		TerminalLocalFlag.ECHOE, TerminalLocalFlag.ECHOKE,
-																		TerminalLocalFlag.ECHONL, TerminalLocalFlag.ECHOPRT,
-																		TerminalLocalFlag.ECHOCTL, TerminalLocalFlag.ISIG,
-																		TerminalLocalFlag.IEXTEN, TerminalLocalFlag.ICANON);
-			final TerminalFlag TOF_VALUE = (TerminalFlag) TerminalFlag.build()
-																.disable(TerminalOutputFlag.OPOST, TerminalOutputFlag.ONLCR);
-			final TerminalFlag TIF_VALUE = TerminalFlag.build();
-			/* open the serial port using the path or the name */
-			ttyDevice.openPort(new SerialPort("/dev/ttyUSB0"));
-			/* initialize the terminal IO with the default terminal flags */
-			ttyDevice.initTerminal();
-			/* print the initial terminal control flags as long value */
-			System.out.println(ttyDevice.getTerminalControlFlag().getValue());
-			/* set and update the new terminal flags */
-			ttyDevice.setTerminalControlFlag(TCF_VALUE);
-			ttyDevice.setTerminalLocalFlag(TLF_VALUE);
-			ttyDevice.setTerminalOutputFlag(TOF_VALUE);
-			ttyDevice.setTerminalInputFlag(TIF_VALUE);
-			/* print the new terminal control flag */
-			System.out.println(ttyDevice.getTerminalControlFlag().getValue());
-			/* set the baud rate (bits/second) */
-			ttyDevice.setBaudRate(BaudRate.B57600);
-			/* set the reading mode config to interbyte timeout of delay 510 bytes and delay of 5ms between each charachter */
-			ttyDevice.setReadConfigurationMode(ReadConfiguration.BLOCKING_READ_ONE_CHAR, 0, 9);
+		/* define terminal flags */
+		final TerminalFlag TLF_VALUE = (TerminalFlag) TerminalFlag.build().disable(TerminalLocalFlag.ECHO, TerminalLocalFlag.ECHOK,
+																	TerminalLocalFlag.ECHOE, TerminalLocalFlag.ECHOKE,
+																	TerminalLocalFlag.ECHONL, TerminalLocalFlag.ECHOPRT,
+																	TerminalLocalFlag.ECHOCTL, TerminalLocalFlag.ISIG,
+																	TerminalLocalFlag.IEXTEN, TerminalLocalFlag.ICANON);
+		final TerminalFlag TOF_VALUE = (TerminalFlag) TerminalFlag.build()
+															.disable(TerminalOutputFlag.OPOST, TerminalOutputFlag.ONLCR);
+		final TerminalFlag TIF_VALUE = TerminalFlag.build();
+		/* open the serial port using the path or the name */
+		ttyDevice.openPort(new SerialPort("/dev/ttyUSB0"));
+		/* initialize the terminal IO with the default terminal flags */
+		ttyDevice.initTerminal();
+		/* print the initial terminal control flags as long value */
+		System.out.println(ttyDevice.getTerminalControlFlag().getValue());
+		/* set and update the new terminal flags */
+		ttyDevice.setTerminalControlFlag(TCF_VALUE);
+		ttyDevice.setTerminalLocalFlag(TLF_VALUE);
+		ttyDevice.setTerminalOutputFlag(TOF_VALUE);
+		ttyDevice.setTerminalInputFlag(TIF_VALUE);
+		/* print the new terminal control flag */
+		System.out.println(ttyDevice.getTerminalControlFlag().getValue());
+		/* set the baud rate (bits/second) */
+		ttyDevice.setBaudRate(BaudRate.B57600);
+		/* set the reading mode config to interbyte timeout of delay 510 bytes and delay of 5ms between each charachter */
+		ttyDevice.setReadConfigurationMode(ReadConfiguration.BLOCKING_READ_ONE_CHAR, 0, 9);
 
-			/* print the port file descriptor */
-			if (ttyDevice.getSerialPort().getFd() > 0) {
-				System.out.println("Port Opened with " + ttyDevice.getSerialPort().getFd());
-			}
-			System.out.println(Arrays.toString(ttyDevice.getReadConfigurationMode().getMode()));
-			System.out.println(Arrays.toString(ttyDevice.getSerialPorts()) + " " + ttyDevice.getSerialPorts().length);
-
-			 /* start the R/W threads */
-			startReadThread(ttyDevice, 0);
-			startWriteThread(ttyDevice, 10000);
-		} catch(FileNotFoundException e) {
-			Logger.getLogger(getClass().getName())
-				   .log(Level.SEVERE, "Terminal IO has failed!", e);
+		/* print the port file descriptor */
+		if (ttyDevice.getSerialPort().getFd() > 0) {
+			System.out.println("Port Opened with " + ttyDevice.getSerialPort().getFd());
 		}
+		System.out.println(ttyDevice.getReadConfigurationMode().getMode().toString());
+		System.out.println(Arrays.toString(ttyDevice.getSerialPorts()) + " " + ttyDevice.getSerialPorts().length);
+
+		/* start the R/W threads */
+		startReadThread(ttyDevice, 0);
+		startWriteThread(ttyDevice, 10000);
 
 	}
 
