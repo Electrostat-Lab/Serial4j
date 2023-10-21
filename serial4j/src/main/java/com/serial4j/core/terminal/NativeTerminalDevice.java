@@ -58,7 +58,6 @@ public final class NativeTerminalDevice {
     private SerialPort serialPort;
     private String[] serialPorts;
     private String readBuffer;
-
     private char[] buffer;
 
     /**
@@ -73,7 +72,7 @@ public final class NativeTerminalDevice {
     /**
      * Sets up the native environment for this terminal device.
      *
-     * @return (- 1) if the jni env pointer is NULL, (1) for successful initialization.
+     * @return (- 1) if the JNI env pointer is NULL, (1) for successful initialization.
      */
     @Deprecated
     static native int setupJniEnvironment();
@@ -142,7 +141,7 @@ public final class NativeTerminalDevice {
      * </p>
      *
      * @param flag the flag to set the [c_cflag] to.
-     * @return errno(- 1) for failure, errno(-2) for invalid port, errno(1) for success.
+     * @return (- 1) for failure, (-2) for invalid port, (1) for success.
      * @see TerminalControlFlag
      */
     native int setTerminalControlFlag(final int flag);
@@ -161,7 +160,7 @@ public final class NativeTerminalDevice {
      * </p>
      *
      * @param flag the flag to set the [c_lflag] to.
-     * @return errno(- 1) for failure, errno(-2) for invalid port, errno(1) for success.
+     * @return (- 1) for failure, (-2) for invalid port, (1) for success.
      * @see TerminalLocalFlag
      */
     native int setTerminalLocalFlag(final int flag);
@@ -301,6 +300,11 @@ public final class NativeTerminalDevice {
      * Reads the data from this terminal device and insert the result into the {@link NativeTerminalDevice#readBuffer}
      * string buffer.
      *
+     * <p>
+     * This method uses the MIN value specified by the terminal character control "c_cc"
+     * as the number of the requested bytes by read().
+     * </p>
+     *
      * @return the number of read bytes from this terminal device.
      */
     native long sread();
@@ -309,7 +313,7 @@ public final class NativeTerminalDevice {
      * Reads the data from this file-system and inserts the result into the {@link NativeTerminalDevice#readBuffer}
      * string buffer.
      *
-     * @param length the length of the reading buffer
+     * @param length the length of the reading buffer (the requested bytes from the read())
      * @return the number of read bytes
      */
     native long sread(final int length);
@@ -318,7 +322,7 @@ public final class NativeTerminalDevice {
      * Reads the data from this file-system and inserts the result into the {@link NativeTerminalDevice#getBuffer()}
      * buffer.
      *
-     * @param length the number of the bytes to read into the buffer
+     * @param length the number of the bytes to read into the buffer (the requested bytes from the read())
      * @return the number of the read bytes
      */
     native long iread(final int length);
@@ -350,9 +354,26 @@ public final class NativeTerminalDevice {
      *
      * @param port the port path in strings.
      * @param flag the flag for the base file control native api [fcntl].
-     * @return errno(- 1) for failure, errno(1) for success.
+     * @return (- 1) for failure, (1) for success.
      */
     native int openPort(final String port, final int flag);
+
+    /**
+     * Reassigns the modem bits status, used to enable/disable
+     * modem bits in the Rs232 interface.
+     *
+     * @param status the new bits status
+     * @return (- 1) for failure, (- 2) for invalid port, (1) for success.
+     */
+    native int setModemBitsStatus(final int status);
+
+    /**
+     * Retrieves the modem bits status and inserts it into a pointer.
+     *
+     * @param pointer a pointer to an integer value
+     * @return (- 1) for failure, (- 2) for invalid port, (1) for success.
+     */
+    native int getModemBitsStatus(final int[] pointer);
 
     /**
      * Initializes this terminal device with the default terminal flags and read timeout properties:
@@ -400,7 +421,7 @@ public final class NativeTerminalDevice {
      * Note: This should be called right after {@link NativeTerminalDevice#openPort(String, int)}.
      * </p>
      *
-     * @return errno(- 1) for failure, errno(-2) for invalid port, errno(1) for success.
+     * @return (- 1) for failure, (-2) for invalid port, (1) for success.
      */
     native int initTerminal();
 
@@ -408,7 +429,7 @@ public final class NativeTerminalDevice {
      * Adjusts the baud rate aka. the speed of data transmission in bits/seconds for this bus.
      *
      * @param baudRate the baud rate POSIX native code, find more about baud rate codes at `include/x86_64-linux-gnu/bits/termios.h`
-     * @return errno(- 1) for failure, errno(-2) for invalid port, errno(1) for success.
+     * @return (- 1) for failure, (-2) for invalid port, (1) for success.
      */
     native int setBaudRate(int baudRate);
 
@@ -420,7 +441,7 @@ public final class NativeTerminalDevice {
      * the port descriptor {@link NativeTerminalDevice#serialPort#fd} to 0 and the port path {@link NativeTerminalDevice#serialPort#fd} to "".
      * </p>
      *
-     * @return errno(- 1) for failure, errno(-2) for invalid port, errno(1) for success.
+     * @return (- 1) for failure, (-2) for invalid port, (1) for success.
      */
     native int closePort();
 
@@ -455,10 +476,28 @@ public final class NativeTerminalDevice {
             this.descritpion = description;
         }
 
+        /**
+         * Retrieves the value that orders a seek from the
+         * start position of the byte stream.
+         *
+         * @return the value ordering a seek from the start
+         */
         private static native int getSeekFromStart();
 
+        /**
+         * Retrieves the value that orders a seek from the
+         * current of the byte stream.
+         *
+         * @return the value ordering a seek from the current position
+         */
         private static native int getSeekFromCurrent();
 
+        /**
+         * Retrieves the value that orders a seek from the
+         * end of the byte stream.
+         *
+         * @return the value ordering a seek from the end position
+         */
         private static native int getSeekFromEnd();
 
         /**

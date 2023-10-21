@@ -177,6 +177,22 @@ JNIEXPORT jint JNICALL Java_com_serial4j_core_terminal_NativeTerminalDevice_open
 
 /*
  * Class:     com_serial4j_core_terminal_NativeTerminalDevice
+ * Method:    setModemBitsStatus
+ * Signature: (I)I
+ */
+JNIEXPORT jint JNICALL Java_com_serial4j_core_terminal_NativeTerminalDevice_setModemBitsStatus
+  (JNIEnv *, jobject, jint);
+
+/*
+ * Class:     com_serial4j_core_terminal_NativeTerminalDevice
+ * Method:    getModemBitsStatus
+ * Signature: ([I)I
+ */
+JNIEXPORT jint JNICALL Java_com_serial4j_core_terminal_NativeTerminalDevice_getModemBitsStatus
+  (JNIEnv *, jobject, jintArray);
+
+/*
+ * Class:     com_serial4j_core_terminal_NativeTerminalDevice
  * Method:    initTerminal
  * Signature: ()I
  */

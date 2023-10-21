@@ -38,6 +38,7 @@
 #include<jni/com_serial4j_core_terminal_NativeTerminalDevice.h>
 #include<errno.h>
 #include<TerminalDevice.h>
+#include<ModemController.h>
 #include<stdlib.h>
 #include<JniUtils.h>
 
@@ -170,11 +171,11 @@ JNIEXPORT jlong JNICALL Java_com_serial4j_core_terminal_NativeTerminalDevice_sre
     char strBuffer[length + 1];
     /* clear the memory blocks before using */
     memset(strBuffer, '\0', sizeof(strBuffer));
-    long numberOfReadChars = TerminalDevice::readData((void*) strBuffer, length, &fd);
+    long bytes = TerminalDevice::readData((void*) strBuffer, length, &fd);
     /* get the java string buffer and setup its data with the buffer */
     JniUtils::setObjectField(env, &object, "readBuffer", "Ljava/lang/String;", env->NewStringUTF(strBuffer));
 
-    return numberOfReadChars;
+    return bytes;
 }
 
 JNIEXPORT jlong JNICALL Java_com_serial4j_core_terminal_NativeTerminalDevice_sread__I
@@ -185,10 +186,10 @@ JNIEXPORT jlong JNICALL Java_com_serial4j_core_terminal_NativeTerminalDevice_sre
     char strBuffer[length + 1];
     /* clear the memory blocks before using */
     memset(strBuffer, '\0', sizeof(strBuffer));
-    long numberOfReadChars = TerminalDevice::readData((void*) strBuffer, length, &fd);
+    long bytes = TerminalDevice::readData((void*) strBuffer, length, &fd);
     /* get the java string buffer and setup its data with the buffer */
     JniUtils::setObjectField(env, &object, "readBuffer", "Ljava/lang/String;", env->NewStringUTF(strBuffer));
-    return numberOfReadChars;
+    return bytes;
 }
 
 JNIEXPORT jlong JNICALL Java_com_serial4j_core_terminal_NativeTerminalDevice_iread
@@ -200,7 +201,7 @@ JNIEXPORT jlong JNICALL Java_com_serial4j_core_terminal_NativeTerminalDevice_ire
     memset(buffer, '\0', sizeof(buffer));
 
     /* read data into the buffer */
-    int bytes = TerminalDevice::readData((void*) buffer, length, &fd);
+    long bytes = TerminalDevice::readData((void*) buffer, length, &fd);
 
     /* send the data to the Java buffer */
     jcharArray array = JniUtils::getCharArrayFromBuffer(env, buffer, length);
@@ -245,6 +246,21 @@ JNIEXPORT jint JNICALL Java_com_serial4j_core_terminal_NativeTerminalDevice_open
     env->ReleaseStringUTFChars(string, buffer);
 
     return fd;
+}
+
+JNIEXPORT jint JNICALL Java_com_serial4j_core_terminal_NativeTerminalDevice_setModemBitsStatus
+  (JNIEnv* env, jobject object, jint status) {
+    int fd = JniUtils::getPortDescriptorFromSerialPort(env, &object);
+    return ModemController::setModemBitsStatus(fd, &status);
+}
+
+JNIEXPORT jint JNICALL Java_com_serial4j_core_terminal_NativeTerminalDevice_getModemBitsStatus
+  (JNIEnv* env, jobject object, jintArray pointer) {
+    int fd = JniUtils::getPortDescriptorFromSerialPort(env, &object);
+    jint* elements = JniUtils::getIntArrayElements(env, &pointer);
+    int state = ModemController::getModemBitsStatus(fd, elements);
+    env->ReleaseIntArrayElements(pointer, elements, 0);
+    return state;
 }
 
 JNIEXPORT jint JNICALL Java_com_serial4j_core_terminal_NativeTerminalDevice_closePort

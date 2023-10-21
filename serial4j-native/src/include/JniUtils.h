@@ -292,11 +292,11 @@ namespace JniUtils {
         return env->GetObjectArrayElement(*array, index);
     }
 
-    static inline jint getIntArrayElement(JNIEnv* env, jintArray* array, jsize index) {
-        return env->GetIntArrayElements(*array, 0)[index];
+    static inline jint* getIntArrayElements(JNIEnv* env, jintArray* array) {
+        return env->GetIntArrayElements(*array, 0);
     }
 
-    static inline jbyte* getByteArrayElement(JNIEnv* env, jbyteArray* array, jsize index) {
+    static inline jbyte* getByteArrayElement(JNIEnv* env, jbyteArray* array) {
         return env->GetByteArrayElements(*array, 0);
     }
 
