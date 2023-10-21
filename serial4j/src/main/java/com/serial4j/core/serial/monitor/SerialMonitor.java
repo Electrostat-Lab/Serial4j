@@ -122,8 +122,7 @@ public class SerialMonitor {
         /* ignore timeout strategy */
         terminalDevice.setSerial4jLoggingEnabled(true);
         if (filePermissions != null) {
-            terminalDevice.setPermissions(filePermissions);
-            System.out.println(filePermissions.getDescription());
+            terminalDevice.setOperativeFilePermissions(filePermissions);
         }
         terminalDevice.openPort(new SerialPort(port));
         terminalDevice.setBaudRate(baudRate);
