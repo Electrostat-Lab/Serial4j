@@ -33,6 +33,12 @@ package com.serial4j.core.terminal.control;
 
 import com.serial4j.core.flag.FlagConst;
 
+/**
+ * Provides the POSIX constants that control the terminal
+ * driver output queue.
+ *
+ * @author pavl_g
+ */
 public enum TerminalOutputFlag implements FlagConst {
     BSDLY(NativeTerminalFlags.OutputFlags.getBackspaceDelayMask()),
     CRDLY(NativeTerminalFlags.OutputFlags.getCarriageReturnDelayMask()),

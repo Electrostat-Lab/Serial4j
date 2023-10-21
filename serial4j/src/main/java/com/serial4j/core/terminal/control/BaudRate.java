@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with the GNU C Library; if not, see
  * <http://www.gnu.org/licenses/>.
- * 
+ *
  *  -----------------------------------------------------------------------
  *
  * BSD 3-Clause License for Serial4j from the AVR-Sandbox Project.
@@ -56,7 +56,7 @@ import com.serial4j.core.terminal.control.NativeTerminalFlags.ControlFlags.MaskB
 /**
  * Represents codes for the POSIX Systems baud rates and their real values
  * defined from "/usr/include/x86_64-linux-gnu/bits/termios.h".
- * 
+ *
  * @author pavl_g.
  */
 public enum BaudRate {
@@ -83,10 +83,10 @@ public enum BaudRate {
     B230400(MaskBits.getBaud230400(), 230400),
     B460800(MaskBits.getBaud460800(), 460800),
     B500000(MaskBits.getBaud500000(), 500000),
-    B576000(MaskBits.getBaud57600(), 576000),
+    B576000(MaskBits.getBaud576000(), 576000),
     B921600(MaskBits.getBaud921600(), 921600),
     B1000000(MaskBits.getBaud1000000(), 1000000),
-    B1152000(MaskBits.getBaud115200(), 1152000),
+    B1152000(MaskBits.getBaud1152000(), 1152000),
     B1500000(MaskBits.getBaud1500000(), 1500000),
     B2000000(MaskBits.getBaud2000000(), 2000000),
     B2500000(MaskBits.getBaud2500000(), 2500000),
@@ -94,13 +94,13 @@ public enum BaudRate {
     B3500000(MaskBits.getBaud3500000(), 3500000),
     B4000000(MaskBits.getBaud4000000(), 4000000),
     MAX_BAUD(B4000000.getBaudRate(), B4000000.getRealBaud());
-    
+
     private final int baudRate;
     private final int realBaud;
 
     /**
      * Defines a basic structure for POSIX baud rates.
-     * 
+     *
      * @param baudRate the baud rate representative POSIX code.
      * @param realBaud the real baud value.
      */
@@ -110,9 +110,9 @@ public enum BaudRate {
     }
 
     /**
-     * Retrieves the real baud rate value from the baud 
+     * Retrieves the real baud rate value from the baud
      * rate structure defined by the POSIX code.
-     * 
+     *
      * @return the real baud rate.
      */
     public int getRealBaud() {
@@ -122,7 +122,7 @@ public enum BaudRate {
     /**
      * Retrieves the baud rate code defined from "termios.h" for
      * POSIX systems.
-     * 
+     *
      * @return the code for this baud rate.
      */
     public int getBaudRate() {

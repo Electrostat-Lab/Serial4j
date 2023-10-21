@@ -33,6 +33,12 @@ package com.serial4j.core.terminal.control;
 
 import com.serial4j.core.flag.FlagConst;
 
+/**
+ * Provides a POSIX terminal flag constants that
+ * manipulate the hardware control over the terminal lines.
+ *
+ * @author pavl_g
+ */
 public enum TerminalControlFlag implements FlagConst {
     CIBAUD(NativeTerminalFlags.ControlFlags.getInputBaudRate()),
     CLOCAL(NativeTerminalFlags.ControlFlags.getIgnoreModemStatusLines()),
