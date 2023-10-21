@@ -37,19 +37,19 @@ discouraged to utilize it via the Java Reflection API, you are very welcome to o
 you to utilize the native API.
 
 ### Compiling, building and testing examples:
-> ```bash
-> # building and assembling
-> ┌─[pavl-machine@pavl-machine]─[/home/twisted/GradleProjects/Serial4j-v1]
-> └──╼ $./gradlew :serial4j:build && 
->       ./gradlew :serial4j-native:compileX86_64 && 
->       ./gradlew :serial4j-native:copyBinaries && 
->       ./gradlew :serial4j-native:assemble && 
->       ./gradlew :serial4j-native:copyToExample
-> 
-> # selectively running an example
-> ┌─[pavl-machine@pavl-machine]─[/home/twisted/GradleProjects/Serial4j-v1]
-> └──╼ $./gradlew :serial4j-examples:run --args="com.serial4j.example.jme.RollingTheMonkey  /dev/ttyUSB0"
-> ```
+```bash
+# building and assembling
+┌─[pavl-machine@pavl-machine]─[/home/twisted/GradleProjects/Serial4j-v1]
+└──╼ $./gradlew :serial4j:build && 
+       ./gradlew :serial4j-native:compileX86_64 && 
+       ./gradlew :serial4j-native:copyBinaries && 
+       ./gradlew :serial4j-native:assemble && 
+       ./gradlew :serial4j-native:copyToExample
+ 
+ # selectively running an example
+ ┌─[pavl-machine@pavl-machine]─[/home/twisted/GradleProjects/Serial4j-v1]
+ └──╼ $./gradlew :serial4j-examples:run --args="com.serial4j.example.jme.RollingTheMonkey  /dev/ttyUSB0"
+ ```
 
 ### The framework implementation is based on these resources and technologies: 
 
