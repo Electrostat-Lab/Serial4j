@@ -31,52 +31,119 @@
  */
 package com.serial4j.core.terminal;
 
-import com.serial4j.core.errno.Errno;
-import com.serial4j.core.serial.throwable.InvalidPortException;
-
 /**
- * Provides a Unix terminal read configuration for the specified serial port of the 
+ * Provides a Unix terminal read configuration for the specified serial port of the
  * terminal device.
- * 
+ *
  * @author pavl_g.
  */
 public enum ReadConfiguration {
-    POLLING_READ(new short[] {0, 0}, "Polling Read"),
-    BLOCKING_READ_ONE_CHAR(new short[] {0, 1}, "Blocking read one character at a time"),
-    READ_WITH_TIMEOUT(new short[] {1, 0}, "Polling Read with timeout"),
-    READ_WITH_INTERBYTE_TIMEOUT(new short[] {1, 1}, "Blocking read with timeout"),
-    ERR_INVALID_PORT(new short[] {(short) Errno.ERR_INVALID_PORT.getValue(), (short) Errno.ERR_INVALID_PORT.getValue()}, "Error invalid port");
-    private short[] mode;
-    private final String description;
 
-    ReadConfiguration(final short[] mode, final String description) {
+    /**
+     * Busy loop polling read the requested bytes without blocking.
+     * <p>
+     * If data is available at the time of the call,
+     * then read() returns immediately with the least number of bytes available or
+     * the number of bytes requested. If no bytes are available, read() completes immediately, returning 0.
+     * </p>
+     */
+    POLLING_READ(new Mode((short) 0, (short) 0), "Polling Read"),
+
+    /**
+     * Blocking read without polling in a busy loop.
+     * <p>
+     * The read() blocks (possibly indefinitely) until the lesser of the number of bytes
+     * requested or MIN bytes are available, and returns the lesser of the two values.
+     * </p>
+     */
+    BLOCKING_READ_ONE_CHAR(new Mode((short) 0, (short) 1), "Blocking read one character at a time"),
+
+    /**
+     * Polling read the requested bytes with a timeout.
+     * <p>
+     * A timer is started when read() is called. The call returns as soon as at least 1 byte is
+     * available, or when TIME tenths of a second have elapsed. In the latter case, read()
+     * returns 0.
+     * </p>
+     */
+    READ_WITH_TIMEOUT(new Mode((short) 1, (short) 0), "Polling Read with timeout"),
+
+    /**
+     * Blocking read the requested bytes or the MIN with a timeout.
+     * <p>
+     * After the initial byte of input becomes available, a timer is restarted as each further
+     * byte is received. The read() returns when either the lesser of MIN bytes or the number
+     * of bytes requested have been read, or when the time between receiving successive
+     * bytes exceeds TIME tenths of a second. Since the timer is started only after the initial
+     * byte becomes available, at least 1 byte is returned. (A read() can block indefinitely
+     * for this case.)
+     * </p>
+     */
+    READ_WITH_INTERBYTE_TIMEOUT(new Mode((short) 1, (short) 1), "Blocking read with timeout");
+
+    private final String description;
+    private Mode mode;
+
+    ReadConfiguration(final Mode mode, final String description) {
         this.mode = mode;
         this.description = description;
     }
 
-    public short[] getMode() {
-        return mode;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public static ReadConfiguration getFromNativeReadConfig(final short[] nativeReadConfig) {
+    /**
+     * Creates a read configuration from the native values.
+     *
+     * @param nativeReadConfig the native values
+     * @return a new instance of read configuration reflecting the native values
+     */
+    public static ReadConfiguration getFromNativeReadConfig(final Mode nativeReadConfig) {
         ReadConfiguration readConfiguration;
-        if (nativeReadConfig[0] < 1 && nativeReadConfig[1] >= 1) {
+        if (nativeReadConfig.TIME_OUT < 1 && nativeReadConfig.MIN >= 1) {
             readConfiguration = ReadConfiguration.BLOCKING_READ_ONE_CHAR;
-        } else if ((nativeReadConfig[0] | nativeReadConfig[1]) == 0) {
+        } else if ((nativeReadConfig.TIME_OUT | nativeReadConfig.MIN) == 0) {
             readConfiguration = ReadConfiguration.POLLING_READ;
-        } else if (nativeReadConfig[0] >= 1 && nativeReadConfig[1] >= 1) {
+        } else if (nativeReadConfig.TIME_OUT >= 1 && nativeReadConfig.MIN >= 1) {
             readConfiguration = ReadConfiguration.READ_WITH_INTERBYTE_TIMEOUT;
-        } else if ((nativeReadConfig[0] & nativeReadConfig[1]) == Errno.ERR_INVALID_PORT.getValue()) {
-            throw new InvalidPortException("Cannot get read configuration for an invalid port !");
         } else {
             readConfiguration = ReadConfiguration.READ_WITH_TIMEOUT;
         }
         /* update the mode value with the native readConfig value */
         readConfiguration.mode = nativeReadConfig;
         return readConfiguration;
+    }
+
+    /**
+     * Retrieves the reading mode in a block form.
+     *
+     * @return the reading mode, the minimum number of bytes available and the
+     * timeout for the reading operation
+     */
+    public Mode getMode() {
+        return mode;
+    }
+
+    /**
+     * Retrieves the summative description of this mode.
+     *
+     * @return the summative description of this mode
+     */
+    public String getDescription() {
+        return description;
+    }
+
+    /**
+     * Defines a reading configuration mode with the minimum bytes available
+     * and a timeout value for the read() operation.
+     *
+     * @param TIME_OUT the timeout is a step-down counter in a tenth of a second unit,
+     *                 specifying [0] will disable the timeout.
+     * @param MIN      the minimum number of bytes requested to return the read() operation,
+     *                 specifying [0] will disable this analogy and the reading operation
+     *                 will busy loop until polling the requested number of bytes is successful.
+     */
+    public record Mode(short TIME_OUT, short MIN) {
+        @Override
+        public String toString() {
+            return "[TIME_OUT, MIN] = [" + TIME_OUT + ", " + MIN + "]";
+        }
     }
 }
