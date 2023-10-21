@@ -46,7 +46,7 @@ public final class NativeFileAccessPermissions {
     /**
      * Changes the file access mode for the owner's processes operations.
      *
-     * @param fd the file descriptor
+     * @param fd   the file descriptor
      * @param mode the new file mode access
      * @return (0) for success, (-1) for failure
      */

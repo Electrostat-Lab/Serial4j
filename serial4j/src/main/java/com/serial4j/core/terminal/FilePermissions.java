@@ -53,19 +53,43 @@ public final class FilePermissions extends AppendableFlag {
         super(value, description);
     }
 
+    /**
+     * Builds an empty file permission instance.
+     *
+     * @return a new file permission instance.
+     */
     public static FilePermissions build() {
         return (FilePermissions) AppendableFlag.build(FilePermissions.class);
     }
 
+    /**
+     * Houses constants utilized by the Access Mode permission that
+     * grants/revokes file permissions to/from the OWNER.
+     */
     public enum AccessModeConst implements FlagConst {
+
+        /**
+         * Grants a read-only file permission for the owner.
+         */
         S_IRUSR(NativeFileAccessPermissions.getGrantReadByOwner(), "Read by owner"),
+
+        /**
+         * Grants a write-only file permission for the owner.
+         */
         S_IWUSR(NativeFileAccessPermissions.getGrantWriteByOwner(), "Write by owner"),
+
+        /**
+         * Grants an execute-only file permission for the owner.
+         */
         S_IXUSR(NativeFileAccessPermissions.getGrantExecuteByOwner(), "Execute by owner"),
+
+        /**
+         * Grants a read-write-execute (rwx) file permissions for the owner.
+         */
         S_IRWXU(NativeFileAccessPermissions.getGrantFullPermissions(), "Grant full permissions (+rwx)");
 
         private final int value;
         private final String description;
-
 
         AccessModeConst(int value, String description) {
             this.value = value;
@@ -83,19 +107,24 @@ public final class FilePermissions extends AppendableFlag {
         }
     }
 
+    /**
+     * Houses the constants that concern the current process file
+     * permissions for operative actions (open, read, write, mkdir, ...).
+     */
     public enum OperativeConst implements FlagConst {
+
         /**
-         * Aliasing Read-only file permission.
+         * Aliasing Read-only file permission, grants the current process a read-only file permission.
          */
         O_RDONLY(NativeFilePermissions.getReadOnly(), "READ_ONLY"),
 
         /**
-         * Aliasing Write-only file permission.
+         * Aliasing Write-only file permission, grants the current process a write-only file permission.
          */
         O_WRONLY(NativeFilePermissions.getWriteOnly(), "WRITE_ONLY"),
 
         /**
-         * Aliasing R/W file permission.
+         * Aliasing R/W file permission, grants the current process a read-write file permission.
          */
         O_RDWR(NativeFilePermissions.getReadWrite(), "READ_WRITE"),
 
@@ -110,7 +139,7 @@ public final class FilePermissions extends AppendableFlag {
         O_NONBLOCK(NativeFilePermissions.getTerminalNonBlock(), "NON_BLOCK_READ"),
 
         /**
-         * Creates the file if it doesn't exist.
+         * Creates the file if it doesn't exist, grants the current process the ability to create a new file.
          */
         O_CREATE(NativeFilePermissions.getCreateFile(), "CREATE_NEW_FILE");
 
