@@ -31,8 +31,6 @@
  */
 package com.serial4j.core.serial.throwable;
 
-import java.lang.RuntimeException;
-import com.serial4j.core.serial.throwable.SerialThrowable;
 import com.serial4j.core.errno.Errno;
 
 public final class InvalidPortException extends SerialThrowable {
