@@ -33,6 +33,7 @@
 package com.serial4j.core.flag;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * The base class for appendable native flags.
@@ -52,9 +53,14 @@ public class AppendableFlag implements FlagConst {
     protected String description;
 
     /**
+     * The appended flag constants.
+     */
+    protected final ConcurrentHashMap<String, String> descriptions = new ConcurrentHashMap<>();
+
+    /**
      * Wraps a POSIX IO flag using an integer value.
      *
-     * @param value       the value of the permission flag.
+     * @param value       the value of the flag.
      * @param description the description of the flag.
      */
     public AppendableFlag(final int value, final String description) {
@@ -85,8 +91,8 @@ public class AppendableFlag implements FlagConst {
     public AppendableFlag append(final FlagConst flag) {
         /* append new values */
         this.value |= flag.getValue();
-        if (flag.getDescription() != null) {
-            this.description += " - " + flag.getDescription();
+        if (flag.getDescription() != null && descriptions.get(flag.getDescription()) == null) {
+            descriptions.put(flag.getDescription(), flag.getDescription());
         }
         return this;
     }
@@ -112,9 +118,8 @@ public class AppendableFlag implements FlagConst {
      */
     public AppendableFlag disable(FlagConst flag) {
         this.value &= ~flag.getValue();
-        if (flag.getDescription() != null && this.description.length() > flag.getDescription().length()) {
-            this.description = description.substring(description.indexOf(flag.getDescription()),
-                    flag.getDescription().length() - 1);
+        if (flag.getDescription() != null) {
+            descriptions.remove(flag.getDescription());
         }
         return this;
     }
@@ -158,6 +163,26 @@ public class AppendableFlag implements FlagConst {
 
     @Override
     public String getDescription() {
-        return description;
+        final String[] description = new String[1];
+        final int[] tracker = new int[1];
+        description[0] = "";
+
+        descriptions.forEach((key, description1) -> {
+            ++tracker[0];
+
+            description[0] += description1;
+            if (tracker[0] < descriptions.values().size()) {
+                description[0] += " - ";
+            }
+        });
+        return description[0];
+    }
+
+    @Override
+    public String toString() {
+        return "AppendableFlag{" +
+                "value=" + getValue() +
+                ", description='" + getDescription() + '\'' +
+                '}';
     }
 }
