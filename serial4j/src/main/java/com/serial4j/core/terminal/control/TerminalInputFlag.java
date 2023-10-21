@@ -34,15 +34,17 @@ package com.serial4j.core.terminal.control;
 import com.serial4j.core.flag.FlagConst;
 
 /**
- * Provides Unix [c_iflag] termios bits.
+ * Provides the POSIX terminal flags that control
+ * the input queue of the terminal driver.
  *
- * @author pavl_g.
+ * @author pavl_g
  */
 public enum TerminalInputFlag implements FlagConst {
     BRKINT(NativeTerminalFlags.InputFlags.getSignalInterrupt()),
     ICRNL(NativeTerminalFlags.InputFlags.getMapCarriageReturnToNewLine()),
     IGNBRK(NativeTerminalFlags.InputFlags.getIgnoreBreakCondition()),
     IGNCR(NativeTerminalFlags.InputFlags.getIgnoreCarriageReturn()),
+    IGNPAR(NativeTerminalFlags.InputFlags.getIgnoreCharsWithParityErrors()),
     IMAXBEL(NativeTerminalFlags.InputFlags.getRingBell()),
     INLCR(NativeTerminalFlags.InputFlags.getMapNewLineToCarriageReturn()),
     INPCK(NativeTerminalFlags.InputFlags.getEnableParityChecking()),
