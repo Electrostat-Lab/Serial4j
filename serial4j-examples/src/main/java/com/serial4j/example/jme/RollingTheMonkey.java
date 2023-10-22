@@ -66,6 +66,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import com.serial4j.core.serial.entity.EntityStatus;
 import com.serial4j.core.serial.entity.impl.SerialReadEntity;
+import com.serial4j.core.serial.throwable.SerialThrowable;
 import com.serial4j.core.terminal.control.BaudRate;
 import com.serial4j.core.serial.monitor.SerialDataListener;
 import com.serial4j.core.serial.monitor.SerialMonitor;
@@ -128,7 +129,7 @@ public class RollingTheMonkey extends SimpleApplication implements SerialDataLis
             serialMonitor = new SerialMonitor("Embedded-Controller");
             serialMonitor.setReadEntityListener(this);
             serialMonitor.startDataMonitoring(args[0], BaudRate.B57600, null);
-            serialMonitor.addSerialDataListener(this);
+            serialMonitor.setSerialDataListener(this);
         } catch(FileNotFoundException e) {
             Logger.getLogger(getClass().getName())
                   .log(Level.SEVERE, "Monitor has failed!", e);
@@ -504,5 +505,10 @@ public class RollingTheMonkey extends SimpleApplication implements SerialDataLis
                 e.getMessage(), JOptionPane.ERROR_MESSAGE);
         serialMonitor.setTerminate();
         stop();
+        int error = -1;
+        if (e instanceof SerialThrowable) {
+            error = ((SerialThrowable) e).getCausingErrno().getValue();
+        }
+        System.exit(error);
     }
 }

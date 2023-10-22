@@ -39,7 +39,6 @@ import com.serial4j.core.serial.monitor.SerialMonitorException;
 import com.serial4j.core.terminal.FilePermissions;
 import com.serial4j.core.terminal.NativeBufferInputStream;
 import com.serial4j.core.terminal.control.BaudRate;
-import java.io.IOException;
 import java.io.InputStream;
 
 /**
@@ -96,28 +95,29 @@ public class SerialReadEntity extends SerialMonitorEntity {
         final NativeBufferInputStream nbis = (NativeBufferInputStream) getEntityStream();
 
         /* execute serial data tasks */
-        for (int i = 0; i < getSerialDataListeners().size(); i++) {
+        if (getSerialDataListener() != null) {
             try {
                 while (getEntityStream().read() > 0) {
                     /* send characters serially */
-                    getSerialDataListeners().get(i).onDataReceived(nbis.getBuffer()[0]);
+                    getSerialDataListener().onDataReceived(nbis.getBuffer()[0]);
 
                     /* get a string buffer from a data frame */
                     stringBuffer.append(nbis.getBuffer());
 
                     /* send data frames separated by [\n\r] the return carriage/newline */
-                    if (!isUsingReturnCarriage()) {
+                    if (!isProcessLinefeedCarriageReturn()) {
                         continue;
                     }
 
+                    /* LF/CR */
                     if (stringBuffer.toString().endsWith("\n\r")) {
-                        getSerialDataListeners().get(i).onDataReceived(stringBuffer.toString());
+                        getSerialDataListener().onDataReceived(stringBuffer.toString());
                         stringBuffer = new StringBuffer();
                         break;
                     }
                 }
-            } catch (IOException e) {
-                if (getSerialDataListeners() != null) {
+            } catch (Exception e) {
+                if (getSerialEntityStatusListener() != null) {
                     getSerialEntityStatusListener().onExceptionThrown(e);
                 }
             }

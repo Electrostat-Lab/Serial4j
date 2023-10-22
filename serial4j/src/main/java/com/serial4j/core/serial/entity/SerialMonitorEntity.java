@@ -39,14 +39,13 @@ import java.util.logging.Logger;
 import java.util.logging.Level;
 import java.io.Closeable;
 import java.io.IOException;
-import java.util.ArrayList;
 
 /**
  * Represents the base implementation for serial monitor Read and Write entities.
  *
+ * @author pavl_g.
  * @see com.serial4j.core.serial.entity.impl.SerialWriteEntity
  * @see com.serial4j.core.serial.entity.impl.SerialReadEntity
- * @author pavl_g.
  */
 public abstract class SerialMonitorEntity implements Runnable {
 
@@ -56,15 +55,15 @@ public abstract class SerialMonitorEntity implements Runnable {
     protected final ReentrantLock reentrantLock = new ReentrantLock();
 
     private final Logger entityLogger;
-    private boolean hasLoggedMonitor;
     private final SerialMonitor serialMonitor;
     private final String entityName;
+    private boolean hasLoggedMonitor;
 
     /**
      * Defines a serial monitor basic entity.
      *
      * @param serialMonitor the monitor object.
-     * @param entityName the entity name.
+     * @param entityName    the entity name.
      */
     public SerialMonitorEntity(SerialMonitor serialMonitor, String entityName) {
         this.serialMonitor = serialMonitor;
@@ -119,7 +118,7 @@ public abstract class SerialMonitorEntity implements Runnable {
     }
 
     private void logStart() {
-        if(!hasLoggedMonitor) {
+        if (!hasLoggedMonitor) {
             return;
         }
         entityLogger.log(Level.INFO,
@@ -132,8 +131,8 @@ public abstract class SerialMonitorEntity implements Runnable {
      *
      * @return true if [\n\r] check is enabled, default value is [true].
      */
-    protected boolean isUsingReturnCarriage() {
-        return getSerialMonitor().isUsingReturnCarriage();
+    protected boolean isProcessLinefeedCarriageReturn() {
+        return getSerialMonitor().isProcessLinefeedCarriageReturn();
     }
 
     /**
@@ -174,19 +173,19 @@ public abstract class SerialMonitorEntity implements Runnable {
     }
 
     /**
-     * Retrieves the serial data listeners list.
+     * Retrieves the serial data listener.
      *
-     * @return a list instance representing the serial data listeners.
+     * @return a reference to the serial data listener instance
      */
-    protected ArrayList<SerialDataListener> getSerialDataListeners() {
-        return getSerialMonitor().getSerialDataListeners();
+    protected SerialDataListener getSerialDataListener() {
+        return getSerialMonitor().getSerialDataListener();
     }
 
     /**
      * Tests whether the serial monitor holding this entity terminated.
-     * @see SerialMonitor#setTerminate()
      *
      * @return true if the serial monitor has been terminated by the user, default value is false.
+     * @see SerialMonitor#setTerminate()
      */
     protected boolean isTerminate() {
         return getSerialMonitor().isTerminate();
@@ -216,10 +215,9 @@ public abstract class SerialMonitorEntity implements Runnable {
     /**
      * Sets the serial entity initialized status.
      *
+     * @param state a state to set.
      * @see SerialMonitor#isReadSerialEntityInitialized
      * @see SerialMonitor#isWriteSerialEntityInitialized
-     *
-     * @param state a state to set.
      */
     protected abstract void setSerialEntityInitialized(boolean state);
 

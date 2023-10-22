@@ -66,7 +66,7 @@ public class HelloSerialMonitor implements SerialDataListener, EntityStatus<Seri
                                                        .append(FilePermissions.OperativeConst.O_NOCTTY);
             serialMonitor.startDataMonitoring("/dev/ttyUSB0", BaudRate.B57600, filePermissions);
             serialMonitor.setWriteEntityStatus(this);
-            serialMonitor.addSerialDataListener(this);
+            serialMonitor.setSerialDataListener(this);
 
              /* write data to UART with return-carriage/newline */
              delay(2000);

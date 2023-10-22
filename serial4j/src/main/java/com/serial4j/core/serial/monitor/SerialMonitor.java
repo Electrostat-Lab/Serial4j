@@ -44,7 +44,6 @@ import com.serial4j.core.terminal.control.*;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
 
 /**
  * Monitors the UART Data Port using {@link SerialReadEntity} for serial data read and {@link SerialWriteEntity} for serial
@@ -54,41 +53,36 @@ import java.util.ArrayList;
  */
 public class SerialMonitor {
 
+    protected final String monitorName;
+    protected final TerminalDevice terminalDevice = new TerminalDevice();
     /**
      * Provides callbacks for the serial read task.
      */
     public volatile EntityStatus<SerialReadEntity> serialReadEntityEntityStatus;
-
     /**
      * Provides callbacks for the serial write task.
      */
     public volatile EntityStatus<SerialWriteEntity> serialWriteEntityEntityStatus;
-
     /**
      * The state of the serial read task. Default is "false".
      */
     public volatile boolean isReadSerialEntityInitialized;
-
     /**
      * The state of the write read task. Default is "false".
      */
     public volatile boolean isWriteSerialEntityInitialized;
-
     /**
      * The state of this monitor object. Default is "false".
      */
     public volatile boolean isMonitoringStarted;
-
     /**
      * The state of use CR/NL (jump to the start of a new line). Default is "true".
      */
-    public volatile boolean useReturnCarriage = true;
-    protected final ArrayList<SerialDataListener> serialDataListeners = new ArrayList<>();
-    protected final String monitorName;
+    public volatile boolean processLinefeedCarriageReturn = true;
+    protected SerialDataListener serialDataListener;
     protected volatile Thread monitorThread;
     protected volatile InputStream readEntityStream;
     protected volatile OutputStream writeEntityStream;
-    protected final TerminalDevice terminalDevice = new TerminalDevice();
     protected volatile boolean terminate = false;
     protected volatile SerialReadEntity serialReadEntity;
     protected volatile SerialWriteEntity serialWriteEntity;
@@ -109,7 +103,7 @@ public class SerialMonitor {
     /**
      * Initializes and starts data monitoring on a [port] and with a [baudRate]
      *
-     * @param port specify the serial port.
+     * @param port     specify the serial port.
      * @param baudRate specify the baud rate aka bits/seconds based for the connected FOsc.
      */
     public void startDataMonitoring(final String port, final BaudRate baudRate, final FilePermissions filePermissions) throws
@@ -154,7 +148,7 @@ public class SerialMonitor {
                 TerminalOutputFlag.ONLCR
         );
         final TerminalFlag TIF_VALUE = TerminalFlag.build();
-        
+
         terminalDevice.setTerminalControlFlag(TCF_VALUE);
         terminalDevice.setTerminalLocalFlag(TLF_VALUE);
         terminalDevice.setTerminalOutputFlag(TOF_VALUE);
@@ -166,7 +160,7 @@ public class SerialMonitor {
         serialWriteEntity = new SerialWriteEntity(this);
 
         serialReadEntity = new SerialReadEntity(this);
-	    monitorThread = new Thread(() -> {
+        monitorThread = new Thread(() -> {
             while (!isTerminate()) {
                 serialReadEntity.run();
                 serialWriteEntity.run();
@@ -241,9 +235,8 @@ public class SerialMonitor {
      * Gets the serial read entity used for reading data from the serial port using
      * {@link SerialMonitor#readEntityStream}.
      *
-     * @see SerialReadEntity
-     *
      * @return the serial monitor read instance.
+     * @see SerialReadEntity
      */
     public SerialReadEntity getSerialReadEntity() {
         return serialReadEntity;
@@ -253,36 +246,11 @@ public class SerialMonitor {
      * Gets the serial write entity used for writing data to the serial port using
      * {@link SerialMonitor#writeEntityStream}.
      *
-     * @see SerialWriteEntity
-     *
      * @return the serial monitor write instance.
+     * @see SerialWriteEntity
      */
     public SerialWriteEntity getSerialWriteEntity() {
         return serialWriteEntity;
-    }
-
-    /**
-     * Adds a new serial data listener to the list of the updatable listeners.
-     *
-     * @param serialDataListener the new serial data listener to add.
-     */
-    public void addSerialDataListener(final SerialDataListener serialDataListener) {
-        if (serialDataListeners.contains(serialDataListener)) {
-            return;
-        }
-        serialDataListeners.add(serialDataListener);
-    }
-
-    /**
-     * Removes a serial data listener instance from the list of the list of the updatable listeners.
-     *
-     * @param serialDataListener the serial data listener to remove.
-     */
-    public void removeSerialDataListener(final SerialDataListener serialDataListener) {
-        if (!serialDataListeners.contains(serialDataListener)) {
-            return;
-        }
-        serialDataListeners.remove(serialDataListener);
     }
 
     /**
@@ -314,28 +282,36 @@ public class SerialMonitor {
      *
      * @return true if `CR/LF` is enabled, false otherwise.
      */
-    public boolean isUsingReturnCarriage() {
-        return useReturnCarriage;
+    public boolean isProcessLinefeedCarriageReturn() {
+        return processLinefeedCarriageReturn;
     }
 
     /**
      * Triggers the `CR/LF` check state flag. Default value is "true".
      *
-     * @param useReturnCarriage true to enable `CR/LF` and return data frames
+     * @param processLinefeedCarriageReturn true to enable `CR/LF` and return data frames
      *                          at {@link SerialDataListener#onDataReceived(String)}, false to disable
      *                          both the `CR/LF` check and disable {@link SerialDataListener#onDataReceived(String)}.
      */
-    public void setUseReturnCarriage(boolean useReturnCarriage) {
-        this.useReturnCarriage = useReturnCarriage;
+    public void setProcessLinefeedCarriageReturn(boolean processLinefeedCarriageReturn) {
+        this.processLinefeedCarriageReturn = processLinefeedCarriageReturn;
     }
 
     /**
-     * Gets the serial data listeners used for listening to data changes at
-     * this monitor port.
+     * Retrieves the data listener that is dispatched upon I/O operations.
      *
-     * @return a list of serial data listeners for this monitor.
+     * @return a reference to the serial data listener instance
      */
-    public ArrayList<SerialDataListener> getSerialDataListeners() {
-        return serialDataListeners;
+    public SerialDataListener getSerialDataListener() {
+        return serialDataListener;
+    }
+
+    /**
+     * Sets a new serial data listener that listens for transmitting and receiving data.
+     *
+     * @param serialDataListener the new serial data listener instance, or null to stop processing the listeners
+     */
+    public void setSerialDataListener(final SerialDataListener serialDataListener) {
+        this.serialDataListener = serialDataListener;
     }
 }
