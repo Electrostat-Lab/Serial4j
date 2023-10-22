@@ -55,7 +55,7 @@ public final class TestVirtualMonitor {
         final String[] data = new String[] {""};
 
         final VirtualMonitor virtualMonitor = new VirtualMonitor("ttyVirtual-monitor");
-        virtualMonitor.setUseReturnCarriage(true);
+        virtualMonitor.setProcessLinefeedCarriageReturn(true);
         virtualMonitor.setReadEntityListener(new EntityStatus<>() {
             @Override
             public void onSerialEntityInitialized(SerialReadEntity serialMonitorEntity) {
@@ -78,7 +78,7 @@ public final class TestVirtualMonitor {
 
             }
         });
-        virtualMonitor.addSerialDataListener(new SerialDataListener() {
+        virtualMonitor.setSerialDataListener(new SerialDataListener() {
             @Override
             public void onDataReceived(int data) {
             }

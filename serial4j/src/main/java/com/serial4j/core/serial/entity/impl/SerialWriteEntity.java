@@ -99,10 +99,11 @@ public class SerialWriteEntity extends SerialMonitorEntity {
             /* send capsule data to the UART */
             final String data = capsule.getData();
             for (int i = 0; i < data.length(); i++) {
-                sendToUART(data.charAt(i));
-                for (int j = 0; j < getSerialDataListeners().size(); j++) {
-                    getSerialDataListeners().get(j).onDataTransmitted(data.charAt(i));
+                send(data.charAt(i));
+                if (getSerialDataListener() == null) {
+                    continue;
                 }
+                getSerialDataListener().onDataTransmitted(data.charAt(i));
             }
             capsule.setDataWritten(true);
         }
@@ -168,7 +169,7 @@ public class SerialWriteEntity extends SerialMonitorEntity {
      *
      * @param data the data to send in integers.
      */
-    private void sendToUART(final int data) {
+    private void send(final int data) {
         try {
             getEntityStream().write(data);
         } catch (IOException e) {
