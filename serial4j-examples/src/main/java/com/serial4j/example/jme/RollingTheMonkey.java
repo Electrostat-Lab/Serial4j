@@ -60,24 +60,23 @@ import com.jme3.scene.Spatial;
 import com.jme3.scene.shape.Box;
 import com.jme3.scene.shape.Sphere;
 import com.jme3.shadow.DirectionalLightShadowFilter;
-import java.io.FileNotFoundException;
+
 import java.util.concurrent.Callable;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import com.serial4j.core.serial.entity.EntityStatus;
-import com.serial4j.core.serial.entity.impl.SerialReadEntity;
-import com.serial4j.core.serial.throwable.SerialThrowable;
+
+import com.serial4j.core.hid.ReportDescriptor;
+import com.serial4j.core.hid.shiftavr.JoystickDescriptor;
+import com.serial4j.core.hid.shiftavr.JoystickDevice;
+import com.serial4j.core.serial.SerialPort;
+import com.serial4j.core.terminal.FilePermissions;
+import com.serial4j.core.terminal.TerminalDevice;
 import com.serial4j.core.terminal.control.BaudRate;
-import com.serial4j.core.serial.monitor.SerialDataListener;
-import com.serial4j.core.serial.monitor.SerialMonitor;
-import javax.swing.*;
 
 /**
  * Physics based marble game.
  * 
  * @author SkidRunner (Mark E. Picknell)
  */
-public class RollingTheMonkey extends SimpleApplication implements SerialDataListener, ActionListener, PhysicsCollisionListener, EntityStatus<SerialReadEntity> {
+public class RollingTheMonkey extends SimpleApplication implements ReportDescriptor.DecoderListener<JoystickDescriptor>, ActionListener, PhysicsCollisionListener {
 
     private static final String MESSAGE         = "Thanks for Playing!";
     private static final String INFO_MESSAGE    = "Collect all the spinning cubes!\nPress the 'R' key any time to reset!";
@@ -115,7 +114,7 @@ public class RollingTheMonkey extends SimpleApplication implements SerialDataLis
     private BitmapText scoreText;
     private BitmapText messageText;
 
-    private SerialMonitor serialMonitor;
+    private JoystickDevice joystickDevice;
     private static String[] args;
 
     public static void main(String[] args) {
@@ -125,15 +124,13 @@ public class RollingTheMonkey extends SimpleApplication implements SerialDataLis
 
     @Override
     public void simpleInitApp() {
-        try {
-            serialMonitor = new SerialMonitor("Embedded-Controller");
-            serialMonitor.setReadEntityListener(this);
-            serialMonitor.startDataMonitoring(args[0], BaudRate.B57600, null);
-            serialMonitor.setSerialDataListener(this);
-        } catch(FileNotFoundException e) {
-            Logger.getLogger(getClass().getName())
-                  .log(Level.SEVERE, "Monitor has failed!", e);
-        }
+        joystickDevice = new JoystickDevice(new TerminalDevice(), new SerialPort(args[0]));
+        joystickDevice.setOperativePermissions((FilePermissions)
+                FilePermissions.build().append(FilePermissions.OperativeConst.O_RDONLY));
+        joystickDevice.setReportDescriptor(new ReportDescriptor<>());
+        joystickDevice.init();
+        joystickDevice.getTerminalDevice().setBaudRate(BaudRate.B57600);
+        joystickDevice.setDecoderListener(this);
 
         flyCam.setEnabled(false);
         cam.setLocation(new Vector3f(0.0f, 12.0f, 21.0f));
@@ -327,6 +324,8 @@ public class RollingTheMonkey extends SimpleApplication implements SerialDataLis
     
     @Override
     public void simpleUpdate(float tpf) {
+        joystickDevice.decode();
+
         // Update and position the score
         scoreText.setText("Score: " + score);
         scoreText.setLocalTranslation((cam.getWidth() - scoreText.getLineWidth()) / 2.0f,
@@ -344,7 +343,7 @@ public class RollingTheMonkey extends SimpleApplication implements SerialDataLis
         if(keyBackward) centralForce.addLocal(cam.getDirection().negate());
         if(keyLeft) centralForce.addLocal(cam.getLeft());
         if(keyRight) centralForce.addLocal(cam.getLeft().negate());
-        if(startBaud) serialMonitor.getTerminalDevice().setBaudRate(BaudRate.B9600);
+        if(startBaud) joystickDevice.getTerminalDevice().setBaudRate(BaudRate.B9600);
 
         if(!Vector3f.ZERO.equals(centralForce)) {
             centralForce.setY(0);                   // stop ball from pushing down or flying up
@@ -379,45 +378,12 @@ public class RollingTheMonkey extends SimpleApplication implements SerialDataLis
             case INPUT_MAPPING_RESET:
                 enqueue((Callable<Void>) () -> {
                     reset();
-                    serialMonitor.getTerminalDevice().setBaudRate(BaudRate.B50);
+                    joystickDevice.getTerminalDevice().setBaudRate(BaudRate.B50);
                     return null;
                 });
                 break;
         }
     }
-
-    @Override
-    public void onDataReceived(int data) {
-
-    }
-
-    @Override
-    public void onDataTransmitted(int data) {
-
-    }
-
-    @Override
-    public void onDataReceived(String data) {
-        final String frame = data.replace("\n\r", "");
-        System.out.println(frame);
-        resetMoves();
-
-        final JoystickValue joystickValue = JoystickValueDecoder.getJoystickValue(frame);
-        final int x = joystickValue.x();
-        final int y = joystickValue.y();
-
-        if (x >= 540) {
-            keyForward = true;
-        } else if (x < 440) {
-            keyBackward = true;
-        } 
-        
-        if (y >= 540) {
-            keyRight = true;
-        } else if (y < 440) {
-            keyLeft = true;
-        }
-    } 
 
     private void resetMoves() {
         keyForward = false;
@@ -429,7 +395,7 @@ public class RollingTheMonkey extends SimpleApplication implements SerialDataLis
     @Override
     public void requestClose(boolean esc) {
         super.requestClose(esc);
-        serialMonitor.setTerminate();
+        joystickDevice.terminate();
     }
 
     @Override
@@ -485,30 +451,27 @@ public class RollingTheMonkey extends SimpleApplication implements SerialDataLis
     }
 
     @Override
-    public void onSerialEntityInitialized(SerialReadEntity serialMonitorEntity) {
+    public void onEncodingCompleted(String raw) {
 
     }
 
     @Override
-    public void onSerialEntityTerminated(SerialReadEntity serialMonitorEntity) {
+    public void onDecodingCompleted(JoystickDescriptor data) {
+        System.out.println(data);
+        resetMoves();
+        final int x = data.x();
+        final int y = data.y();
 
-    }
-
-    @Override
-    public void onUpdate(SerialReadEntity serialMonitorEntity) {
-
-    }
-
-    @Override
-    public void onExceptionThrown(Exception e) {
-        JOptionPane.showMessageDialog(null, "Reading Serial data has failed, Terminating now!",
-                e.getMessage(), JOptionPane.ERROR_MESSAGE);
-        serialMonitor.setTerminate();
-        stop();
-        int error = -1;
-        if (e instanceof SerialThrowable) {
-            error = ((SerialThrowable) e).getCausingErrno().getValue();
+        if (x >= 540) {
+            keyForward = true;
+        } else if (x < 440) {
+            keyBackward = true;
         }
-        System.exit(error);
+
+        if (y >= 540) {
+            keyRight = true;
+        } else if (y < 440) {
+            keyLeft = true;
+        }
     }
 }
