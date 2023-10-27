@@ -132,6 +132,12 @@ public class RollingTheMonkey extends SimpleApplication implements ReportDescrip
         joystickDevice.getTerminalDevice().setBaudRate(BaudRate.B57600);
         joystickDevice.setDecoderListener(this);
 
+        new Thread(() -> {
+            while (true) {
+                joystickDevice.decode();
+            }
+        }).start();
+
         flyCam.setEnabled(false);
         cam.setLocation(new Vector3f(0.0f, 12.0f, 21.0f));
         viewPort.setBackgroundColor(new ColorRGBA(0.2118f, 0.0824f, 0.6549f, 1.0f));
@@ -324,7 +330,6 @@ public class RollingTheMonkey extends SimpleApplication implements ReportDescrip
     
     @Override
     public void simpleUpdate(float tpf) {
-        joystickDevice.decode();
 
         // Update and position the score
         scoreText.setText("Score: " + score);
@@ -378,7 +383,7 @@ public class RollingTheMonkey extends SimpleApplication implements ReportDescrip
             case INPUT_MAPPING_RESET:
                 enqueue((Callable<Void>) () -> {
                     reset();
-                    joystickDevice.getTerminalDevice().setBaudRate(BaudRate.B50);
+                    joystickDevice.getTerminalDevice().setBaudRate(BaudRate.B57600);
                     return null;
                 });
                 break;
