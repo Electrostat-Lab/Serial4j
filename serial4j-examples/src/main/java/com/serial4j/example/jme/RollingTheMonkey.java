@@ -60,23 +60,20 @@ import com.jme3.scene.Spatial;
 import com.jme3.scene.shape.Box;
 import com.jme3.scene.shape.Sphere;
 import com.jme3.shadow.DirectionalLightShadowFilter;
-
-import java.util.concurrent.Callable;
-
-import com.serial4j.core.hid.ReportDescriptor;
-import com.serial4j.core.hid.shiftavr.JoystickDescriptor;
-import com.serial4j.core.hid.shiftavr.JoystickDevice;
+import com.serial4j.core.hid.device.dataframe.DataFrameDevice;
+import com.serial4j.core.hid.device.dataframe.registry.JoystickRegistry;
 import com.serial4j.core.serial.SerialPort;
 import com.serial4j.core.terminal.FilePermissions;
 import com.serial4j.core.terminal.TerminalDevice;
 import com.serial4j.core.terminal.control.BaudRate;
+import java.util.concurrent.Callable;
 
 /**
  * Physics based marble game.
  * 
  * @author SkidRunner (Mark E. Picknell)
  */
-public class RollingTheMonkey extends SimpleApplication implements ReportDescriptor.DecoderListener<JoystickDescriptor>, ActionListener, PhysicsCollisionListener {
+public class RollingTheMonkey extends SimpleApplication implements DataFrameDevice.ReportDescriptor.DecoderListener<JoystickRegistry>, ActionListener, PhysicsCollisionListener {
 
     private static final String MESSAGE         = "Thanks for Playing!";
     private static final String INFO_MESSAGE    = "Collect all the spinning cubes!\nPress the 'R' key any time to reset!";
@@ -114,7 +111,7 @@ public class RollingTheMonkey extends SimpleApplication implements ReportDescrip
     private BitmapText scoreText;
     private BitmapText messageText;
 
-    private JoystickDevice joystickDevice;
+    private DataFrameDevice<JoystickRegistry> dataFrameDevice;
     private static String[] args;
 
     public static void main(String[] args) {
@@ -124,17 +121,16 @@ public class RollingTheMonkey extends SimpleApplication implements ReportDescrip
 
     @Override
     public void simpleInitApp() {
-        joystickDevice = new JoystickDevice(new TerminalDevice(), new SerialPort(args[0]));
-        joystickDevice.setOperativePermissions((FilePermissions)
+        dataFrameDevice = new DataFrameDevice<>(new TerminalDevice(), new SerialPort(args[0]));
+        dataFrameDevice.setOperativePermissions((FilePermissions)
                 FilePermissions.build().append(FilePermissions.OperativeConst.O_RDONLY));
-        joystickDevice.setReportDescriptor(new ReportDescriptor<>());
-        joystickDevice.init();
-        joystickDevice.getTerminalDevice().setBaudRate(BaudRate.B57600);
-        joystickDevice.setDecoderListener(this);
+        dataFrameDevice.init();
+        dataFrameDevice.getTerminalDevice().setBaudRate(BaudRate.B57600);
+        dataFrameDevice.setDecoderListener(this);
 
         new Thread(() -> {
             while (true) {
-                joystickDevice.decode();
+                dataFrameDevice.receive();
             }
         }).start();
 
@@ -330,7 +326,6 @@ public class RollingTheMonkey extends SimpleApplication implements ReportDescrip
     
     @Override
     public void simpleUpdate(float tpf) {
-
         // Update and position the score
         scoreText.setText("Score: " + score);
         scoreText.setLocalTranslation((cam.getWidth() - scoreText.getLineWidth()) / 2.0f,
@@ -348,7 +343,7 @@ public class RollingTheMonkey extends SimpleApplication implements ReportDescrip
         if(keyBackward) centralForce.addLocal(cam.getDirection().negate());
         if(keyLeft) centralForce.addLocal(cam.getLeft());
         if(keyRight) centralForce.addLocal(cam.getLeft().negate());
-        if(startBaud) joystickDevice.getTerminalDevice().setBaudRate(BaudRate.B9600);
+        if(startBaud) dataFrameDevice.getTerminalDevice().setBaudRate(BaudRate.B9600);
 
         if(!Vector3f.ZERO.equals(centralForce)) {
             centralForce.setY(0);                   // stop ball from pushing down or flying up
@@ -383,7 +378,7 @@ public class RollingTheMonkey extends SimpleApplication implements ReportDescrip
             case INPUT_MAPPING_RESET:
                 enqueue((Callable<Void>) () -> {
                     reset();
-                    joystickDevice.getTerminalDevice().setBaudRate(BaudRate.B57600);
+                    dataFrameDevice.getTerminalDevice().setBaudRate(BaudRate.B57600);
                     return null;
                 });
                 break;
@@ -400,7 +395,7 @@ public class RollingTheMonkey extends SimpleApplication implements ReportDescrip
     @Override
     public void requestClose(boolean esc) {
         super.requestClose(esc);
-        joystickDevice.terminate();
+        dataFrameDevice.terminate();
     }
 
     @Override
@@ -461,7 +456,7 @@ public class RollingTheMonkey extends SimpleApplication implements ReportDescrip
     }
 
     @Override
-    public void onDecodingCompleted(JoystickDescriptor data) {
+    public void onDecodingCompleted(JoystickRegistry data) {
         System.out.println(data);
         resetMoves();
         final int x = data.x();
