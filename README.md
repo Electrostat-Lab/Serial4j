@@ -51,6 +51,18 @@ you to utilize the native API.
  └──╼ $./gradlew :serial4j-examples:run --args="com.serial4j.example.jme.RollingTheMonkey  /dev/ttyUSB0"
  ```
 
+### The Serial-Human-Interface-Device (HID) API: 
+* The package _**com.serial4j.core.hid**_ contains the core base API `HumanInterfaceDevice` that houses a report descriptor `HumanInterfaceDevice.ReportDescriptor`
+and a decoder interface `HumanInterfaceDevice.ReportDescriptor.Decoder`, and an event handler interface `HumanInterfaceDevice.ReportDescriptor.DecoderListener` 
+that is dispatched when the decoding algorithm defined by the decoder interface has finished-up decoding input data.
+* The abstraction `StandardSerialDevice` is a base implementation that associates a `TerminalDevice` to the abstract interface `HumanInterfaceDevice`, further 
+standardization or specifications of the serial-based HID interfaces should extend this class, and its own decoder and data registry data structures.
+* The rest of the packages are standard examples for the `StandardSerialDeivce`, the `DataFrameDevice` is a standardization that provides the ability 
+to dynamically read data separated by the line feed character (LF-'\n'), and accumulate it into a dataframe buffer without the need to specify a report 
+length to the report descriptor object.
+* This **_Serial-HID_** API is based primarily on the [usb.org-hid-2001-specification](https://www.usb.org/document-library/device-class-definition-hid-111), 
+and the [linux-kernel-hid-intro](https://docs.kernel.org/hid/hidintro.html). 
+
 ### The framework implementation is based on these resources and technologies: 
 
 | The Linux Programming Interface & The Man Page                                                                                           | Advanced Programming in the Unix Environment by Richard Stevens                                                                                                                              | Java & JNI |
