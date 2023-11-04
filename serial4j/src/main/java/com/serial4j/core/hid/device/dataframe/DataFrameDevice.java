@@ -33,24 +33,36 @@
 package com.serial4j.core.hid.device.dataframe;
 
 import com.serial4j.core.hid.HumanInterfaceDevice;
-import com.serial4j.core.hid.SerialInterfaceDevice;
-import com.serial4j.core.hid.device.dataframe.joystick.JoystickDescriptor;
+import com.serial4j.core.hid.StandardSerialDevice;
+import com.serial4j.core.hid.device.dataframe.registry.JoystickRegistry;
 import com.serial4j.core.serial.SerialPort;
 import com.serial4j.core.terminal.TerminalDevice;
 
 /**
  * A shift-avr joystick serial interface device providing a data
  * descriptor decoder that decodes raw reports into {X} and {Y} values
- * based on the {@link JoystickDescriptor}.
+ * based on the {@link JoystickRegistry}.
  *
  * @author pavl_g
  */
-public class DataFrameDevice extends SerialInterfaceDevice<String, JoystickDescriptor> {
+public class DataFrameDevice<D> extends StandardSerialDevice<String, D> {
 
     /**
-     * The input buffer for the reading stream.
+     * A Global Input buffer for decoding operations.
+     *
+     * <p>
+     * <b>Global V.S. Local Buffers:</b> The use of global/heap buffer here
+     * is attributed to the reading configuration (Polling read) being utilized by the
+     * serial-based HIDs, which enforces immediate termination if there were no characters
+     * available at the input queue buffer at the time of dispatching the read() operation,
+     * rendering incomplete dataframe reports in case of using a local input buffer instead of the heap buffer.
+     * On the contrary, utilizing a heap buffer enables the receiver software to accumulate data, whenever available,
+     * from the Data-Communication-Equipment device (DCE) data register before reaching a Line-Feed/Return-Carriage compound
+     * characters, after which the input buffer is flushed, and the decoder is dispatched, eventually dispatching the user code
+     * with the decoded data structure.
+     * </p>
      */
-    protected final StringBuffer buffer = new StringBuffer();
+    protected final StringBuffer inputBuffer = new StringBuffer();
 
     /**
      * Instantiates a serial shift-avr device that is capable of
@@ -64,49 +76,76 @@ public class DataFrameDevice extends SerialInterfaceDevice<String, JoystickDescr
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public void init() {
         super.init();
-        decoder = new JoystickDescriptor.Decoder();
+        decoder = (HumanInterfaceDevice.ReportDescriptor.Decoder<String, D>) new JoystickRegistry.Decoder();
         setDecoder(decoder);
+        setReportDescriptor(new ReportDescriptor());
     }
 
     @Override
-    public void decode() {
+    public void receive() {
         // reads a frame terminated by LF-CR, Line feed - Carriage return ("\n\r")
         // then finishes by dispatching the decoder implementation
         // after which the decoding listeners come into play
         // terminating the loop thereafter.
         // Note: as a part of loop control:
         // the loop self-terminates with an exception if the
-        // reading exceeds 1024 (10 << 2 or 2^10) bytes without dispatching the decoder
-        for (int chars = 0; getTerminalDevice().iread(report.getReportLength()) > 0; chars++) {
-            buffer.append(getTerminalDevice().getBuffer());
-            if (buffer.toString().endsWith("\n\r")) {
-                final JoystickDescriptor descriptor =
-                        decoder.decode(buffer.toString());
-                buffer.delete(0, buffer.length());  // flush input buffer
-                if (decoderListener != null) {
-                    decoderListener.onDecodingCompleted(descriptor);
+        // reading exceeds 1024 (1 << 10 or 2^10) bytes without dispatching the decoder
+        super.decode(dataRegisterLength -> {
+            for (int chars = 0; getTerminalDevice().iread(dataRegisterLength) > 0; chars++) {
+                inputBuffer.append(getTerminalDevice().getBuffer());
+                if (inputBuffer.toString().endsWith(Character.toString(reportDescriptor.getReportLength()))) {
+                    final String data = inputBuffer.toString(); // create a new local pointer
+                    inputBuffer.delete(0, inputBuffer.length()); // flush the input buffer
+                    return data;
+                } else if (chars > (0x01 << 0x0A)) {
+                    throw new NotDataFrameDeviceException();
                 }
-                return;
-            } else if (chars > (0x10 << 0x02)) {
-                throw new NotDataFrameDeviceException();
             }
-        }
+            return null; // return null as of no value
+        });
     }
 
     @Override
-    public void encode(JoystickDescriptor decoded) {
+    public void transmit(D decoded) {
         throw new UnsupportedOperationException("Error READ_ONLY Device, encoding and writing data is prohibited on this vendor!");
     }
 
-    public static final class DataFrameReport implements Report {
+    @Override
+    public String getVendor() {
+        return "DataFrame-Serial-HID";
+    }
+
+    /**
+     * Retrieves the input buffer being in-use.
+     *
+     * @return the input buffer holding data frames
+     */
+    public final StringBuffer getInputBuffer() {
+        return inputBuffer;
+    }
+
+    public static class ReportDescriptor implements HumanInterfaceDevice.ReportDescriptor {
         @Override
         public int getReportLength() {
-            return 1;
+            return 0x0A; // LF or '\n'
         }
 
-        public interface Decoder<D> extends HumanInterfaceDevice.Report.Decoder<String, D> {
+        @Override
+        public int getDataRegisterBufferLength() {
+            return 1; // 1-byte data for 8-bit based registers
+        }
+
+        /**
+         * Defines an alias type for the decoder interface
+         * specialized for this standard.
+         *
+         * @param <D> the type of the decoded data.
+         * @see JoystickRegistry
+         */
+        public interface Decoder<D> extends HumanInterfaceDevice.ReportDescriptor.Decoder<String, D> {
         }
 
         /**
@@ -116,7 +155,7 @@ public class DataFrameDevice extends SerialInterfaceDevice<String, JoystickDescr
          *
          * @param <D> the type of the decoded data packets
          */
-        public interface DecoderListener<D> extends HumanInterfaceDevice.Report.DecoderListener<String, D> {
+        public interface DecoderListener<D> extends HumanInterfaceDevice.ReportDescriptor.DecoderListener<String, D> {
         }
     }
 }

@@ -30,10 +30,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package com.serial4j.core.hid.device.dataframe.joystick;
+package com.serial4j.core.hid.device.dataframe.registry;
 
 import com.serial4j.core.hid.device.dataframe.DataFrameDevice;
-
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -65,7 +64,7 @@ public record JoystickRegistry(int x, int y) {
      * The Report descriptor decoder that is dispatched by the
      * {@link DataFrameDevice} to decode the data reports into {@link JoystickRegistry}s.
      */
-    public static class Decoder implements DataFrameDevice.DataFrameReport.Decoder<JoystickRegistry> {
+    public static class Decoder implements DataFrameDevice.ReportDescriptor.Decoder<JoystickRegistry> {
         private static int getPotentiometerValue(String frame, int index, char delimiter) {
             final StringBuilder data = new StringBuilder();
             for (int i = index; frame.charAt(i) != delimiter; i++) {
