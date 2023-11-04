@@ -30,9 +30,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package com.serial4j.core.hid.device.standard;
+package com.serial4j.core.hid;
 
-import com.serial4j.core.hid.HumanInterfaceDevice;
 import com.serial4j.core.hid.device.dataframe.DataFrameDevice;
 import com.serial4j.core.serial.SerialPort;
 import com.serial4j.core.terminal.FilePermissions;
