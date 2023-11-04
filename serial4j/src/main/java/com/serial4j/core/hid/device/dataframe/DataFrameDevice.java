@@ -30,9 +30,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package com.serial4j.core.hid.shiftavr;
+package com.serial4j.core.hid.device.dataframe;
 
+import com.serial4j.core.hid.HumanInterfaceDevice;
 import com.serial4j.core.hid.SerialInterfaceDevice;
+import com.serial4j.core.hid.device.dataframe.joystick.JoystickDescriptor;
 import com.serial4j.core.serial.SerialPort;
 import com.serial4j.core.terminal.TerminalDevice;
 
@@ -43,7 +45,7 @@ import com.serial4j.core.terminal.TerminalDevice;
  *
  * @author pavl_g
  */
-public class JoystickDevice extends SerialInterfaceDevice<JoystickDescriptor> {
+public class DataFrameDevice extends SerialInterfaceDevice<String, JoystickDescriptor> {
 
     /**
      * The input buffer for the reading stream.
@@ -57,7 +59,7 @@ public class JoystickDevice extends SerialInterfaceDevice<JoystickDescriptor> {
      * @param terminalDevice the associated terminal device
      * @param serialPort     the serial port of the connected device
      */
-    public JoystickDevice(TerminalDevice terminalDevice, SerialPort serialPort) {
+    public DataFrameDevice(TerminalDevice terminalDevice, SerialPort serialPort) {
         super(terminalDevice, serialPort);
     }
 
@@ -77,7 +79,7 @@ public class JoystickDevice extends SerialInterfaceDevice<JoystickDescriptor> {
         // Note: as a part of loop control:
         // the loop self-terminates with an exception if the
         // reading exceeds 1024 (10 << 2 or 2^10) bytes without dispatching the decoder
-        for (int chars = 0; getTerminalDevice().iread(1) > 0; chars++) {
+        for (int chars = 0; getTerminalDevice().iread(report.getReportLength()) > 0; chars++) {
             buffer.append(getTerminalDevice().getBuffer());
             if (buffer.toString().endsWith("\n\r")) {
                 final JoystickDescriptor descriptor =
@@ -88,8 +90,33 @@ public class JoystickDevice extends SerialInterfaceDevice<JoystickDescriptor> {
                 }
                 return;
             } else if (chars > (0x10 << 0x02)) {
-                throw new NotJoystickDeviceException();
+                throw new NotDataFrameDeviceException();
             }
+        }
+    }
+
+    @Override
+    public void encode(JoystickDescriptor decoded) {
+        throw new UnsupportedOperationException("Error READ_ONLY Device, encoding and writing data is prohibited on this vendor!");
+    }
+
+    public static final class DataFrameReport implements Report {
+        @Override
+        public int getReportLength() {
+            return 1;
+        }
+
+        public interface Decoder<D> extends HumanInterfaceDevice.Report.Decoder<String, D> {
+        }
+
+        /**
+         * Defines a dispatch listener that is dispatched
+         * when decoding/encoding completes, usually this
+         * is a user-side API.
+         *
+         * @param <D> the type of the decoded data packets
+         */
+        public interface DecoderListener<D> extends HumanInterfaceDevice.Report.DecoderListener<String, D> {
         }
     }
 }

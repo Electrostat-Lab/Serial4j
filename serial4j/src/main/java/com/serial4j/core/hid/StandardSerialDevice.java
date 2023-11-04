@@ -30,8 +30,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package com.serial4j.core.hid;
+package com.serial4j.core.hid.device.standard;
 
+import com.serial4j.core.hid.HumanInterfaceDevice;
+import com.serial4j.core.hid.device.dataframe.DataFrameDevice;
 import com.serial4j.core.serial.SerialPort;
 import com.serial4j.core.terminal.FilePermissions;
 import com.serial4j.core.terminal.ReadConfiguration;
@@ -42,17 +44,18 @@ import com.serial4j.core.terminal.TerminalDevice;
  *
  * <p>
  * Any serial-based HID is associated with a {@link TerminalDevice}
- * instance that opens the port, initializes terminal IO, and handles
- * raw read/write operations, after which comes the decoder algorithms
+ * instance that opens the port, initializes terminal IO, without handling
+ * raw read/write operations, in addition to the decoder algorithms
  * which is left as an open-ended API for the serial-based devices, wherein
  * each serial-based HID should define its standard report descriptor through these
- * algorithms, see {@link com.serial4j.core.hid.shiftavr.JoystickDevice} as an example.
+ * algorithms, see {@link DataFrameDevice} as an example.
  * </p>
  *
- * @param <T> the type-arg of the decoded data packets
+ * @param <E> the type-arg of the encoded data packets
+ * @param <D> the type-arg of the decoded data packets
  * @author pavl_g
  */
-public class SerialInterfaceDevice<T> extends HumanInterfaceDevice<T> {
+public abstract class StandardSerialDevice<E, D> extends HumanInterfaceDevice<E, D> {
 
     /**
      * The associated terminal device instance for handling terminal
@@ -77,7 +80,7 @@ public class SerialInterfaceDevice<T> extends HumanInterfaceDevice<T> {
      * @param terminalDevice the associated terminal device
      * @param serialPort     the serial port to which this device is connected to
      */
-    public SerialInterfaceDevice(final TerminalDevice terminalDevice, final SerialPort serialPort) {
+    public StandardSerialDevice(final TerminalDevice terminalDevice, final SerialPort serialPort) {
         this.terminalDevice = terminalDevice;
         this.serialPort = serialPort;
     }
@@ -104,24 +107,6 @@ public class SerialInterfaceDevice<T> extends HumanInterfaceDevice<T> {
         serialPort = null;
         operativePermissions = null;
         super.terminate();
-    }
-
-    @Override
-    public void decode() {
-        // assigns a read function and the raw packet of the input queue
-        super.decode(
-                integer -> terminalDevice.sread(reportDescriptor.getEncodedData().length()),
-                terminalDevice.getReadBuffer()
-        );
-    }
-
-    @Override
-    public void encode() {
-        // assigns a write function and the packet decoded from the output queue
-        super.encode(
-                raw -> terminalDevice.write(raw),
-                reportDescriptor.getDecodedData()
-        );
     }
 
     /**

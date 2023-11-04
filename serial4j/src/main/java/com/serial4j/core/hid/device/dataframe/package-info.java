@@ -34,4 +34,4 @@
  * Provides a standard for the ShiftAvr Joystick device with a report descriptor
  * of <b> [x = 1023, y = 1023]\n\r </b>.
  */
-package com.serial4j.core.hid.shiftavr;
+package com.serial4j.core.hid.dataframedevice;

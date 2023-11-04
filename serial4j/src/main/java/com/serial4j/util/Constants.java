@@ -1,7 +1,7 @@
 /*
  * BSD 3-Clause License
  *
- * Copyright (c) 2022, Scrappers Team, The AVR-Sandbox Project
+ * Copyright (c) 2022, Scrappers Team, The AVR-Sandbox Project, Serial4j API.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -30,20 +30,32 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package com.serial4j.core.hid.shiftavr;
+package com.serial4j.util;
 
 /**
- * Indicates a non-standard joystick device.
+ * A Utility defining constant fields repeatedly utilized.
  *
  * @author pavl_g
  */
-public class NotJoystickDeviceException extends RuntimeException {
+public final class Constants {
 
     /**
-     * Thrown to indicate a non-standard joystick device
-     * as defined by the local device report descriptors.
+     * Represents a constant value for the serial data frame max number
+     * of "bits".
+     *
+     * <p>
+     * This value is ideal for nearly all the microcontrollers out-there
+     * as it is backward compatible with the 8-bit microcontrollers.
+     * </p>
      */
-    public NotJoystickDeviceException() {
-        super("Not a Joystick device, check the vendor sheet with the standard shiftavr serial HID report descriptors!");
+    public static final int DEFAULT_DATA_REGISTER_BUFFER_LENGTH = 8;
+
+    /**
+     * Represents a constant value for the total number of "bits" utilized
+     * per a standard mouse.
+     */
+    public static final int STANDARD_MOUSE_BITS = 32;
+
+    private Constants() {
     }
 }

@@ -30,9 +30,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package com.serial4j.core.hid.shiftavr;
+package com.serial4j.core.hid.device.dataframe.joystick;
 
-import com.serial4j.core.hid.ReportDescriptor;
+import com.serial4j.core.hid.device.dataframe.DataFrameDevice;
+
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -50,7 +51,7 @@ import java.util.logging.Logger;
  * @param y the decoded Y-coordinate value
  * @author pavl_g
  */
-public record JoystickDescriptor(int x, int y) {
+public record JoystickRegistry(int x, int y) {
 
     @Override
     public String toString() {
@@ -62,9 +63,9 @@ public record JoystickDescriptor(int x, int y) {
 
     /**
      * The Report descriptor decoder that is dispatched by the
-     * {@link JoystickDevice} to decode the data reports into {@link JoystickDescriptor}s.
+     * {@link DataFrameDevice} to decode the data reports into {@link JoystickRegistry}s.
      */
-    public static class Decoder implements ReportDescriptor.Decoder<JoystickDescriptor> {
+    public static class Decoder implements DataFrameDevice.DataFrameReport.Decoder<JoystickRegistry> {
         private static int getPotentiometerValue(String frame, int index, char delimiter) {
             final StringBuilder data = new StringBuilder();
             for (int i = index; frame.charAt(i) != delimiter; i++) {
@@ -74,12 +75,12 @@ public record JoystickDescriptor(int x, int y) {
         }
 
         @Override
-        public String encode(JoystickDescriptor data) {
+        public String encode(JoystickRegistry data) {
             throw new UnsupportedOperationException("The Joystick HID is a read-only device!");
         }
 
         @Override
-        public JoystickDescriptor decode(String raw) {
+        public JoystickRegistry decode(String raw) {
             final String frame = raw.replace("\n\r", "");
             int x = 0;
             int y = 0;
@@ -97,11 +98,11 @@ public record JoystickDescriptor(int x, int y) {
             } catch (Exception e) {
                 x = 0;
                 y = 0;
-                Logger.getLogger(JoystickDevice.class.getName())
+                Logger.getLogger(DataFrameDevice.class.getName())
                         .log(Level.WARNING, "Decoding Fails with '" + e.getMessage() + "'", e.getCause());
             }
 
-            return new JoystickDescriptor(x, y);
+            return new JoystickRegistry(x, y);
         }
     }
 }
