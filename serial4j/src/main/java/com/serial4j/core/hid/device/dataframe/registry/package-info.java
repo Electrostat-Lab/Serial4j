@@ -30,20 +30,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package com.serial4j.core.hid.device.dataframe;
-
 /**
- * Indicates a non-standard joystick device.
- *
- * @author pavl_g
+ * Provides data registries and decoders for a variety of serial-based
+ * dataframe devices.
  */
-public class NotDataFrameDeviceException extends RuntimeException {
-
-    /**
-     * Thrown to indicate a non-standard joystick device
-     * as defined by the local device report descriptors.
-     */
-    public NotDataFrameDeviceException() {
-        super("Not a Joystick device, check the vendor sheet with the standard dataframe serial HID report descriptors!");
-    }
-}
+package com.serial4j.core.hid.device.dataframe.registry;
