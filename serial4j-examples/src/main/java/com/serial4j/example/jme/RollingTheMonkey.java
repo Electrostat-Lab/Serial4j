@@ -395,7 +395,7 @@ public class RollingTheMonkey extends SimpleApplication implements DataFrameDevi
     @Override
     public void requestClose(boolean esc) {
         super.requestClose(esc);
-        dataFrameDevice.terminate();
+        dataFrameDevice.close();
     }
 
     @Override
