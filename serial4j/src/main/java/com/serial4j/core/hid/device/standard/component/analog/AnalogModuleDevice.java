@@ -47,8 +47,16 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class AnalogModuleDevice extends StandardSerialDevice<Integer, AnalogRegistry> {
 
+    /**
+     * Provides a global/heap input buffer to accumulate data in a 32-bit
+     * report for the decoder.
+     */
     protected final AtomicInteger inputBuffer = new AtomicInteger(0);
 
+    /**
+     * Provides a clock counter analogy to clock-in and clock-out data
+     * to and from the MCU data register.
+     */
     protected final AtomicInteger inputClock = new AtomicInteger(0);
 
     /**
@@ -114,6 +122,13 @@ public class AnalogModuleDevice extends StandardSerialDevice<Integer, AnalogRegi
         return "AnalogDevice-Serial-HID";
     }
 
+    @Override
+    public void close() {
+        inputClock.set(0);
+        inputBuffer.set(0); // flush the input buffer
+        super.close(); // close the port and release native resources
+    }
+
     /**
      * Retrieves the ADC resolution in bits unit, default is 8-bit.
      *
@@ -139,6 +154,12 @@ public class AnalogModuleDevice extends StandardSerialDevice<Integer, AnalogRegi
         ((ReportDescriptor) this.reportDescriptor).setResolution(resolution);
     }
 
+    /**
+     * Retrieves a reference to the input buffer that accumulates
+     * data for the input report to be utilized by the decoder.
+     *
+     * @return a reference to the input buffer being used
+     */
     public AtomicInteger getInputBuffer() {
         return inputBuffer;
     }
