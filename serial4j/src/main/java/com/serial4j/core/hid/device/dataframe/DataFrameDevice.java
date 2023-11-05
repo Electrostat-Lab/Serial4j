@@ -110,12 +110,20 @@ public class DataFrameDevice<D> extends StandardSerialDevice<String, D> {
 
     @Override
     public void transmit(D decoded) {
-        throw new UnsupportedOperationException("Error READ_ONLY Device, encoding and writing data is prohibited on this vendor!");
+        // sends the encoded values plus a '\n' for data framing
+        super.encode(encoded ->
+                terminalDevice.write(encoded + reportDescriptor.getReportLength()), decoded);
     }
 
     @Override
     public String getVendor() {
         return "DataFrame-Serial-HID";
+    }
+
+    @Override
+    public void close() {
+        inputBuffer.delete(0, inputBuffer.length()); // flush the input buffer
+        super.close(); // close the port and release resources
     }
 
     /**
@@ -127,7 +135,20 @@ public class DataFrameDevice<D> extends StandardSerialDevice<String, D> {
         return inputBuffer;
     }
 
+    /**
+     * Provides a descriptor for the report, this includes the report length and
+     * the data register buffer length.
+     */
     public static class ReportDescriptor implements HumanInterfaceDevice.ReportDescriptor {
+
+        /**
+         * Instantiates a report descriptor with the default
+         * Line Feed (0x0A) as a report length, and a 1-byte
+         * data register buffer length.
+         */
+        public ReportDescriptor() {
+        }
+
         @Override
         public int getReportLength() {
             return 0x0A; // LF or '\n'
