@@ -37,6 +37,7 @@ import com.serial4j.core.serial.SerialPort;
 import com.serial4j.core.terminal.FilePermissions;
 import com.serial4j.core.terminal.ReadConfiguration;
 import com.serial4j.core.terminal.TerminalDevice;
+import com.serial4j.core.terminal.control.BaudRate;
 
 /**
  * Provides a standard implementation for a serial-based HID.
@@ -89,6 +90,7 @@ public abstract class StandardSerialDevice<E, D> extends HumanInterfaceDevice<E,
         terminalDevice.setOperativeFilePermissions(operativePermissions);
         terminalDevice.openPort(serialPort);
         terminalDevice.initTerminal();
+        terminalDevice.setBaudRate(BaudRate.B9600);
         // POLLING requested bytes out of the IO pipeline queue
         // this makes the read() returns immediately in case
         // of there are no bytes are in the terminal input queue
@@ -100,12 +102,12 @@ public abstract class StandardSerialDevice<E, D> extends HumanInterfaceDevice<E,
     }
 
     @Override
-    public void terminate() {
+    public void close() {
         terminalDevice.closePort();
         terminalDevice = null;
         serialPort = null;
         operativePermissions = null;
-        super.terminate();
+        super.close();
     }
 
     /**
