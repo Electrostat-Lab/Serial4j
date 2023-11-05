@@ -167,6 +167,11 @@ public abstract class HumanInterfaceDevice<E, D> implements AutoCloseable, Clone
         decoderListener = null;
     }
 
+    @Override
+    protected Object clone() throws CloneNotSupportedException {
+        return super.clone();
+    }
+
     /**
      * Override to provide receiving and decoding algorithms,
      * usually a call to {@link HumanInterfaceDevice#decode(Function)} is made
