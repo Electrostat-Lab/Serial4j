@@ -58,6 +58,13 @@ public class StandardMouseDevice extends StandardSerialDevice<Integer, MouseRegi
         return "Mouse-Serial-HID";
     }
 
+    @Override
+    public void close() {
+        inputClock.set(0);
+        inputBuffer.set(0); // flush the input buffer
+        super.close(); // close the port and release the native resources
+    }
+
     public AtomicInteger getInputBuffer() {
         return inputBuffer;
     }
