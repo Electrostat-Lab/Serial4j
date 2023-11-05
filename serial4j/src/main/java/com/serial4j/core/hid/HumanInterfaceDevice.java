@@ -54,7 +54,7 @@ import java.util.function.Function;
  * @see DataFrameDevice Demo Joystick Serial-HID
  */
 @SuppressWarnings("all")
-public abstract class HumanInterfaceDevice<E, D> {
+public abstract class HumanInterfaceDevice<E, D> implements AutoCloseable, Cloneable {
 
     /**
      * An associated report descriptor that provides descriptive
@@ -159,12 +159,10 @@ public abstract class HumanInterfaceDevice<E, D> {
     public abstract void init();
 
     /**
-     * Nullifies references for GC operations.
-     * <p>
      * Override to provide stream/IO/memory release operations.
-     * </p>
      */
-    public void terminate() {
+    @Override
+    public void close() {
         reportDescriptor = null;
         decoderListener = null;
     }
