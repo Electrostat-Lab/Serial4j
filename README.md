@@ -70,3 +70,7 @@ and the [linux-kernel-hid-intro](https://docs.kernel.org/hid/hidintro.html).
 | <a href="https://man7.org/index.html"> <img width=160 height=200 src="https://man7.org/tlpi/cover/TLPI-front-cover-small-256.png"/> </a> | <a href="https://www.amazon.com/Advanced-Programming-UNIX-Environment-3rd/dp/0321637739"> <img width=160 height=200 src="https://m.media-amazon.com/images/I/41RBNJ1IfZL._SY466_.jpg"/> </a> | <a href="https://docs.oracle.com/en/java/javase/21/"> <img width=100 height=80 src="https://docs.oracle.com/en/java/sp_common/shared-images/duke-jetsurf-no-cloud64.png"/> </a>  |
 
 > For C/C++ references, find a language reference, either the [IBM's](https://www.ibm.com/docs/en/i/7.5?topic=c-ile-cc-language-reference) or the [GNU's](https://www.gnu.org/software/gnu-c-manual/gnu-c-manual.html), choose whichever suits you.
+
+> #### And, I will leave you with my gems (controlling a jMonkeyEngine vehicle using JoystickModule connected to the ADC unit of the ATMega328p 8-bit MCU): 
+> ![preview](https://github.com/Software-Hardware-Codesign/Serial4j/assets/60224159/b83a2cca-e76f-4d50-8a26-5084cf02a7de)
+
