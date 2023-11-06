@@ -17,6 +17,13 @@ Serial4j is a terminal I/O library primarily built on top of POSIX base file API
 |---------------------|-----------------------------------------|-----------------------------------------------------|------------------------------------------------|------------------|----------------------------------|--------------------------------------|------------------------------|--------------------------|
 | Controlling the serial ports with the most possible minimalistic approach without irrelevant multithreading/processing bloatware. | Serial4j ports the Unix/POSIX standard terminal IO library to the Java platform without adding extra threading stuff, leaving them to the user application, the framework is sub-divided into layered APIs, of which the classes starting with `Native-` prefix acts as the literal native library. | No, it doesn't; but as it evolves, it may provide a threading model, however mostly on a different module. | Yes, you can do this and there are ongoing optimizations to remove the JNI source binaries for C++ applications cross-compatibility. | Yes, yes, and yes, the `serial/monitor` package has the right tools! | Currently, you can start testing the examples provided in the `serial4j-examples` modules, but knowing how the Unix terminal works will help you to understand the bit manipulations taking place at the terminal flags part. | The library hasn't been tested on Windows, Mac, and Android, yet, it should work on Unix/POSIX standard-based systems, that include Mac and Android! | jMonkeyEngine is a complete code-first approach modern 3D game engine written primarily in Java, Serial4j has an example operating a serial monitor inside a game, COOL! | Of course, you CAN, as Serial4j is built into a dynamic library `libserial4j` that's independent of Java! |
 
+### Features: 
+- [x] Full control on the serial devices over the terminal I/O.
+- [x] Full control on the serial port, the original RS-232 DB-25 port.
+- [x] SerialMonitor API.
+- [x] Human Interface Device (HID) API providing a serial-device abstraction, and common devices standardizations.
+- [x] Powered by a variety of examples and tech-demos. 
+
 ### Java Implementation of the binding library:
 _**Preface**_: The binding library consists of the main package `serial4j.core.terminal` which houses the terminal control facilities for opening, reading and writing to 
 a terminal device in addition to setting the terminal line speed (baud rate), controlling the input and output queues and controlling the UI of the terminal driver.  
