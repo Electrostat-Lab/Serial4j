@@ -50,13 +50,14 @@ import java.util.logging.Logger;
  * @param y the decoded Y-coordinate value
  * @author pavl_g
  */
-public record JoystickRegistry(int x, int y) {
+public record JoystickRegistry(int x, int y, int b) {
 
     @Override
     public String toString() {
-        return "JoystickDescriptor = [" +
-                "x = " + x() +
-                ", y = " + y() +
+        return "JoystickRegistry = [" +
+                "x=" + x +
+                ", y=" + y +
+                ", b=" + b +
                 ']';
     }
 
@@ -81,8 +82,10 @@ public record JoystickRegistry(int x, int y) {
         @Override
         public JoystickRegistry decode(String raw) {
             final String frame = raw.replace("\n\r", "");
+            System.out.println(frame);
             int x = 0;
             int y = 0;
+            int b = 0;
 
             try {
                 for (int i = 0; i < frame.length(); i++) {
@@ -91,17 +94,20 @@ public record JoystickRegistry(int x, int y) {
                         x = getPotentiometerValue(frame, i + 4, ',');
                     } else if (frame.charAt(i) == 'y') {
                         // i + 4 is the delimiter between the 'y' and the value of y
-                        y = getPotentiometerValue(frame, i + 4, ']');
+                        y = getPotentiometerValue(frame, i + 4, ',');
+                    } else if (frame.charAt(i) == 'b') {
+                        b = getPotentiometerValue(frame, i + 4, ']');
                     }
                 }
             } catch (Exception e) {
                 x = 0;
                 y = 0;
+                b = 0;
                 Logger.getLogger(DataFrameDevice.class.getName())
                         .log(Level.WARNING, "Decoding Fails with '" + e.getMessage() + "'", e.getCause());
             }
 
-            return new JoystickRegistry(x, y);
+            return new JoystickRegistry(x, y, b);
         }
     }
 }
