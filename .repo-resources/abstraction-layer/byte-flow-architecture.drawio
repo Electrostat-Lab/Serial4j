@@ -1,6 +1,6 @@
-<mxfile host="app.diagrams.net" modified="2024-01-21T19:01:14.029Z" agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36" etag="ra_b6RM0U14g06XWbU-A" version="22.1.21" type="github">
+<mxfile host="app.diagrams.net" modified="2024-01-21T19:03:56.997Z" agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36" etag="JEcEHMrP4nG5EhDFGHEm" version="22.1.21" type="github">
   <diagram name="Page-1" id="5f0bae14-7c28-e335-631c-24af17079c00">
-    <mxGraphModel dx="764" dy="438" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="850" background="none" math="0" shadow="0">
+    <mxGraphModel dx="1588" dy="909" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="850" background="none" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -93,6 +93,18 @@
         </mxCell>
         <mxCell id="4l-lxIXdtN1crYGhOOL7-32" value="libserial4j.so" style="rounded=0;whiteSpace=wrap;html=1;align=left;labelBorderColor=none;fillColor=none;strokeColor=none;" vertex="1" parent="1">
           <mxGeometry x="360" y="553" width="114" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="4l-lxIXdtN1crYGhOOL7-35" value="settings.gradle" style="label;fontStyle=0;strokeColor=none;fillColor=none;align=left;verticalAlign=top;overflow=hidden;spacingLeft=28;spacingRight=4;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;imageWidth=16;imageHeight=16;whiteSpace=wrap;html=1;image=img/clipart/Gear_128x128.png" vertex="1" parent="1">
+          <mxGeometry x="600" y="660" width="140" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="4l-lxIXdtN1crYGhOOL7-36" value="build.gradle" style="label;fontStyle=0;strokeColor=none;fillColor=none;align=left;verticalAlign=top;overflow=hidden;spacingLeft=28;spacingRight=4;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;imageWidth=16;imageHeight=16;whiteSpace=wrap;html=1;image=img/clipart/Gear_128x128.png" vertex="1" parent="1">
+          <mxGeometry x="600" y="690" width="140" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="4l-lxIXdtN1crYGhOOL7-37" value="gradlew" style="label;fontStyle=0;strokeColor=none;fillColor=none;align=left;verticalAlign=top;overflow=hidden;spacingLeft=28;spacingRight=4;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;imageWidth=16;imageHeight=16;whiteSpace=wrap;html=1;image=img/clipart/Gear_128x128.png" vertex="1" parent="1">
+          <mxGeometry x="600" y="720" width="140" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="4l-lxIXdtN1crYGhOOL7-38" value="gradle-wrapper.jar" style="label;fontStyle=0;strokeColor=none;fillColor=none;align=left;verticalAlign=top;overflow=hidden;spacingLeft=28;spacingRight=4;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;imageWidth=16;imageHeight=16;whiteSpace=wrap;html=1;image=img/clipart/Gear_128x128.png" vertex="1" parent="1">
+          <mxGeometry x="600" y="750" width="140" height="30" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
