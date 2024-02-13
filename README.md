@@ -63,7 +63,8 @@ you to utilize the native API.
  
  # selectively running an example
  ┌─[pavl-machine@pavl-machine]─[/home/twisted/GradleProjects/Serial4j-v1]
- └──╼ $./gradlew :serial4j-examples:run --args="com.serial4j.example.jme.RollingTheMonkey  /dev/ttyUSB0"
+ └──╼ $./gradlew :serial4j-examples:run \
+       --args="com.serial4j.example.jme.RollingTheMonkey  /dev/ttyUSB0"
  ```
 
 ### The Serial-Human-Interface-Device (HID) API: 
