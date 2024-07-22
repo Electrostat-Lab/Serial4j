@@ -92,3 +92,12 @@ and the [linux-kernel-hid-intro](https://docs.kernel.org/hid/hidintro.html).
 > And, I will leave you with my gems (controlling a jMonkeyEngine vehicle using JoystickModule connected to the ADC unit of the ATMega328p 8-bit MCU): 
 > ![preview](https://github.com/Software-Hardware-Codesign/Serial4j/assets/60224159/b83a2cca-e76f-4d50-8a26-5084cf02a7de)
 
+## Credits: 
+- [The jMonkeyEngine Platform](https://github.com/jMonkeyEngine/jmonkeyengine)
+- [Minie Bullet Physics By Stephen Gold](https://github.com/stephengold/Minie)
+- [GNU/Linux Interfaces](https://www.gnu.org/)
+- [Linux Kernel Userspace APIs](https://man7.org/linux/man-pages/man2/ioctl.2.html)
+- [Universal Serial Bus Human-Interface-Device (HID)](https://www.usb.org/hid)
+- [IBM C Language Reference](https://www.ibm.com/docs/en/ssw_ibm_i_71/rzarg/sc097852.pdf)
+- [The Java Platform and JNI](https://docs.oracle.com/en/java/javase/20/)
+- The GitHub Hosting Services.
