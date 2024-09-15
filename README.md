@@ -1,6 +1,8 @@
 <p>  <a href="https://software-hardware-codesign.github.io/Serial4j-v1"> <img src="https://github.com/Software-Hardware-Codesign/Serial4j/assets/60224159/9eaf16bf-c0c7-4d9b-9dad-8e2b4de14368" height=80 width=100/> </a> </p> 
 
 # Serial4j-API:
+> [!WARNING]
+> Archived as Read-Only starting from Sep. $15^{th}$, 2024. Serial4j is now a part of the **_[Electrostatic-Sandbox](https://github.com/Electrostat-Lab/Electrostatic-Sandbox/tree/master/electrostatic-sandbox-framework/electrostatic4j/serial4j)_**, a work-in-progress complete SDK suite written purely in C for distributed simulation systems based on the IEEE-1516 HLA Software Architecture Specification and NASA DSES.
 
 A Java terminal IO library designed to communicate and control the serial (RS232) drivers.
 
